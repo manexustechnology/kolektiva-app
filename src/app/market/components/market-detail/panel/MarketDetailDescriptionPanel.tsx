@@ -99,7 +99,7 @@ const MarketDetailDescriptionPanel: React.FC = () => {
         <div className="ckeditor-content leading-3">
           <h2>Strip Mall with McDonalds & Dominos Pizza in Quad Cities, Iowa</h2>
           <br />
-          <p>Located in the Quad Cities Metro area, this is a 4-unit retail building built in 2010. The tenants include McDonalds, Domino's, US Cellular, and a Real Estate Office. All tenants are on multi-year triple-net leases (NNN). This means that the tenants pay all the expenses of the property including real estate taxes, building insurance, and maintenance.</p>
+          <p>Located in the Quad Cities Metro area, this is a 4-unit retail building built in 2010. The tenants include McDonalds, Domino&apos;s, US Cellular, and a Real Estate Office. All tenants are on multi-year triple-net leases (NNN). This means that the tenants pay all the expenses of the property including real estate taxes, building insurance, and maintenance.</p>
           <br />
           <ul>
             <li>McDonalds has been a tenant since 2010 and extended its lease to 2026</li>
@@ -123,7 +123,7 @@ const MarketDetailDescriptionPanel: React.FC = () => {
           <br />
           <p>Located on an entrance/exit of a major U.S highway, it takes drivers just 1 minute to reach the mall. Route 61 passes through 3 US states (New Orleans, Iowa and Mississippi).</p>
           <br />
-          <p>Refer to the 'Documents' tab above to view the following information:</p>
+          <p>Refer to the &apos;Documents&apos; tab above to view the following information:</p>
           <br />
           <ul>
             <li>Rent Roll & Lease Terms</li>
