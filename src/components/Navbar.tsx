@@ -1,10 +1,17 @@
 import { Box, Flex, Spacer, Button, Image } from "@chakra-ui/react";
 import Link from "next/link";
+import { RefObject } from "react";
 
-const Navbar = () => {
+interface NavbarProps {
+  navbarRef: RefObject<HTMLDivElement>
+}
+
+const Navbar: React.FC<NavbarProps> = ({
+  navbarRef
+}) => {
   return (
     <Flex
-      as="nav"
+      as="div"
       direction="row"
       justify="space-between"
       align="center"
@@ -17,6 +24,7 @@ const Navbar = () => {
       mx="auto"
       position="fixed"
       zIndex={100}
+      ref={navbarRef}
     >
       <Link href="/" passHref>
         <Flex align="center">

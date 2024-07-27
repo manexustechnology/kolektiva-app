@@ -1,5 +1,11 @@
 import { Image } from "@chakra-ui/react";
 import FilterBar from "./components/FilterBar";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Kolektiva",
+  description: "Fractional Property",
+};
 
 export default function Home() {
   return (
