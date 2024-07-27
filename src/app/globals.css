@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.ckeditor-content h2 {
+  font-weight: 500;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: rgb(0 0 0 / var(--tw-text-opacity));
+}
+
+.ckeditor-content p,
+.ckeditor-content ul li {
+  --tw-text-opacity: 1;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  color: rgb(113 113 122 / var(--tw-text-opacity));
+}
+
+.ckeditor-content ul {
+  list-style-position: inside;
+}
