@@ -15,6 +15,8 @@ const Navbar = () => {
       w="100%"
       h="56px"
       mx="auto"
+      position="fixed"
+      zIndex={100}
     >
       <Link href="/" passHref>
         <Flex align="center">
