@@ -4,10 +4,17 @@ import { interGlobalFont } from "@/app/layout";
 import { Slider, SliderFilledTrack, SliderMark, SliderThumb, SliderTrack } from "@chakra-ui/react";
 import { Divider } from "antd";
 import { ApexOptions } from "apexcharts";
-import { useState } from "react";
-import ReactApexChart from "react-apexcharts";
+import { useEffect, useState } from "react";
 
 const MarketDetailFinancialPanel: React.FC = () => {
+  // https://blog.nirdeshpokhrel.com.np/nextjs-window-is-not-defined-react-apexcharts
+  const [ReactApexChart, setReactApexChart] = useState<any>();
+  useEffect(() => {
+    import("react-apexcharts").then((mod) => {
+      setReactApexChart(() => mod.default);
+    });
+  }, []);
+
   const [tokensPurchasedSliderValue, setTokensPurchasedSliderValue] = useState<number>(2519);
   const [appreciationSliderValue, setAppreciationSliderValue] = useState<number>(46);
   const [cocReturnSliderValue, setCocReturnSliderValue] = useState<number>(18);
@@ -26,7 +33,7 @@ const MarketDetailFinancialPanel: React.FC = () => {
       data: Array.from({ length: 30 }, (_, i) => 10)
     }
   ]);
-  const [cumChartOptions, setcumChartOptions] = useState<ApexOptions>({
+  const [cumChartOptions, setCumChartOptions] = useState<ApexOptions>({
     chart: {
       type: 'bar',
       height: 350,
@@ -280,43 +287,9 @@ const MarketDetailFinancialPanel: React.FC = () => {
         </div>
         <div className="w-full rounded-2xl shadow-md p-4">
           <div id="chart">
-            <ReactApexChart options={cumChartOptions} series={cumChartSeries} type="bar" height={350} />
+            {ReactApexChart && <ReactApexChart options={cumChartOptions} series={cumChartSeries} type="bar" height={350} />}
           </div>
         </div>
-        {/* <table className="w-full rounded-2xl shadow-md p-6 divide-y divide-gray-200">
-          <thead className="">
-            <tr className="bg-zinc-100">
-              <th className="py-2 text-center font-normal"></th>
-              <th className="py-2 text-center font-normal">Year 5</th>
-              <th className="py-2 text-center font-normal">Year 10</th>
-              <th className="py-2 text-center font-normal">Year 20</th>
-              <th className="py-2 text-center font-normal">Year 30</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Cumulative Net Cash Flow</td>
-              <td>Rp 125,950,933</td>
-              <td>Rp 125,950,933</td>
-              <td>Rp 125,950,933</td>
-              <td>Rp 125,950,933</td>
-            </tr>
-            <tr>
-              <td>Witchy Woman</td>
-              <td>Rp 125,950,933</td>
-              <td>Rp 125,950,933</td>
-              <td>Rp 125,950,933</td>
-              <td>Rp 125,950,933</td>
-            </tr>
-            <tr>
-              <td>Shining Star</td>
-              <td>Rp 125,950,933</td>
-              <td>Rp 125,950,933</td>
-              <td>Rp 125,950,933</td>
-              <td>Rp 125,950,933</td>
-            </tr>
-          </tbody>
-        </table> */}
         <div className="flex flex-col">
           <div className="-m-1.5 overflow-x-auto">
             <div className="p-1.5 min-w-full inline-block align-middle">
@@ -368,7 +341,6 @@ const MarketDetailFinancialPanel: React.FC = () => {
             </div>
           </div>
         </div>
-
       </div>
     </>
   )

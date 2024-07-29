@@ -24,7 +24,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
         <div className="w-2/3 flex flex-col gap-6">
           <MarketDetailPhotos />
           <div className="w-full">
-            <Tabs colorScheme="green" defaultIndex={0}>
+            <Tabs colorScheme="green" defaultIndex={2}>
               <TabList gap='2'>
                 <Tab fontSize='sm'>Description</Tab>
                 <Tab fontSize='sm'>Financials</Tab>
@@ -40,7 +40,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                   <MarketDetailFinancialPanel />
                 </TabPanel>
                 <TabPanel px={0} py={4}>
-                  <MarketDetailOrderbookPanel />
+                  <MarketDetailOrderbookPanel isSold={isSold} />
                 </TabPanel>
                 <TabPanel px={0} py={4}>
                   <MarketDetailDocumentPanel />
