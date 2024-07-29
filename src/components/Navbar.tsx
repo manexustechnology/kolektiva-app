@@ -13,7 +13,7 @@ const Navbar: React.FC<NavbarProps> = ({
     <Flex
       as="div"
       direction="row"
-      justify="space-between"
+      justify="center"
       align="center"
       p={3}
       px={32}
@@ -26,17 +26,19 @@ const Navbar: React.FC<NavbarProps> = ({
       zIndex={100}
       ref={navbarRef}
     >
-      <Link href="/" passHref>
-        <Flex align="center">
-          <Image src="/images/Kolektiva_Logo.png" alt="kolektiva logo" />
-          <span className="text-white ml-2">Kolektiva</span>
-        </Flex>
-      </Link>
+      <div className="flex justify-between items-center max-w-[1238px] w-full p-2">
+        <Link href="/" passHref>
+          <Flex align="center">
+            <Image src="/images/Kolektiva_Logo.png" alt="kolektiva logo" />
+            <span className="text-white ml-2">Kolektiva</span>
+          </Flex>
+        </Link>
 
-      <Spacer />
-      <Button rounded="full" color="white" bg="#0D9488">
-        Connect Wallet
-      </Button>
+        <Spacer />
+        <Button rounded="full" color="white" bg="#0D9488">
+          Connect Wallet
+        </Button>
+      </div>
     </Flex>
   );
 };
