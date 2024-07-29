@@ -11,7 +11,7 @@ const Navbar: React.FC<NavbarProps> = ({ navbarRef }) => {
     <Flex
       as="div"
       direction="row"
-      justify="space-between"
+      justify="center"
       align="center"
       p={3}
       px={32}
