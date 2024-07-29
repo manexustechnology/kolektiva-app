@@ -3,12 +3,10 @@ import Link from "next/link";
 import { RefObject } from "react";
 
 interface NavbarProps {
-  navbarRef: RefObject<HTMLDivElement>
+  navbarRef: RefObject<HTMLDivElement>;
 }
 
-const Navbar: React.FC<NavbarProps> = ({
-  navbarRef
-}) => {
+const Navbar: React.FC<NavbarProps> = ({ navbarRef }) => {
   return (
     <Flex
       as="div"
@@ -26,19 +24,21 @@ const Navbar: React.FC<NavbarProps> = ({
       zIndex={100}
       ref={navbarRef}
     >
-      <div className="flex justify-between items-center max-w-[1238px] w-full p-2">
-        <Link href="/" passHref>
-          <Flex align="center">
-            <Image src="/images/Kolektiva_Logo.png" alt="kolektiva logo" />
-            <span className="text-white ml-2">Kolektiva</span>
-          </Flex>
-        </Link>
+      <Box width="1238px" mx="auto">
+        <Flex align="center">
+          <Link href="/" passHref>
+            <Flex align="center">
+              <Image src="/images/Kolektiva_Logo.png" alt="kolektiva logo" />
+              <span className="text-white ml-2">Kolektiva</span>
+            </Flex>
+          </Link>
 
-        <Spacer />
-        <Button rounded="full" color="white" bg="#0D9488">
-          Connect Wallet
-        </Button>
-      </div>
+          <Spacer />
+          <Button rounded="full" marginRight={1} color="white" bg="#0D9488">
+            Connect Wallet
+          </Button>
+        </Flex>
+      </Box>
     </Flex>
   );
 };
