@@ -42,7 +42,7 @@ const MarketDetailFinancialPanel: React.FC = () => {
         show: true
       },
       zoom: {
-        enabled: true
+        enabled: false
       }
     },
     responsive: [{
