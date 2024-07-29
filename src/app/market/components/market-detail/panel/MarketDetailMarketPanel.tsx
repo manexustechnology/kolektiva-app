@@ -1,6 +1,6 @@
 'use client';
 
-import { interGlobalFont } from "@/app/layout";
+import { interGlobalFont } from "@/commons/font";
 import { Divider } from "antd";
 import { ApexOptions } from "apexcharts";
 import { useState, useEffect } from "react";
