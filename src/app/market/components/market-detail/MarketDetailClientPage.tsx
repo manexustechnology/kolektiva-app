@@ -24,7 +24,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
         <div className="w-2/3 flex flex-col gap-6">
           <MarketDetailPhotos />
           <div className="w-full">
-            <Tabs colorScheme="green" defaultIndex={2}>
+            <Tabs colorScheme="green" defaultIndex={3}>
               <TabList gap='2'>
                 <Tab fontSize='sm'>Description</Tab>
                 <Tab fontSize='sm'>Financials</Tab>
@@ -114,7 +114,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
             </div>
             <div className="flex gap-2 w-full">
               <Button colorScheme="teal" bgColor='teal.600' w='full' rounded='full' fontWeight='normal'>Buy</Button>
-              <Button colorScheme="teal" w='full' rounded='full' fontWeight='normal' isDisabled={!isSold} bgColor='teal.100' color='teal.700' _disabled={{ bgColor: 'teal.50', color: 'teal.600' }} _hover={{ bgColor: 'teal.50', color: 'teal.600', cursor: isSold ? 'pointer' : 'no-drop' }}>Sell</Button>
+              <Button colorScheme="teal" w='full' rounded='full' fontWeight='normal' isDisabled={!isSold} bgColor='teal.100' color='teal.700' _disabled={{ bgColor: 'teal.50', color: 'teal.600' }} _hover={{ bgColor: 'teal.200', color: 'teal.900', cursor: isSold ? 'pointer' : 'no-drop' }}>Sell</Button>
             </div>
             {isSold && (
               <>
