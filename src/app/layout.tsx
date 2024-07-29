@@ -1,12 +1,10 @@
 'use client';
 
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import Navbar from "../components/Navbar";
 import { useEffect, useRef, useState } from "react";
-
-export const interGlobalFont = Inter({ subsets: ["latin"] });
+import { interGlobalFont } from "@/commons/font";
 
 export default function RootLayout({
   children,

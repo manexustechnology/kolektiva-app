@@ -1,6 +1,6 @@
 'use client';
 
-import { interGlobalFont } from "@/app/layout";
+import { interGlobalFont } from "@/commons/font";
 import { Slider, SliderFilledTrack, SliderMark, SliderThumb, SliderTrack } from "@chakra-ui/react";
 import { Divider } from "antd";
 import { ApexOptions } from "apexcharts";
