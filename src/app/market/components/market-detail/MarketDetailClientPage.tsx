@@ -9,6 +9,7 @@ import MarketDetailFinancialPanel from "./panel/MarketDetailFinancialPanel";
 import MarketDetailOrderbookPanel from "./panel/MarketDetailOrderbookPanel";
 import MarketDetailDocumentPanel from "./panel/MarketDetailDocumentPanel";
 import MarketDetailMarketPanel from "./panel/MarketDetailMarketPanel";
+import { useState } from "react";
 
 interface MarketDetailClientPageProps {
   isSold: boolean;
@@ -23,7 +24,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
         <div className="w-2/3 flex flex-col gap-6">
           <MarketDetailPhotos />
           <div className="w-full">
-            <Tabs colorScheme="green">
+            <Tabs colorScheme="green" defaultIndex={0}>
               <TabList gap='2'>
                 <Tab fontSize='sm'>Description</Tab>
                 <Tab fontSize='sm'>Financials</Tab>
