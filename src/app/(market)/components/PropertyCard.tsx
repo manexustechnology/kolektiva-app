@@ -32,6 +32,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
       boxShadow="md"
       width={394}
       height={321}
+      cursor="pointer"
       onClick={onButtonClick}
     >
       {/* Tag Box */}

@@ -2,9 +2,11 @@
 
 import { Box, Grid } from "@chakra-ui/react";
 import PropertyCard from "./PropertyCard";
+import { useRouter } from "next/navigation";
 
 interface PropertyCardData {
   name: string;
+  slug: string;
   location: string;
   img: string;
   price: string;
@@ -17,15 +19,18 @@ interface PropertyCardsProps {
 }
 
 const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
+  const router = useRouter();
+
   // Handle button click action
-  const handleButtonClick = (name: string) => {
-    alert(`Do you want to see details of ${name}?`);
+  const handleButtonClick = (slug: string) => {
+    router.push('/detail/' + slug);
   };
 
   // Test data
   const cardData: PropertyCardData[] = [
     {
       name: "Luxury Villa",
+      slug: "luxury-villa",
       location: "Beverly Hills, CA",
       img: "/images/Property_Image.jpg",
       price: "82,500",
@@ -34,6 +39,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
     },
     {
       name: "Modern Apartment",
+      slug: "modern-apartment",
       location: "New York, NY",
       img: "/images/Property_Image.jpg",
       price: "26,000",
@@ -42,6 +48,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
     },
     {
       name: "The Den",
+      slug: "the-den",
       location: "Los Angeles, LA",
       img: "/images/Property_Image.jpg",
       price: "9500",
@@ -50,6 +57,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
     },
     {
       name: "Modern Apartment3",
+      slug: "modern-apartment",
       location: "New York, NY",
       img: "/images/Property_Image.jpg",
       price: "15,000",
@@ -58,6 +66,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
     },
     {
       name: "Cozy Cottage",
+      slug: "cozy-cottage",
       location: "Aspen, CO",
       img: "/images/Property_Image.jpg",
       price: "69,200",
@@ -88,7 +97,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
             price={card.price}
             isNew={card.isNew}
             isFeatured={card.isFeatured}
-            onButtonClick={() => handleButtonClick(card.name)} // Handle button click
+            onButtonClick={() => handleButtonClick(card.slug)} // Handle button click
           />
         ))}
       </Grid>
