@@ -1,10 +1,11 @@
 'use client';
 
+import { LiskSepoliaTestnet } from "@/commons/networks";
 import { thirdwebClient } from "@/commons/thirdweb";
-import { Box, Flex, Spacer, Image } from "@chakra-ui/react";
+import { Box, Flex, Image } from "@chakra-ui/react";
 import Link from "next/link";
-import { RefObject, useEffect, useRef, useState } from "react";
-import { ConnectButton, useActiveAccount, useActiveWallet, useEnsAvatar } from "thirdweb/react";
+import { useEffect, useRef } from "react";
+import { ConnectButton, useActiveAccount, useActiveWalletChain } from "thirdweb/react";
 
 interface NavbarProps {
   topNavHeightChange?: (height: number | undefined) => void;
@@ -13,12 +14,17 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ topNavHeightChange }) => {
   const topNavRef = useRef<HTMLDivElement>(null);
   const activeAccount = useActiveAccount();
+  const activeChain = useActiveWalletChain();
 
   useEffect(() => {
     if (topNavHeightChange) {
       topNavHeightChange(topNavRef.current?.offsetHeight)
     }
   }, [topNavRef.current?.offsetHeight, activeAccount]);
+
+  useEffect(() => {
+    console.log(activeChain);
+  }, [activeChain]);
 
   return (
     <Flex
@@ -32,6 +38,7 @@ const Navbar: React.FC<NavbarProps> = ({ topNavHeightChange }) => {
       bg="#042F2E"
       w="100%"
       h="auto"
+      minHeight="36px"
       mx="auto"
       position="fixed"
       zIndex={100}
@@ -55,9 +62,15 @@ const Navbar: React.FC<NavbarProps> = ({ topNavHeightChange }) => {
               className: '!bg-teal-600 !px-3 !py-2 !text-white !text-sm !font-medium !rounded-full',
               label: 'Connect Wallet',
             }}
+            switchButton={{
+              className: '!bg-teal-600 !px-3 !py-2 !text-white !text-sm !font-medium !rounded-full',
+            }}
             detailsButton={{
               className: '!bg-teal-600 !px-6 !py-2 !rounded-full'
             }}
+            autoConnect={true}
+            chain={LiskSepoliaTestnet}
+            chains={[LiskSepoliaTestnet]}
           />
         </div>
       </Box>
