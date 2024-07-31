@@ -23,7 +23,8 @@
     "react": "^18",
     "react-apexcharts": "^1.4.1",
     "react-dom": "^18",
-    "tailwind-merge": "^2.4.0"
+    "tailwind-merge": "^2.4.0",
+    "thirdweb": "^5.42.0"
   },
   "devDependencies": {
     "@types/node": "^20",

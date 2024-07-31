@@ -1,12 +1,25 @@
-import { Box, Flex, Spacer, Button, Image } from "@chakra-ui/react";
+'use client';
+
+import { thirdwebClient } from "@/commons/thirdweb";
+import { Box, Flex, Spacer, Image } from "@chakra-ui/react";
 import Link from "next/link";
-import { RefObject } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
+import { ConnectButton, useActiveAccount, useActiveWallet, useEnsAvatar } from "thirdweb/react";
 
 interface NavbarProps {
-  navbarRef: RefObject<HTMLDivElement>;
+  topNavHeightChange?: (height: number | undefined) => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ navbarRef }) => {
+const Navbar: React.FC<NavbarProps> = ({ topNavHeightChange }) => {
+  const topNavRef = useRef<HTMLDivElement>(null);
+  const activeAccount = useActiveAccount();
+
+  useEffect(() => {
+    if (topNavHeightChange) {
+      topNavHeightChange(topNavRef.current?.offsetHeight)
+    }
+  }, [topNavRef.current?.offsetHeight, activeAccount]);
+
   return (
     <Flex
       as="div"
@@ -18,26 +31,35 @@ const Navbar: React.FC<NavbarProps> = ({ navbarRef }) => {
       gap={2}
       bg="#042F2E"
       w="100%"
-      h="56px"
+      h="auto"
       mx="auto"
       position="fixed"
       zIndex={100}
-      ref={navbarRef}
+      ref={topNavRef}
     >
       <Box width="1238px" mx="auto">
-        <Flex align="center">
+        <div className="flex justify-between items-center">
           <Link href="/" passHref>
             <Flex align="center">
               <Image src="/images/Kolektiva_Logo.png" alt="kolektiva logo" />
               <span className="text-white ml-2">Kolektiva</span>
             </Flex>
           </Link>
-
-          <Spacer />
-          <Button rounded="full" marginRight={1} color="white" bg="#0D9488">
-            Connect Wallet
-          </Button>
-        </Flex>
+          <ConnectButton
+            client={thirdwebClient}
+            appMetadata={{
+              name: process.env.NEXT_PUBLIC_APP_NAME || 'kolektiva',
+              url: process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
+            }}
+            connectButton={{
+              className: '!bg-teal-600 !px-3 !py-2 !text-white !text-sm !font-medium !rounded-full',
+              label: 'Connect Wallet',
+            }}
+            detailsButton={{
+              className: '!bg-teal-600 !px-6 !py-2 !rounded-full'
+            }}
+          />
+        </div>
       </Box>
     </Flex>
   );
