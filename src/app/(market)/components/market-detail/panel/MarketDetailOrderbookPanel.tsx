@@ -80,7 +80,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                               width="50%"
                               className="py-3 px-4 text-sm font-normal relative z-10"
                             >
-                              $52.00
+                              52.00 LSK
                             </td>
                             <td
                               width="50%"
@@ -95,7 +95,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                               width="50%"
                               className="py-3 px-4 text-sm font-normal relative z-10"
                             >
-                              $52.00
+                              52.00 LSK
                             </td>
                             <td
                               width="50%"
@@ -110,7 +110,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                               width="50%"
                               className="py-3 px-4 text-sm font-normal relative z-10"
                             >
-                              $52.00
+                              52.00 LSK
                             </td>
                             <td
                               width="50%"
@@ -125,7 +125,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                               width="50%"
                               className="py-3 px-4 text-sm font-normal relative z-10"
                             >
-                              $52.00
+                              52.00 LSK
                             </td>
                             <td
                               width="50%"
@@ -168,7 +168,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                               width="50%"
                               className="py-3 px-4 text-sm font-normal relative z-10"
                             >
-                              $52.00
+                              52.00 LSK
                             </td>
                             <td
                               width="50%"
@@ -183,7 +183,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                               width="50%"
                               className="py-3 px-4 text-sm font-normal relative z-10"
                             >
-                              $52.00
+                              52.00 LSK
                             </td>
                             <td
                               width="50%"
@@ -198,7 +198,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                               width="50%"
                               className="py-3 px-4 text-sm font-normal relative z-10"
                             >
-                              $52.00
+                              52.00 LSK
                             </td>
                             <td
                               width="50%"
@@ -213,7 +213,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                               width="50%"
                               className="py-3 px-4 text-sm font-normal relative z-10"
                             >
-                              $52.00
+                              52.00 LSK
                             </td>
                             <td
                               width="50%"
