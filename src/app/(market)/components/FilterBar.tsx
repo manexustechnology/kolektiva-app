@@ -22,12 +22,28 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 
-const FilterBar = () => {
+interface FilterBarProps {
+  locations: string[];
+  propertyTypes: string[];
+  sortOptions: string[];
+  onFilterApply: () => void;
+  onFilterReset: () => void;
+  initialSliderValue1?: number;
+  initialSliderValue2?: number;
+}
+
+const FilterBar: React.FC<FilterBarProps> = ({
+  locations,
+  propertyTypes,
+  sortOptions,
+  onFilterApply,
+  onFilterReset,
+  initialSliderValue1 = 50,
+  initialSliderValue2 = 50,
+}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [sliderValue1, setSliderValue1] = useState(50);
-  const [showTooltip1, setShowTooltip1] = useState(false);
   const [sliderValue2, setSliderValue2] = useState(50);
-  const [showTooltip2, setShowTooltip2] = useState(false);
 
   return (
     <Box
@@ -69,6 +85,7 @@ const FilterBar = () => {
           icon={<CaretDown weight="fill" />}
           width="200px"
           rounded={100}
+          marginRight={5}
         >
           <option value="Property Type 1">Property Type 1</option>
           <option value="Property Type 2">Property Type 2</option>

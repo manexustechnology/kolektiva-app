@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
 import "./globals.css";
 import { Providers } from "./providers";
 import Navbar from "../components/Navbar";
+import Footer from "@/components/Footer";
 import { useEffect, useRef, useState } from "react";
 import { interGlobalFont } from "@/commons/font";
 
@@ -20,17 +21,20 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body className={interGlobalFont.className}>
+      <body
+        className={`${interGlobalFont.className} flex flex-col min-h-screen`}
+      >
         <Providers>
           <Navbar navbarRef={topNavRef} />
           <div
-            className="w-full"
+            className="flex-grow"
             style={{
-              paddingTop: topNavHeight ? `${topNavHeight}px` : ''
+              paddingTop: topNavHeight ? `${topNavHeight}px` : "",
             }}
           >
             {children}
           </div>
+          <Footer />
         </Providers>
       </body>
     </html>

@@ -48,7 +48,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           borderRadius="full"
           borderColor="#D97706"
           fontSize="xs"
-          zIndex={100}
+          zIndex={10}
         >
           Featured
         </Box>
