@@ -74,6 +74,24 @@ const FilterBar = () => {
           <option value="Property Type 2">Property Type 2</option>
           <option value="Property Type 3">Property Type 3</option>
         </Select>
+
+        <Select
+          placeholder="Sort"
+          backgroundColor="#F4F4F5"
+          _hover={{
+            backgroundColor: "#CCFBF1",
+          }}
+          _focus={{
+            backgroundColor: "#CCFBF1",
+          }}
+          icon={<CaretDown weight="fill" />}
+          width="200px"
+          rounded={100}
+        >
+          <option value="Featured">Featured</option>
+          <option value="Newest">Newest</option>
+          <option value="Oldest">Oldest</option>
+        </Select>
         <div className="absolute right-0">
           <Menu isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
             <MenuButton
