@@ -15,6 +15,7 @@ import {
   Select,
   Slider,
   SliderFilledTrack,
+  SliderMark,
   SliderThumb,
   SliderTrack,
   Tooltip,
@@ -73,6 +74,24 @@ const FilterBar = () => {
           <option value="Property Type 2">Property Type 2</option>
           <option value="Property Type 3">Property Type 3</option>
         </Select>
+
+        <Select
+          placeholder="Sort"
+          backgroundColor="#F4F4F5"
+          _hover={{
+            backgroundColor: "#CCFBF1",
+          }}
+          _focus={{
+            backgroundColor: "#CCFBF1",
+          }}
+          icon={<CaretDown weight="fill" />}
+          width="200px"
+          rounded={100}
+        >
+          <option value="Featured">Featured</option>
+          <option value="Newest">Newest</option>
+          <option value="Oldest">Oldest</option>
+        </Select>
         <div className="absolute right-0">
           <Menu isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
             <MenuButton
@@ -94,36 +113,41 @@ const FilterBar = () => {
             </MenuButton>
             <MenuList zIndex={1000} width={400} p={4}>
               {/*Sliders*/}
-              <Box p={4} gap={4}>
-                <Box mt={2}>Projected Rental Yield</Box>
-                <Box display="flex" justifyContent="space-between" gap={4}>
-                  <Box>0</Box>
+              <Box p={1} gap={4}>
+                <Box mt={2} marginBottom={10}>
+                  Projected Rental Yield
+                </Box>
+                <div className="flex gap-3 justify-between items-center">
+                  <p className="text-xs text-zinc-500 w-full max-w-5">0%</p>
                   <Slider
-                    colorScheme="teal"
                     aria-label="slider-1"
-                    defaultValue={sliderValue1}
                     min={0}
                     max={100}
+                    defaultValue={sliderValue1}
                     onChange={(value) => setSliderValue1(value)}
-                    onMouseEnter={() => setShowTooltip1(true)}
-                    onMouseLeave={() => setShowTooltip1(false)}
                   >
-                    <SliderTrack>
-                      <SliderFilledTrack />
-                    </SliderTrack>
-                    <Tooltip
-                      hasArrow
-                      bg="gray.300"
+                    <SliderMark
+                      value={sliderValue1}
+                      textAlign="center"
+                      bg="white"
                       color="black"
-                      placement="top"
-                      isOpen={showTooltip1}
-                      label={`${sliderValue1}`}
+                      shadow="md"
+                      rounded="lg"
+                      fontSize="xs"
+                      fontWeight="bold"
+                      py={1}
+                      px={2}
+                      transform="translate(-50%, -45px)"
                     >
-                      <SliderThumb />
-                    </Tooltip>
+                      {sliderValue1}
+                    </SliderMark>
+                    <SliderTrack h={3} rounded="full">
+                      <SliderFilledTrack bgColor="teal.600" />
+                    </SliderTrack>
+                    <SliderThumb h={5} w={5} bgColor="teal.500" />
                   </Slider>
-                  <Box>100</Box>
-                </Box>
+                  <p className="text-xs text-zinc-500 w-full max-w-10">100%</p>
+                </div>
 
                 {/* Dividing Line */}
                 <Box
@@ -137,35 +161,40 @@ const FilterBar = () => {
                   my={4}
                 />
 
-                <Box mt={2}>Projected Annual Return </Box>
-                <Box display="flex" justifyContent="space-between" gap={4}>
-                  <Box>0</Box>
+                <Box mt={2} marginBottom={10}>
+                  Projected Annual Return{" "}
+                </Box>
+                <div className="flex gap-3 justify-between items-center">
+                  <p className="text-xs text-zinc-500 w-full max-w-5">0%</p>
                   <Slider
-                    colorScheme="teal"
                     aria-label="slider-2"
-                    defaultValue={sliderValue2}
                     min={0}
                     max={100}
+                    defaultValue={sliderValue2}
                     onChange={(value) => setSliderValue2(value)}
-                    onMouseEnter={() => setShowTooltip2(true)}
-                    onMouseLeave={() => setShowTooltip2(false)}
                   >
-                    <SliderTrack>
-                      <SliderFilledTrack />
-                    </SliderTrack>
-                    <Tooltip
-                      hasArrow
-                      bg="gray.300"
+                    <SliderMark
+                      value={sliderValue2}
+                      textAlign="center"
+                      bg="white"
                       color="black"
-                      placement="top"
-                      isOpen={showTooltip2}
-                      label={`${sliderValue2}`}
+                      shadow="md"
+                      rounded="lg"
+                      fontSize="xs"
+                      fontWeight="bold"
+                      py={1}
+                      px={2}
+                      transform="translate(-50%, -45px)"
                     >
-                      <SliderThumb />
-                    </Tooltip>
+                      {sliderValue2}
+                    </SliderMark>
+                    <SliderTrack h={3} rounded="full">
+                      <SliderFilledTrack bgColor="teal.600" />
+                    </SliderTrack>
+                    <SliderThumb h={5} w={5} bgColor="teal.500" />
                   </Slider>
-                  <Box>100</Box>
-                </Box>
+                  <p className="text-xs text-zinc-500 w-full max-w-10">100%</p>
+                </div>
               </Box>
 
               {/*Buttons*/}

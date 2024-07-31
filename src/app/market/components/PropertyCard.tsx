@@ -7,6 +7,8 @@ interface PropertyCardProps {
   location: string;
   img: string;
   price: string;
+  isNew: boolean;
+  isFeatured: boolean;
   onButtonClick: () => void;
 }
 
@@ -15,6 +17,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   location,
   img,
   price,
+  isNew,
+  isFeatured,
   onButtonClick,
 }) => {
   return (
@@ -31,43 +35,49 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
       onClick={onButtonClick}
     >
       {/* Tag Box */}
-      <Box
-        position="absolute"
-        top={2} // Adjust as needed
-        right={2} // Adjust as needed
-        backgroundColor="#FFFBEB" // Change to desired color
-        color="#D97706" // Change text color if needed
-        padding="2px 8px"
-        borderWidth="1px"
-        borderRadius="full"
-        borderColor="#D97706"
-        fontSize="xs"
-        zIndex={100}
-      >
-        Featured
-      </Box>
+      {isFeatured && (
+        <Box
+          position="absolute"
+          top={2}
+          right={2}
+          backgroundColor="#FFFBEB"
+          color="#D97706"
+          padding="2px 8px"
+          borderWidth="1px"
+          borderRadius="full"
+          borderColor="#D97706"
+          fontSize="xs"
+          zIndex={100}
+        >
+          Featured
+        </Box>
+      )}
 
       {/*Image*/}
-      <Image src={img} width={394} height={134} alt={name} objectFit="cover" />
+      <div className="relative w-[394px] h-[140px]">
+        <Image
+          src={img}
+          width={394}
+          height={140}
+          alt={name}
+          objectFit="cover"
+          className="w-full h-full"
+        />
+        {isNew && (
+          <div className="absolute bottom-0 left-0 right-0 flex justify-center items-center bg-[#0D9488] py-1">
+            <p className="font-medium text-[10px] leading-[10px] text-white">
+              New Listing
+            </p>
+          </div>
+        )}
+      </div>
+
       <Box paddingTop={2} marginLeft={2} marginRight={2}>
-        <Text
-          fontFamily="'DM Sans'"
-          fontWeight={700}
-          fontSize="14px"
-          lineHeight="18px"
-          color="#042F2E"
-        >
-          {name}
-        </Text>
-        <Text
-          fontFamily="'DM Sans'"
-          fontWeight={400}
-          fontSize="12px"
-          lineHeight="16px"
-          color="#71717A"
-        >
+        <p className="font-bold text-sm leading-4 text-[#042F2E]">{name}</p>
+
+        <p className=" font-normal text-xs leading-4 text-[#71717A]">
           {location}
-        </Text>
+        </p>
 
         {/* Progress Bar */}
         <Box
@@ -87,17 +97,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             borderRadius="full"
           />
           {/* Progress Percentage */}
-          <Text
-            width="26px"
-            fontFamily="'DM Sans'"
-            fontWeight="medium"
-            fontSize="10px"
-            lineHeight="10px"
-            textAlign="right"
-            color="#0D9488"
-          >
+          <p className="w-[26px]  font-medium text-[10px] leading-[10px] text-right text-[#0D9488]">
             50%
-          </Text>
+          </p>
         </Box>
 
         {/*Info*/}
@@ -119,24 +121,13 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             height="28px"
             gap={2}
           >
-            <Text
-              fontFamily="'DM Sans'"
-              fontWeight="400"
-              fontSize="10px"
-              lineHeight="10px"
-              color="#71717A"
-            >
+            <p className=" font-normal text-[10px] leading-[10px] text-[#71717A]">
               Starting at
-            </Text>
-            <Text
-              fontFamily="'DM Sans'"
-              fontWeight="700"
-              fontSize="12px"
-              lineHeight="16px"
-              color="#0D9488"
-            >
-              {price}
-            </Text>
+            </p>
+
+            <p className=" font-bold text-[12px] leading-[16px] text-[#0D9488]">
+              {price} LSK
+            </p>
           </Box>
 
           {/* Tokens Section */}
@@ -148,26 +139,12 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             height="28px"
             gap={2}
           >
-            <Text
-              fontFamily="'DM Sans'"
-              fontWeight="400"
-              fontSize="10px"
-              lineHeight="10px"
-              color="#71717A"
-              textAlign="right"
-            >
+            <p className=" font-normal text-[10px] leading-[10px] text-right text-[#71717A]">
               Available Tokens
-            </Text>
-            <Text
-              fontFamily="'DM Sans'"
-              fontWeight="500"
-              fontSize="12px"
-              lineHeight="16px"
-              color="#042F2E"
-              textAlign="right"
-            >
+            </p>
+            <p className=" font-medium text-[12px] leading-[16px] text-right text-[#042F2E]">
               1000 Token
-            </Text>
+            </p>
           </Box>
         </Box>
 
@@ -200,39 +177,13 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             flexGrow={0}
           >
             {/* Projected Annual Return */}
-            <Text
-              width="327px"
-              height="10px"
-              fontFamily="'DM Sans', sans-serif"
-              fontStyle="normal"
-              fontWeight={400}
-              fontSize="10px"
-              lineHeight="10px"
-              color="#71717A"
-              flex="none"
-              order={0}
-              flexGrow={1}
-            >
+            <p className="w-[327px] font-normal text-[10px] leading-[10px] text-[#71717A]">
               Projected Annual Return
-            </Text>
+            </p>
 
-            {/* 6.0% */}
-            <Text
-              width="23px"
-              height="10px"
-              fontFamily="'DM Sans', sans-serif"
-              fontStyle="normal"
-              fontWeight={500}
-              fontSize="10px"
-              lineHeight="10px"
-              color="#042F2E"
-              textAlign="right"
-              flex="none"
-              order={1}
-              flexGrow={0}
-            >
-              6.0%
-            </Text>
+            <p className="w-[80px] font-medium text-[10px] leading-[10px] text-right text-[#042F2E]">
+              8.7%
+            </p>
           </Box>
 
           {/* Dividing Line */}
@@ -258,39 +209,13 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             flexGrow={0}
           >
             {/* Projected Rental Yield */}
-            <Text
-              width="327px"
-              height="10px"
-              fontFamily="'DM Sans', sans-serif"
-              fontStyle="normal"
-              fontWeight={400}
-              fontSize="10px"
-              lineHeight="10px"
-              color="#71717A"
-              flex="none"
-              order={0}
-              flexGrow={1}
-            >
+            <p className="w-[327px] font-normal text-[10px] leading-[10px] text-[#71717A]">
               Projected Rental Yield
-            </Text>
+            </p>
 
-            {/* 8.6% */}
-            <Text
-              width="23px"
-              height="10px"
-              fontFamily="'DM Sans', sans-serif"
-              fontStyle="normal"
-              fontWeight={500}
-              fontSize="10px"
-              lineHeight="10px"
-              color="#042F2E"
-              textAlign="right"
-              flex="none"
-              order={1}
-              flexGrow={0}
-            >
-              8.6%
-            </Text>
+            <p className="w-[80px] font-medium text-[10px] leading-[10px] text-right text-[#042F2E]">
+              18.6%
+            </p>
           </Box>
         </Box>
       </Box>

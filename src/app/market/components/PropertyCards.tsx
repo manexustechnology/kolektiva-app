@@ -8,6 +8,8 @@ interface PropertyCardData {
   location: string;
   img: string;
   price: string;
+  isNew: boolean;
+  isFeatured: boolean;
 }
 
 interface PropertyCardsProps {
@@ -26,31 +28,41 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
       name: "Luxury Villa",
       location: "Beverly Hills, CA",
       img: "/images/Property_Image.jpg",
-      price: "$1,500,000",
+      price: "82,500",
+      isNew: true,
+      isFeatured: true,
     },
     {
       name: "Modern Apartment",
       location: "New York, NY",
       img: "/images/Property_Image.jpg",
-      price: "$850,000",
+      price: "26,000",
+      isNew: false,
+      isFeatured: true,
     },
     {
-      name: "Modern Apartment2",
-      location: "New York, NY",
+      name: "The Den",
+      location: "Los Angeles, LA",
       img: "/images/Property_Image.jpg",
-      price: "$850,000",
+      price: "9500",
+      isNew: true,
+      isFeatured: false,
     },
     {
       name: "Modern Apartment3",
       location: "New York, NY",
       img: "/images/Property_Image.jpg",
-      price: "$850,000",
+      price: "15,000",
+      isNew: false,
+      isFeatured: false,
     },
     {
       name: "Cozy Cottage",
       location: "Aspen, CO",
       img: "/images/Property_Image.jpg",
-      price: "$600,000",
+      price: "69,200",
+      isNew: true,
+      isFeatured: true,
     },
   ];
 
@@ -74,6 +86,8 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
             location={card.location}
             img={card.img}
             price={card.price}
+            isNew={card.isNew}
+            isFeatured={card.isFeatured}
             onButtonClick={() => handleButtonClick(card.name)} // Handle button click
           />
         ))}
