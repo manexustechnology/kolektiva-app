@@ -355,6 +355,8 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
       },
     });
 
+  const [isInfoAreaHovered, setIsInfoAreaHovered] = useState(false);
+
   return (
     <div className="w-full flex justify-center py-4">
       <div className="flex max-w-[1238px] w-full p-2 gap-4">
@@ -401,8 +403,20 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
             </Tabs>
           </div>
         </div>
-        <div className="w-1/3 flex flex-col gap-6">
+        <div
+          onMouseEnter={() => setIsInfoAreaHovered(true)}
+          onMouseLeave={() => setIsInfoAreaHovered(false)}
+          className="w-1/3 flex flex-col gap-6"
+        >
           <div className="flex flex-col gap-1">
+            {isInfoAreaHovered && (
+              <div className="absolute flex flex-col items-start p-3 gap-1 bg-white shadow-lg rounded-lg w-[240px] h-[78px] right-[120px] top-[246px]">
+                <p className="w-[216px] h-[54px] font-normal text-sm leading-5  text-zinc-500">
+                  This is the lowest current price per token available for this
+                  property.
+                </p>
+              </div>
+            )}
             <h2 className="text-2xl font-bold">
               Jl Pinangsia Raya Komplek Glodok Plaza Bl B-22
             </h2>

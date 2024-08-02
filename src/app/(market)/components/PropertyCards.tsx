@@ -10,6 +10,7 @@ import {
   CaretRight,
   CaretLineLeft,
   CaretLineRight,
+  FileMagnifyingGlass,
 } from "@phosphor-icons/react/dist/ssr";
 
 interface PropertyCardData {
@@ -20,6 +21,7 @@ interface PropertyCardData {
   price: string;
   isNew: boolean;
   isFeatured: boolean;
+  isTraded: boolean;
 }
 
 interface PropertyCardsProps {
@@ -30,7 +32,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
   const router = useRouter();
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 1;
+  const itemsPerPage = 6;
 
   const handleButtonClick = (slug: string) => {
     router.push("/detail/" + slug);
@@ -45,6 +47,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
       price: "82,500",
       isNew: true,
       isFeatured: true,
+      isTraded: false,
     },
     {
       name: "Modern Apartment",
@@ -54,6 +57,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
       price: "26,000",
       isNew: false,
       isFeatured: true,
+      isTraded: false,
     },
     {
       name: "The Den",
@@ -63,6 +67,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
       price: "9500",
       isNew: true,
       isFeatured: false,
+      isTraded: true,
     },
     {
       name: "Modern Apartment3",
@@ -72,6 +77,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
       price: "15,000",
       isNew: false,
       isFeatured: false,
+      isTraded: false,
     },
     {
       name: "Cozy Cottage",
@@ -81,6 +87,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
       price: "69,200",
       isNew: true,
       isFeatured: true,
+      isTraded: true,
     },
     {
       name: "Luxury Villa",
@@ -90,6 +97,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
       price: "82,500",
       isNew: true,
       isFeatured: true,
+      isTraded: false,
     },
     {
       name: "Modern Apartment",
@@ -99,6 +107,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
       price: "26,000",
       isNew: false,
       isFeatured: true,
+      isTraded: true,
     },
     {
       name: "The Den",
@@ -108,6 +117,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
       price: "9500",
       isNew: true,
       isFeatured: false,
+      isTraded: true,
     },
     {
       name: "Modern Apartment3",
@@ -117,6 +127,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
       price: "15,000",
       isNew: false,
       isFeatured: false,
+      isTraded: true,
     },
     {
       name: "Cozy Cottage",
@@ -126,6 +137,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
       price: "69,200",
       isNew: true,
       isFeatured: true,
+      isTraded: true,
     },
   ];
 
@@ -171,124 +183,159 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
 
   return (
     <Box width={1238} pl={0} py={4}>
-      <Grid
-        templateColumns={{
-          base: "repeat(1, 1fr)",
-          md: "repeat(2, 1fr)",
-          lg: "repeat(3, 1fr)",
-        }}
-        gap={4}
-      >
-        {currentCards.map((card, index) => (
-          <PropertyCard
-            key={index}
-            name={card.name}
-            location={card.location}
-            img={card.img}
-            price={card.price}
-            isNew={card.isNew}
-            isFeatured={card.isFeatured}
-            onButtonClick={() => handleButtonClick(card.slug)}
-          />
-        ))}
-      </Grid>
-
-      {/*Pageation UI*/}
-      <Flex
-        mt={4}
-        justifyContent="center"
-        alignItems="center"
-        gap={3}
-        width="1214px"
-        height="40px"
-      >
-        <Button
-          onClick={() => setCurrentPage(1)}
-          bg="#CCFBF1"
-          borderRadius="full"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          p={2}
-          w={10}
-          h={10}
-          isDisabled={currentPage === 1}
-          _disabled={{ bg: "gray.300", cursor: "not-allowed", opacity: 0.4 }}
-        >
-          <CaretLineLeft size={16} weight="fill" color="#0F766E" />
-        </Button>
-
-        <Button
-          onClick={() => handlePageChange(currentPage - 1)}
-          bg="#CCFBF1"
-          borderRadius="full"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          p={2}
-          w={10}
-          h={10}
-          isDisabled={currentPage === 1}
-          _disabled={{ bg: "gray.300", cursor: "not-allowed", opacity: 0.4 }}
-        >
-          <CaretLeft size={16} weight="fill" color="#0F766E" />
-        </Button>
-
-        {getPageNumbers().map((page, index) => (
-          <Button
-            key={index}
-            onClick={() => {
-              if (typeof page === "number") {
-                handlePageChange(page);
-              }
+      {cardsToDisplay.length === 0 ? (
+        <div className="flex flex-col justify-center items-center p-12 gap-1 w-[1214px] h-[204px] ">
+          <div className="flex flex-row items-center p-3 gap-2 w-14 h-14 bg-zinc-100 rounded-full">
+            <div className=" relative flex items-center justify-center">
+              <FileMagnifyingGlass size={32} weight="fill" color="#A1A1AA" />
+            </div>
+          </div>
+          <p>No Result Found</p>
+          <p>Please try another filter combination</p>
+        </div>
+      ) : (
+        <>
+          <Grid
+            templateColumns={{
+              base: "repeat(1, 1fr)",
+              md: "repeat(2, 1fr)",
+              lg: "repeat(3, 1fr)",
             }}
-            bg={page === currentPage ? "#0D9488" : "#F4F4F5"}
-            color={page === currentPage ? "white" : "black"}
-            borderRadius="full"
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
-            p={2}
-            w={10}
-            h={10}
-            isDisabled={page === "..."}
-            _disabled={{ bg: "gray.300", cursor: "not-allowed", opacity: 0.4 }}
+            gap={4}
           >
-            {page}
-          </Button>
-        ))}
+            {currentCards.map((card, index) => (
+              <PropertyCard
+                key={index}
+                name={card.name}
+                location={card.location}
+                img={card.img}
+                price={card.price}
+                isNew={card.isNew}
+                isFeatured={card.isFeatured}
+                isTraded={card.isTraded}
+                onButtonClick={() => handleButtonClick(card.slug)}
+              />
+            ))}
+          </Grid>
 
-        <Button
-          onClick={() => handlePageChange(currentPage + 1)}
-          bg="#CCFBF1"
-          borderRadius="full"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          p={2}
-          w={10}
-          h={10}
-          isDisabled={currentPage === totalPages}
-          _disabled={{ bg: "gray.300", cursor: "not-allowed", opacity: 0.4 }}
-        >
-          <CaretRight size={16} weight="fill" color="#0F766E" />
-        </Button>
-        <Button
-          onClick={() => setCurrentPage(totalPages)}
-          bg="#CCFBF1"
-          borderRadius="full"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          p={2}
-          w={10}
-          h={10}
-          isDisabled={currentPage === totalPages}
-          _disabled={{ bg: "gray.300", cursor: "not-allowed", opacity: 0.4 }}
-        >
-          <CaretLineRight size={16} weight="fill" color="#0F766E" />
-        </Button>
-      </Flex>
+          {/*Pageation UI*/}
+          <Flex
+            mt={4}
+            justifyContent="center"
+            alignItems="center"
+            gap={3}
+            width="1214px"
+            height="40px"
+          >
+            <Button
+              onClick={() => setCurrentPage(1)}
+              bg="#CCFBF1"
+              borderRadius="full"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              p={2}
+              w={10}
+              h={10}
+              isDisabled={currentPage === 1}
+              _disabled={{
+                bg: "gray.300",
+                cursor: "not-allowed",
+                opacity: 0.4,
+              }}
+            >
+              <CaretLineLeft size={16} weight="fill" color="#0F766E" />
+            </Button>
+
+            <Button
+              onClick={() => handlePageChange(currentPage - 1)}
+              bg="#CCFBF1"
+              borderRadius="full"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              p={2}
+              w={10}
+              h={10}
+              isDisabled={currentPage === 1}
+              _disabled={{
+                bg: "gray.300",
+                cursor: "not-allowed",
+                opacity: 0.4,
+              }}
+            >
+              <CaretLeft size={16} weight="fill" color="#0F766E" />
+            </Button>
+
+            {getPageNumbers().map((page, index) => (
+              <Button
+                key={index}
+                onClick={() => {
+                  if (typeof page === "number") {
+                    handlePageChange(page);
+                  }
+                }}
+                bg={page === currentPage ? "#0D9488" : "#F4F4F5"}
+                color={page === currentPage ? "white" : "black"}
+                borderRadius="full"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                p={2}
+                w={10}
+                h={10}
+                isDisabled={page === "..."}
+                _disabled={{
+                  bg: "gray.300",
+                  cursor: "not-allowed",
+                  opacity: 0.4,
+                }}
+              >
+                {page}
+              </Button>
+            ))}
+
+            <Button
+              onClick={() => handlePageChange(currentPage + 1)}
+              bg="#CCFBF1"
+              borderRadius="full"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              p={2}
+              w={10}
+              h={10}
+              isDisabled={currentPage === totalPages}
+              _disabled={{
+                bg: "gray.300",
+                cursor: "not-allowed",
+                opacity: 0.4,
+              }}
+            >
+              <CaretRight size={16} weight="fill" color="#0F766E" />
+            </Button>
+            <Button
+              onClick={() => setCurrentPage(totalPages)}
+              bg="#CCFBF1"
+              borderRadius="full"
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              p={2}
+              w={10}
+              h={10}
+              isDisabled={currentPage === totalPages}
+              _disabled={{
+                bg: "gray.300",
+                cursor: "not-allowed",
+                opacity: 0.4,
+              }}
+            >
+              <CaretLineRight size={16} weight="fill" color="#0F766E" />
+            </Button>
+          </Flex>
+        </>
+      )}
     </Box>
   );
 };
