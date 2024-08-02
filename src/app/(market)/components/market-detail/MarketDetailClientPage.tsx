@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  Box,
   Button,
   Progress,
   Tab,
@@ -8,6 +9,7 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { House, WarningCircle } from "@phosphor-icons/react/dist/ssr";
 import { Divider } from "antd";
@@ -19,6 +21,11 @@ import MarketDetailDocumentPanel from "./panel/MarketDetailDocumentPanel";
 import MarketDetailMarketPanel from "./panel/MarketDetailMarketPanel";
 import { ApexOptions } from "apexcharts";
 import { useEffect, useState } from "react";
+import InitialOfferingConfirmationModal from "./modals/InitialOfferingConfirmationModal";
+import AftermarketTradingMarketBuyModal from "./modals/AftermarketTradingMarketBuyModal";
+import AftermarketTradingMarketSellModal from "./modals/AftermarketTradingMarketSell";
+import AftermarketTradingLimitedSellModal from "./modals/AftermarketTradingLimitedSellModal";
+import AftermarketTradingLimitedBuyModal from "./modals/AftermarketTradingLimitedBuyModal";
 
 interface MarketDetailClientPageProps {
   isSold: boolean;
@@ -356,6 +363,8 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
     });
 
   const [isInfoAreaHovered, setIsInfoAreaHovered] = useState(false);
+  const [isTraded, setIsTraded] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <div className="w-full flex justify-center py-4">
@@ -410,7 +419,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
         >
           <div className="flex flex-col gap-1">
             {isInfoAreaHovered && (
-              <div className="absolute flex flex-col items-start p-3 gap-1 bg-white shadow-lg rounded-lg w-[240px] h-[78px] right-[120px] top-[246px]">
+              <div className="absolute flex flex-col items-start p-3 gap-1 bg-white shadow-lg rounded-lg w-[240px] h-[78px] right-[120px] top-[260px]">
                 <p className="w-[216px] h-[54px] font-normal text-sm leading-5  text-zinc-500">
                   This is the lowest current price per token available for this
                   property.
@@ -422,11 +431,38 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
             </h2>
             <p className="text-lg text-zinc-500">DKI Jakarta</p>
           </div>
-          <div className="flex">
-            <div className="border-2 border-teal-600 px-2.5 py-1 rounded-full text-teal-600 bg-teal-50 text-sm">
-              New Listing
-            </div>
-          </div>
+          {/* Tag Box of trading*/}
+          {isTraded ? (
+            <Box
+              position="relative"
+              backgroundColor="#F0FDFA"
+              color="#0D9488"
+              padding="2px 8px"
+              borderWidth="1px"
+              borderRadius="full"
+              borderColor="#0D9488"
+              fontSize="xs"
+              zIndex={10}
+              width="fit-content"
+            >
+              Aftermarket Trading
+            </Box>
+          ) : (
+            <Box
+              position="relative"
+              backgroundColor="#F7FEE7"
+              color="#65A30D"
+              padding="2px 8px"
+              borderWidth="1px"
+              borderRadius="full"
+              borderColor="#65A30D"
+              fontSize="xs"
+              zIndex={10}
+              width="fit-content"
+            >
+              Initial Offering
+            </Box>
+          )}
           <div className="flex p-4 gap-4 w-full rounded-2xl shadow-md items-center">
             <House size={32} weight="fill" className="text-teal-600" />
             <div className="flex flex-col justify-between">
@@ -510,6 +546,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                 w="full"
                 rounded="full"
                 fontWeight="normal"
+                onClick={onOpen}
               >
                 Buy
               </Button>
@@ -530,6 +567,27 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
               >
                 Sell
               </Button>
+
+              <InitialOfferingConfirmationModal
+                isOpen={isOpen}
+                onClose={onClose}
+              />
+              {/* <AftermarketTradingMarketBuyModal
+                isOpen={isOpen}
+                onClose={onClose}
+              /> */}
+              {/* <AftermarketTradingMarketSellModal
+                isOpen={isOpen}
+                onClose={onClose}
+              /> */}
+              {/* <AftermarketTradingLimitedBuyModal
+                isOpen={isOpen}
+                onClose={onClose}
+              /> */}
+              {/* <AftermarketTradingLimitedSellModal
+                isOpen={isOpen}
+                onClose={onClose}
+              /> */}
             </div>
             {isSold && (
               <>
