@@ -9,6 +9,7 @@ interface PropertyCardProps {
   price: string;
   isNew: boolean;
   isFeatured: boolean;
+  isTraded: boolean;
   onButtonClick: () => void;
 }
 
@@ -19,6 +20,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   price,
   isNew,
   isFeatured,
+  isTraded,
   onButtonClick,
 }) => {
   return (
@@ -35,7 +37,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
       cursor="pointer"
       onClick={onButtonClick}
     >
-      {/* Tag Box */}
+      {/* Tag Box of Featured*/}
       {isFeatured && (
         <Box
           position="absolute"
@@ -51,6 +53,41 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           zIndex={10}
         >
           Featured
+        </Box>
+      )}
+
+      {/* Tag Box of trading*/}
+      {isTraded ? (
+        <Box
+          position="absolute"
+          top={2}
+          left={2}
+          backgroundColor="#F0FDFA"
+          color="#0D9488"
+          padding="2px 8px"
+          borderWidth="1px"
+          borderRadius="full"
+          borderColor="#0D9488"
+          fontSize="xs"
+          zIndex={10}
+        >
+          Aftermarket Trading
+        </Box>
+      ) : (
+        <Box
+          position="absolute"
+          top={2}
+          left={2}
+          backgroundColor="#F7FEE7"
+          color="#65A30D"
+          padding="2px 8px"
+          borderWidth="1px"
+          borderRadius="full"
+          borderColor="#65A30D"
+          fontSize="xs"
+          zIndex={10}
+        >
+          Initial Offering
         </Box>
       )}
 
@@ -81,27 +118,40 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
         </p>
 
         {/* Progress Bar */}
-        <Box
-          marginTop={2}
-          display="flex"
-          alignItems="center"
-          gap={2}
-          width="374px"
-          height="10px"
-        >
-          <Progress
-            value={50}
-            size="sm"
-            colorScheme="teal"
-            width="340px"
-            height="6px"
-            borderRadius="full"
-          />
-          {/* Progress Percentage */}
-          <p className="w-[26px]  font-medium text-[10px] leading-[10px] text-right text-[#0D9488]">
-            50%
-          </p>
-        </Box>
+        {isTraded ? (
+          <>
+            {/* Dividing Line */}
+            <Box
+              marginTop={4}
+              height="1px"
+              backgroundColor="#E4E4E7"
+              alignSelf="stretch"
+              flexGrow={0}
+            />
+          </>
+        ) : (
+          <Box
+            marginTop={2}
+            display="flex"
+            alignItems="center"
+            gap={2}
+            width="374px"
+            height="10px"
+          >
+            <Progress
+              value={50}
+              size="sm"
+              colorScheme="teal"
+              width="340px"
+              height="6px"
+              borderRadius="full"
+            />
+            {/* Progress Percentage */}
+            <p className="w-[26px]  font-medium text-[10px] leading-[10px] text-right text-[#0D9488]">
+              50%
+            </p>
+          </Box>
+        )}
 
         {/*Info*/}
         <Box

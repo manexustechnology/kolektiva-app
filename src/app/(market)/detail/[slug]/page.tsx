@@ -4,7 +4,7 @@ import MarketDetailClientPage from "../../components/market-detail/MarketDetailC
 interface MarketDetailProps {
   searchParams: {
     sold: string;
-  }
+  };
 }
 
 export const metadata: Metadata = {
@@ -19,7 +19,7 @@ const MarketDetailPage: React.FC<MarketDetailProps> = ({ searchParams }) => {
     <>
       <MarketDetailClientPage isSold={isSold} />
     </>
-  )
-}
+  );
+};
 
 export default MarketDetailPage;
