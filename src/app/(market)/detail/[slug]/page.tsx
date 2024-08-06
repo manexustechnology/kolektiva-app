@@ -13,11 +13,11 @@ export const metadata: Metadata = {
 };
 
 const MarketDetailPage: React.FC<MarketDetailProps> = ({ searchParams }) => {
-  const isSold = searchParams.sold ? true : false;
+  const allowTrade = searchParams.sold ? true : false;
 
   return (
     <>
-      <MarketDetailClientPage isSold={isSold} />
+      <MarketDetailClientPage allowTrade={allowTrade} />
     </>
   );
 };

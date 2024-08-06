@@ -10,7 +10,8 @@
 }
 
 .ckeditor-content p,
-.ckeditor-content ul li {
+.ckeditor-content ul li,
+.ckeditor-content ol li {
   --tw-text-opacity: 1;
   font-size: 0.875rem;
   line-height: 1.25rem;
@@ -18,7 +19,8 @@
   color: rgb(113 113 122 / var(--tw-text-opacity));
 }
 
-.ckeditor-content ul {
+.ckeditor-content ul,
+.ckeditor-content ol {
   list-style-position: inside;
 }
 
