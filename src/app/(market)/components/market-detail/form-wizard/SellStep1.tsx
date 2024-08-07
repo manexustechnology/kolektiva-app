@@ -45,6 +45,7 @@ const SellStep1: React.FC<SellStep1Props> = ({ formData, onDataChange }) => {
         <div className="w-full flex justify-evenly bg-zinc-100 rounded-full">
           {tabs.map((tab) => (
             <button
+              key={tab.id}
               className={cn(
                 "w-full text-center py-3 text-sm relative transition",
                 activeTab === tab.id ? "font-medium text-white" : "text-zinc-500"
