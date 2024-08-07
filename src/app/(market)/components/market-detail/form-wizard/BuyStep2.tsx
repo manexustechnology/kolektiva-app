@@ -1,6 +1,6 @@
 'use client';
 
-import { BuyOrderData } from "@/types/buy-order";
+import { BuyOrderData } from "@/types/order";
 import { Divider } from "antd";
 
 interface BuyStep2Props {
@@ -21,7 +21,7 @@ const BuyStep2: React.FC<BuyStep2Props> = ({ isAfterMarketTrading, formData }) =
       <div className="flex flex-col gap-4 shadow-md rounded-2xl p-4">
         <div className="flex justify-between items-center">
           <p className="text-base text-zinc-500">Property token quantity</p>
-          <p className="text-base text-zinc-500"><span className="text-base font-bold text-teal-950">{formData?.qtyToken}</span> Token(s)</p>
+          <p className="text-base text-zinc-500"><span className="text-base font-bold text-teal-950">{formData?.qtyToken}</span> Token{"(s)"}</p>
         </div>
         <Divider className="border-zinc-200 !m-0" />
         <div className="flex justify-between items-center">

@@ -22,7 +22,7 @@ import { ApexOptions } from "apexcharts";
 import { useEffect, useState } from "react";
 import PlaceBuyOrderModal from "./modals/PlaceBuyOrderModal";
 import PlaceSellOrderModal from "./modals/PlaceSellOrderModal";
-import { AfterMarketBuyOrderData, BuyOrderData } from "@/types/buy-order";
+import { AfterMarketBuyOrderData, SellOrderData, BuyOrderData } from "@/types/order";
 import InitialOfferingBuySuccessModal from "./modals/InitialOfferingBuySuccessModal";
 import LimitBuySuccessModal from "./modals/LimitBuySuccessModal";
 import LimitSellSuccessModal from "./modals/LimitSellSuccessModal";
@@ -401,6 +401,18 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
     return;
   }
 
+  const handleSellSuccess = (formData: SellOrderData) => {
+    switch ((formData as SellOrderData)?.type) {
+      case 'market':
+        setIsMarketSellSuccessModalOpen(true);
+        break;
+      case 'limit':
+        setIsLimitSellSuccessModalOpen(true);
+        break;
+    }
+    return;
+  }
+
   return (
     <div className="w-full flex justify-center py-4">
       <div className="flex max-w-[1238px] w-full p-2 gap-4">
@@ -624,7 +636,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
         </div>
       </div>
       <PlaceBuyOrderModal isOpen={isBuyOrderModalOpen} onClose={() => setIsBuyOrderModalOpen(false)} isAfterMarketTrading={allowTrade} onSuccess={handleBuySuccess} />
-      <PlaceSellOrderModal isOpen={isSellOrderModalOpen} onClose={() => setIsSellOrderModalOpen(false)} />
+      <PlaceSellOrderModal isOpen={isSellOrderModalOpen} onClose={() => setIsSellOrderModalOpen(false)} onSuccess={handleSellSuccess} />
       <InitialOfferingBuySuccessModal isOpen={isInitialOfferingBuySuccessModalOpen} onClose={() => setIsInitialOfferingBuySuccessModalOpen(false)} />
       <LimitBuySuccessModal isOpen={isLimitBuySuccessModalOpen} onClose={() => setIsLimitBuySuccessModalOpen(false)} />
       <LimitSellSuccessModal isOpen={isLimitSellSuccessModalOpen} onClose={() => setIsLimitSellSuccessModalOpen(false)} />

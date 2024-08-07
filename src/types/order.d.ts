@@ -12,3 +12,10 @@ export interface AfterMarketBuyOrderData {
 export type BuyOrderData =
   | InitialOfferingBuyOrderData
   | AfterMarketBuyOrderData;
+
+export type SellOrderData = {
+  type: "market" | "limit";
+  qtyToken: number;
+  pricePerToken: number;
+  orderExpiration: number;
+};

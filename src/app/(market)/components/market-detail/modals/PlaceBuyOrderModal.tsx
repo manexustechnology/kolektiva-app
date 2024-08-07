@@ -3,7 +3,7 @@ import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, Modal
 import { ArrowLeft, X } from "@phosphor-icons/react/dist/ssr";
 import { Divider } from "antd";
 import BuyFormWizard from '../form-wizard/BuyFormWizard';
-import { BuyOrderData } from '@/types/buy-order';
+import { BuyOrderData } from '@/types/order';
 
 interface PlaceBuyOrderModalProps {
   isOpen: boolean;

@@ -7,7 +7,7 @@ import BuyStep3 from "./BuyStep3";
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Checkbox, ModalBody, ModalFooter } from "@chakra-ui/react";
 import { Divider } from "antd";
-import { BuyOrderData } from "@/types/buy-order";
+import { BuyOrderData } from "@/types/order";
 import { Warning, WarningCircle } from "@phosphor-icons/react/dist/ssr";
 
 interface BuyFormWizardProps {

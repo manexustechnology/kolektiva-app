@@ -1,6 +1,6 @@
 'use client';
 
-import { AfterMarketBuyOrderData, BuyOrderData } from "@/types/buy-order";
+import { AfterMarketBuyOrderData, BuyOrderData } from "@/types/order";
 import { cn } from "@/utils/cn";
 import { Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 import { Info, Wallet } from "@phosphor-icons/react/dist/ssr";
@@ -15,8 +15,8 @@ interface BuyStep1Props {
 }
 
 const tabs = [
-  { id: 'market', label: 'Market' },
-  { id: 'limit', label: 'Limit' },
+  { id: 'market' as const, label: 'Market' },
+  { id: 'limit' as const, label: 'Limit' },
 ]
 
 const BuyStep1: React.FC<BuyStep1Props> = ({ isAfterMarketTrading, formData, onDataChange }) => {
@@ -27,7 +27,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({ isAfterMarketTrading, formData, onD
     onDataChange(updatedData);
   }
 
-  const setActiveTab = (tab: string) => {
+  const setActiveTab = (tab: typeof tabs[number]["id"]) => {
     const updatedData = { ...formData, type: tab };
     onDataChange(updatedData);
   }
