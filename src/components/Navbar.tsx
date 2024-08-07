@@ -20,7 +20,7 @@ const Navbar: React.FC<NavbarProps> = ({ topNavHeightChange }) => {
     if (topNavHeightChange) {
       topNavHeightChange(topNavRef.current?.offsetHeight)
     }
-  }, [topNavRef.current?.offsetHeight, activeAccount]);
+  }, [topNavRef.current?.offsetHeight, activeAccount, topNavHeightChange]);
 
   useEffect(() => {
     console.log(activeChain);
