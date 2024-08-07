@@ -21,13 +21,13 @@ import {
   CheckCircle,
 } from "@phosphor-icons/react/dist/ssr";
 
-interface AftermarketTradingMarketBuyModalProps {
+interface MarketSellSuccessModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const AftermarketTradingMarketBuyModal: React.FC<
-  AftermarketTradingMarketBuyModalProps
+const MarketSellSuccessModal: React.FC<
+  MarketSellSuccessModalProps
 > = ({ isOpen, onClose }) => {
   const handleIconClick = (url: string) => {
     window.open(url, "_blank");
@@ -92,7 +92,6 @@ const AftermarketTradingMarketBuyModal: React.FC<
                 align="center"
                 width="346px"
               >
-                {" "}
                 <Flex
                   justify="center"
                   align="center"
@@ -101,7 +100,7 @@ const AftermarketTradingMarketBuyModal: React.FC<
                 >
                   {/* Kolektiva Image */}
                   <Image
-                    src="/images/Kolektiva@2.png"
+                    src="/images/Kolektiva@3.png"
                     alt="Building"
                     width="140px"
                     height="140px"
@@ -117,13 +116,14 @@ const AftermarketTradingMarketBuyModal: React.FC<
                   width="346px"
                 >
                   <p className="w-[346px]  font-bold text-2xl leading-7 text-center text-teal-600">
-                    Market buy order competed
+                    Market sell order competed
                   </p>
 
                   <p className="w-[300px] font-normal text-base leading-4 text-center text-neutral-700">
                     View your transaction on the blockchain with the code below
                   </p>
                 </Flex>
+
                 <div className="flex flex-row items-center mt-4 gap-2 w-[350px] h-[64px] bg-[#F0FDFA] rounded-full z-[2] p-[12px_24px_12px_12px]">
                   {/* Text */}
                   <p className="text-teal-600 text-base font-medium overflow-hidden truncate">
@@ -150,6 +150,7 @@ const AftermarketTradingMarketBuyModal: React.FC<
                     />
                   </Button>
                 </div>
+
                 <Button
                   marginTop={4}
                   display="flex"
@@ -181,4 +182,4 @@ const AftermarketTradingMarketBuyModal: React.FC<
   );
 };
 
-export default AftermarketTradingMarketBuyModal;
+export default MarketSellSuccessModal;

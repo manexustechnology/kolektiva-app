@@ -19,13 +19,13 @@ import {
   WhatsappLogo,
 } from "@phosphor-icons/react/dist/ssr";
 
-interface InitialOfferingConfirmationModalProps {
+interface InitialOfferingBuySuccessModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const InitialOfferingConfirmationModal: React.FC<
-  InitialOfferingConfirmationModalProps
+const InitialOfferingBuySuccessModal: React.FC<
+  InitialOfferingBuySuccessModalProps
 > = ({ isOpen, onClose }) => {
   const handleIconClick = (url: string) => {
     window.open(url, "_blank");
@@ -185,4 +185,4 @@ const InitialOfferingConfirmationModal: React.FC<
   );
 };
 
-export default InitialOfferingConfirmationModal;
+export default InitialOfferingBuySuccessModal;

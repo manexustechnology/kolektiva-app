@@ -5,11 +5,11 @@ import { ListBullets } from "@phosphor-icons/react/dist/ssr";
 import { Divider } from "antd";
 
 interface MarketDetailOrderbookPanelProps {
-  isSold?: boolean;
+  allowTrade?: boolean;
 }
 
 const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
-  isSold = false,
+  allowTrade = false,
 }) => {
   return (
     <>
@@ -51,7 +51,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
         <Divider className="border-zinc-200 !m-0" />
         <div className="flex flex-col gap-2">
           <p className="text-base font-medium text-zinc-700">Open orders</p>
-          {isSold ? (
+          {allowTrade ? (
             <div className="flex gap-4">
               <div className="flex flex-col w-full">
                 <div className="-m-1.5 overflow-x-auto">

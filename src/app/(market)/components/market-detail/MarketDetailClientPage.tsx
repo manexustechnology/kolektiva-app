@@ -9,7 +9,6 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
-  useDisclosure,
 } from "@chakra-ui/react";
 import { House, WarningCircle } from "@phosphor-icons/react/dist/ssr";
 import { Divider } from "antd";
@@ -21,18 +20,21 @@ import MarketDetailDocumentPanel from "./panel/MarketDetailDocumentPanel";
 import MarketDetailMarketPanel from "./panel/MarketDetailMarketPanel";
 import { ApexOptions } from "apexcharts";
 import { useEffect, useState } from "react";
-import InitialOfferingConfirmationModal from "./modals/InitialOfferingConfirmationModal";
-import AftermarketTradingMarketBuyModal from "./modals/AftermarketTradingMarketBuyModal";
-import AftermarketTradingMarketSellModal from "./modals/AftermarketTradingMarketSell";
-import AftermarketTradingLimitedSellModal from "./modals/AftermarketTradingLimitedSellModal";
-import AftermarketTradingLimitedBuyModal from "./modals/AftermarketTradingLimitedBuyModal";
+import PlaceBuyOrderModal from "./modals/PlaceBuyOrderModal";
+import PlaceSellOrderModal from "./modals/PlaceSellOrderModal";
+import { AfterMarketBuyOrderData, SellOrderData, BuyOrderData } from "@/types/order";
+import InitialOfferingBuySuccessModal from "./modals/InitialOfferingBuySuccessModal";
+import LimitBuySuccessModal from "./modals/LimitBuySuccessModal";
+import LimitSellSuccessModal from "./modals/LimitSellSuccessModal";
+import MarketBuySuccessModal from "./modals/MarketBuySuccessModal";
+import MarketSellSuccessModal from "./modals/MarketSellSuccessModal";
 
 interface MarketDetailClientPageProps {
-  isSold: boolean;
+  allowTrade: boolean;
 }
 
 const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
-  isSold,
+  allowTrade,
 }) => {
   // https://blog.nirdeshpokhrel.com.np/nextjs-window-is-not-defined-react-apexcharts
   const [ReactApexChart, setReactApexChart] = useState<any>();
@@ -362,16 +364,61 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
       },
     });
 
-  const [isInfoAreaHovered, setIsInfoAreaHovered] = useState(false);
-  const [isTraded, setIsTraded] = useState(false);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isInfoAreaHovered, setIsInfoAreaHovered] = useState<boolean>(false);
+  const [isBuyOrderModalOpen, setIsBuyOrderModalOpen] = useState<boolean>(false);
+  const [isSellOrderModalOpen, setIsSellOrderModalOpen] = useState<boolean>(false);
+  const [isInitialOfferingBuySuccessModalOpen, setIsInitialOfferingBuySuccessModalOpen] = useState<boolean>(false);
+  const [isLimitBuySuccessModalOpen, setIsLimitBuySuccessModalOpen] = useState<boolean>(false);
+  const [isLimitSellSuccessModalOpen, setIsLimitSellSuccessModalOpen] = useState<boolean>(false);
+  const [isMarketBuySuccessModalOpen, setIsMarketBuySuccessModalOpen] = useState<boolean>(false);
+  const [isMarketSellSuccessModalOpen, setIsMarketSellSuccessModalOpen] = useState<boolean>(false);
+
+  const handleBuyButtonClick = () => {
+    setIsBuyOrderModalOpen(true);
+  };
+
+  const handleSellButtonClick = () => {
+    if (allowTrade) {
+      setIsSellOrderModalOpen(true);
+    }
+  };
+
+  const handleBuySuccess = (formData: BuyOrderData) => {
+    if (!allowTrade) {
+      setIsInitialOfferingBuySuccessModalOpen(true);
+      return;
+    }
+
+    switch ((formData as AfterMarketBuyOrderData)?.type) {
+      case 'market':
+        setIsMarketBuySuccessModalOpen(true);
+        break;
+      case 'limit':
+        setIsLimitBuySuccessModalOpen(true);
+        break;
+    }
+
+    return;
+  }
+
+  const handleSellSuccess = (formData: SellOrderData) => {
+    switch ((formData as SellOrderData)?.type) {
+      case 'market':
+        setIsMarketSellSuccessModalOpen(true);
+        break;
+      case 'limit':
+        setIsLimitSellSuccessModalOpen(true);
+        break;
+    }
+    return;
+  }
 
   return (
     <div className="w-full flex justify-center py-4">
       <div className="flex max-w-[1238px] w-full p-2 gap-4">
         <div className="w-2/3 flex flex-col gap-6">
           <MarketDetailPhotos />
-          {isSold && (
+          {allowTrade && (
             <div className="w-full">
               {ReactApexChart && (
                 <ReactApexChart
@@ -400,7 +447,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                   <MarketDetailFinancialPanel />
                 </TabPanel>
                 <TabPanel px={0} py={4}>
-                  <MarketDetailOrderbookPanel isSold={isSold} />
+                  <MarketDetailOrderbookPanel allowTrade={allowTrade} />
                 </TabPanel>
                 <TabPanel px={0} py={4}>
                   <MarketDetailDocumentPanel />
@@ -432,7 +479,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
             <p className="text-lg text-zinc-500">DKI Jakarta</p>
           </div>
           {/* Tag Box of trading*/}
-          {isTraded ? (
+          {allowTrade ? (
             <Box
               position="relative"
               backgroundColor="#F0FDFA"
@@ -546,7 +593,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                 w="full"
                 rounded="full"
                 fontWeight="normal"
-                onClick={onOpen}
+                onClick={handleBuyButtonClick}
               >
                 Buy
               </Button>
@@ -555,41 +602,21 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                 w="full"
                 rounded="full"
                 fontWeight="normal"
-                isDisabled={!isSold}
+                isDisabled={!allowTrade}
                 bgColor="teal.100"
                 color="teal.700"
                 _disabled={{ bgColor: "teal.50", color: "teal.600" }}
                 _hover={{
-                  bgColor: "teal.200",
-                  color: "teal.900",
-                  cursor: isSold ? "pointer" : "no-drop",
+                  bgColor: allowTrade ? "teal.200" : "teal.50",
+                  color: allowTrade ? "teal.900" : "teal.600",
+                  cursor: allowTrade ? "pointer" : "no-drop",
                 }}
+                onClick={handleSellButtonClick}
               >
                 Sell
               </Button>
-
-              <InitialOfferingConfirmationModal
-                isOpen={isOpen}
-                onClose={onClose}
-              />
-              {/* <AftermarketTradingMarketBuyModal
-                isOpen={isOpen}
-                onClose={onClose}
-              /> */}
-              {/* <AftermarketTradingMarketSellModal
-                isOpen={isOpen}
-                onClose={onClose}
-              /> */}
-              {/* <AftermarketTradingLimitedBuyModal
-                isOpen={isOpen}
-                onClose={onClose}
-              /> */}
-              {/* <AftermarketTradingLimitedSellModal
-                isOpen={isOpen}
-                onClose={onClose}
-              /> */}
             </div>
-            {isSold && (
+            {allowTrade && (
               <>
                 <Divider className="border-zinc-200 !m-0" />
                 <div className="w-full">
@@ -608,6 +635,13 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
           </div>
         </div>
       </div>
+      <PlaceBuyOrderModal isOpen={isBuyOrderModalOpen} onClose={() => setIsBuyOrderModalOpen(false)} isAfterMarketTrading={allowTrade} onSuccess={handleBuySuccess} />
+      <PlaceSellOrderModal isOpen={isSellOrderModalOpen} onClose={() => setIsSellOrderModalOpen(false)} onSuccess={handleSellSuccess} />
+      <InitialOfferingBuySuccessModal isOpen={isInitialOfferingBuySuccessModalOpen} onClose={() => setIsInitialOfferingBuySuccessModalOpen(false)} />
+      <LimitBuySuccessModal isOpen={isLimitBuySuccessModalOpen} onClose={() => setIsLimitBuySuccessModalOpen(false)} />
+      <LimitSellSuccessModal isOpen={isLimitSellSuccessModalOpen} onClose={() => setIsLimitSellSuccessModalOpen(false)} />
+      <MarketBuySuccessModal isOpen={isMarketBuySuccessModalOpen} onClose={() => setIsMarketBuySuccessModalOpen(false)} />
+      <MarketSellSuccessModal isOpen={isMarketSellSuccessModalOpen} onClose={() => setIsMarketSellSuccessModalOpen(false)} />
     </div>
   );
 };

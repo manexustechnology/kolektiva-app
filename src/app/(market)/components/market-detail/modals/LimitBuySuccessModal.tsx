@@ -20,13 +20,13 @@ import {
   WarningCircle,
 } from "@phosphor-icons/react/dist/ssr";
 
-interface AftermarketTradingLimitedSellModalProps {
+interface LimitBuySuccessModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const AftermarketTradingLimitedSellModal: React.FC<
-  AftermarketTradingLimitedSellModalProps
+const LimitBuySuccessModal: React.FC<
+  LimitBuySuccessModalProps
 > = ({ isOpen, onClose }) => {
   const handleIconClick = (url: string) => {
     window.open(url, "_blank");
@@ -98,7 +98,7 @@ const AftermarketTradingLimitedSellModal: React.FC<
                   width="346px"
                 >
                   <p className="w-[346px] font-bold text-2xl leading-7 text-center text-teal-600">
-                    Limit sell order placed
+                    Limit buy order placed
                   </p>
 
                   <p className="w-[300px] font-normal text-base leading-4 text-center text-neutral-700">
@@ -222,4 +222,4 @@ const AftermarketTradingLimitedSellModal: React.FC<
   );
 };
 
-export default AftermarketTradingLimitedSellModal;
+export default LimitBuySuccessModal;
