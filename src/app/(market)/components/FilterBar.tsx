@@ -56,6 +56,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
     >
       <div className="flex flex-row">
         <Select
+          id="location"
           placeholder="Location"
           backgroundColor="#F4F4F5"
           _hover={{
@@ -74,6 +75,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
           <option value="Location 3">Location 3</option>
         </Select>
         <Select
+          id="propertytype"
           placeholder="Property Type"
           backgroundColor="#F4F4F5"
           _hover={{
@@ -93,6 +95,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
         </Select>
 
         <Select
+          id="sort"
           placeholder="Sort"
           backgroundColor="#F4F4F5"
           _hover={{
