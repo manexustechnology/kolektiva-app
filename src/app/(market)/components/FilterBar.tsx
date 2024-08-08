@@ -18,6 +18,11 @@ import {
   SliderMark,
   SliderThumb,
   SliderTrack,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
   Tooltip,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -113,7 +118,8 @@ const FilterBar: React.FC<FilterBarProps> = ({
           <option value="Oldest">Oldest</option>
         </Select>
         <div className="absolute right-0">
-          <Menu isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
+          {/*Slider Filter if needed*/}
+          {/* <Menu isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
             <MenuButton
               as={Button}
               rounded={100}
@@ -132,7 +138,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
               Filter
             </MenuButton>
             <MenuList zIndex={1000} width={400} p={4}>
-              {/*Sliders*/}
+        
               <Box p={1} gap={4}>
                 <Box mt={2} marginBottom={10}>
                   Projected Rental Yield
@@ -169,7 +175,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                   <p className="text-xs text-zinc-500 w-full max-w-10">100%</p>
                 </div>
 
-                {/* Dividing Line */}
+           
                 <Box
                   width="362px"
                   height="1px"
@@ -217,7 +223,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 </div>
               </Box>
 
-              {/*Buttons*/}
+           
               <Box mt={4} gap={4} display="flex" justifyContent="space-between">
                 <Button
                   width="full"
@@ -239,7 +245,87 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 </Button>
               </Box>
             </MenuList>
-          </Menu>
+          </Menu> */}
+
+          {/*Tabs*/}
+          <Tabs variant="soft-rounded" colorScheme="teal">
+            <TabList
+              display="flex"
+              flexDirection="row"
+              alignItems="center"
+              justifyContent="center"
+              backgroundColor="#F4F4F5"
+              borderRadius="full"
+              paddingTop="4px"
+              paddingRight="6px"
+              paddingBottom="4px"
+              paddingLeft="6px"
+            >
+              <Tab
+                _selected={{ bg: "white", color: "#0D9488" }}
+                fontSize="14px"
+                fontWeight="500"
+                paddingLeft="16px"
+                paddingRight="16px"
+                borderRadius="full"
+              >
+                All
+              </Tab>
+              <Tab
+                _selected={{ bg: "white", color: "#0D9488" }}
+                fontSize="14px"
+                fontWeight="500"
+                paddingLeft="16px"
+                paddingRight="16px"
+                borderRadius="full"
+              >
+                Upcoming
+              </Tab>
+              <Tab
+                _selected={{ bg: "white", color: "#0D9488" }}
+                fontSize="14px"
+                fontWeight="500"
+                paddingLeft="16px"
+                paddingRight="16px"
+                borderRadius="full"
+              >
+                Initial Offering
+              </Tab>
+              <Tab
+                _selected={{ bg: "white", color: "#0D9488" }}
+                fontSize="14px"
+                fontWeight="500"
+                paddingLeft="16px"
+                paddingRight="16px"
+                borderRadius="full"
+              >
+                Aftermarket Trading
+              </Tab>
+            </TabList>
+
+            {/* <TabPanels>
+              <TabPanel>
+                <Box p="4">
+                  <p>Content for Phase 1</p>
+                </Box>
+              </TabPanel>
+              <TabPanel>
+                <Box p="4">
+                  <p>Content for Phase 2</p>
+                </Box>
+              </TabPanel>
+              <TabPanel>
+                <Box p="4">
+                  <p>Content for Phase 3</p>
+                </Box>
+              </TabPanel>
+              <TabPanel>
+                <Box p="4">
+                  <p>Content for Phase 4</p>
+                </Box>
+              </TabPanel>
+            </TabPanels> */}
+          </Tabs>
         </div>
       </div>
 
