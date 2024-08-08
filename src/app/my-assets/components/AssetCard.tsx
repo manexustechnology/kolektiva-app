@@ -162,6 +162,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
             )}
           </div>
         </div>
+        <div className="w-[1037px] h-[1px] bg-zinc-200 self-stretch"></div>
 
         <div className="flex flex-row justify-between items-center gap-4 w-[1037px] h-[40px]">
           {/* Column 1 */}
