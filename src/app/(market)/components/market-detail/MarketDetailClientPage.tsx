@@ -28,6 +28,8 @@ import LimitBuySuccessModal from "./modals/LimitBuySuccessModal";
 import LimitSellSuccessModal from "./modals/LimitSellSuccessModal";
 import MarketBuySuccessModal from "./modals/MarketBuySuccessModal";
 import MarketSellSuccessModal from "./modals/MarketSellSuccessModal";
+import { useActiveAccount } from "thirdweb/react";
+import { cn } from "@/utils/cn";
 
 interface MarketDetailClientPageProps {
   allowTrade: boolean;
@@ -36,6 +38,8 @@ interface MarketDetailClientPageProps {
 const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
   allowTrade,
 }) => {
+  const account = useActiveAccount();
+
   // https://blog.nirdeshpokhrel.com.np/nextjs-window-is-not-defined-react-apexcharts
   const [ReactApexChart, setReactApexChart] = useState<any>();
   useEffect(() => {
@@ -364,6 +368,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
       },
     });
 
+  const [tabIndex, setTabIndex] = useState(0);
   const [isInfoAreaHovered, setIsInfoAreaHovered] = useState<boolean>(false);
   const [isBuyOrderModalOpen, setIsBuyOrderModalOpen] = useState<boolean>(false);
   const [isSellOrderModalOpen, setIsSellOrderModalOpen] = useState<boolean>(false);
@@ -418,7 +423,8 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
       <div className="flex max-w-[1238px] w-full p-2 gap-4">
         <div className="w-2/3 flex flex-col gap-6">
           <MarketDetailPhotos />
-          {allowTrade && (
+          {/* Will be used later */}
+          {/* {allowTrade && (
             <div className="w-full">
               {ReactApexChart && (
                 <ReactApexChart
@@ -429,9 +435,9 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                 />
               )}
             </div>
-          )}
+          )} */}
           <div className="w-full">
-            <Tabs colorScheme="green" defaultIndex={0}>
+            <Tabs colorScheme="green" index={tabIndex} onChange={(index: number) => setTabIndex(index)}>
               <TabList gap="2">
                 <Tab fontSize="sm">Description</Tab>
                 <Tab fontSize="sm">Financials</Tab>
@@ -462,176 +468,177 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
         <div
           onMouseEnter={() => setIsInfoAreaHovered(true)}
           onMouseLeave={() => setIsInfoAreaHovered(false)}
-          className="w-1/3 flex flex-col gap-6"
+          className="w-1/3 relative"
         >
-          <div className="flex flex-col gap-1">
-            {isInfoAreaHovered && (
-              <div className="absolute flex flex-col items-start p-3 gap-1 bg-white shadow-lg rounded-lg w-[240px] h-[78px] right-[120px] top-[260px]">
-                <p className="w-[216px] h-[54px] font-normal text-sm leading-5  text-zinc-500">
-                  This is the lowest current price per token available for this
-                  property.
-                </p>
-              </div>
-            )}
-            <h2 className="text-2xl font-bold">
-              Jl Pinangsia Raya Komplek Glodok Plaza Bl B-22
-            </h2>
-            <p className="text-lg text-zinc-500">DKI Jakarta</p>
-          </div>
-          {/* Tag Box of trading*/}
-          {allowTrade ? (
-            <Box
-              position="relative"
-              backgroundColor="#F0FDFA"
-              color="#0D9488"
-              padding="2px 8px"
-              borderWidth="1px"
-              borderRadius="full"
-              borderColor="#0D9488"
-              fontSize="xs"
-              zIndex={10}
-              width="fit-content"
-            >
-              Aftermarket Trading
-            </Box>
-          ) : (
-            <Box
-              position="relative"
-              backgroundColor="#F7FEE7"
-              color="#65A30D"
-              padding="2px 8px"
-              borderWidth="1px"
-              borderRadius="full"
-              borderColor="#65A30D"
-              fontSize="xs"
-              zIndex={10}
-              width="fit-content"
-            >
-              Initial Offering
-            </Box>
-          )}
-          <div className="flex p-4 gap-4 w-full rounded-2xl shadow-md items-center">
-            <House size={32} weight="fill" className="text-teal-600" />
-            <div className="flex flex-col justify-between">
-              <p className="text-sm text-zinc-500">Property type</p>
-              <p className="text-md font-bold text-teal-600">House</p>
-            </div>
-          </div>
-          <div className="flex flex-col gap-4 p-4 w-full rounded-2xl shadow-md">
-            <div className="flex flex-col justify-center">
-              <div className="flex items-center gap-1">
-                <p className="text-sm text-zinc-500">Starting at</p>
-                <WarningCircle
-                  size={18}
-                  weight="fill"
-                  className="rotate-180 text-zinc-400"
-                />
-              </div>
-              <p className="text-lg font-bold text-teal-600">600,000 LSK</p>
-            </div>
+          <div className={cn(
+            "flex flex-col gap-6 sticky top-0",
+            account?.address ? 'top-[92px]' : 'top-[84px]'
+          )}>
             <div className="flex flex-col gap-1">
-              <div className="flex w-full gap-2 items-center">
-                <Progress
-                  colorScheme="green"
-                  size="sm"
-                  value={83}
+              {isInfoAreaHovered && (
+                <div className="absolute flex flex-col items-start p-3 gap-1 bg-white shadow-lg rounded-lg w-[240px] h-[78px] right-[120px] top-[260px]">
+                  <p className="w-[216px] h-[54px] font-normal text-sm leading-5  text-zinc-500">
+                    This is the lowest current price per token available for this
+                    property.
+                  </p>
+                </div>
+              )}
+              <h2 className="text-2xl font-bold">
+                Jl Pinangsia Raya Komplek Glodok Plaza Bl B-22
+              </h2>
+              <p className="text-lg text-zinc-500">DKI Jakarta</p>
+            </div>
+            {/* Tag Box of trading*/}
+            {allowTrade ? (
+              <Box
+                position="relative"
+                backgroundColor="#F0FDFA"
+                color="#0D9488"
+                padding="2px 8px"
+                borderWidth="1px"
+                borderRadius="full"
+                borderColor="#0D9488"
+                fontSize="xs"
+                zIndex={10}
+                width="fit-content"
+              >
+                Aftermarket
+              </Box>
+            ) : (
+              <Box
+                position="relative"
+                backgroundColor="#F7FEE7"
+                color="#65A30D"
+                padding="2px 8px"
+                borderWidth="1px"
+                borderRadius="full"
+                borderColor="#65A30D"
+                fontSize="xs"
+                zIndex={10}
+                width="fit-content"
+              >
+                Initial Offering
+              </Box>
+            )}
+            <div className="flex p-4 gap-4 w-full rounded-2xl shadow-md items-center">
+              <House size={32} weight="fill" className="text-teal-600" />
+              <div className="flex flex-col justify-between">
+                <p className="text-sm text-zinc-500">Property type</p>
+                <p className="text-md font-bold text-teal-600">House</p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-4 p-4 w-full rounded-2xl shadow-md">
+              <div className="flex flex-col justify-center">
+                <div className="flex items-center gap-1">
+                  <p className="text-sm text-zinc-500">{allowTrade ? 'Estimated Price' : 'Starting at'}</p>
+                  <WarningCircle
+                    size={18}
+                    weight="fill"
+                    className="rotate-180 text-zinc-400"
+                  />
+                </div>
+                <p className="text-lg font-bold text-teal-600">600,000 LSK</p>
+              </div>
+              <div className="flex flex-col gap-1">
+                <div className="flex w-full gap-2 items-center">
+                  <Progress
+                    colorScheme="green"
+                    size="sm"
+                    value={83}
+                    w="full"
+                    rounded="full"
+                  />
+                  <p className="text-xs text-teal-600 font-bold">83%</p>
+                </div>
+                <div className="flex justify-between items-center">
+                  <p className="text-sm text-zinc-500">Token available</p>
+                  <p className="text-sm font-medium text-black">8,210 token</p>
+                </div>
+              </div>
+              <div className="flex flex-col p-3 gap-3 w-full bg-zinc-100 rounded-lg">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-1">
+                    <p className="text-sm text-zinc-500">
+                      Projected Yield
+                    </p>
+                    <WarningCircle
+                      size={18}
+                      weight="fill"
+                      className="rotate-180 text-zinc-400"
+                    />
+                  </div>
+                  <p className="text-sm font-medium text-black">6.0%</p>
+                </div>
+                <Divider className="border-zinc-200 !m-0" />
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-1">
+                    <p className="text-sm text-zinc-500">
+                      Rental Status
+                    </p>
+                    <WarningCircle
+                      size={18}
+                      weight="fill"
+                      className="rotate-180 text-zinc-400"
+                    />
+                  </div>
+                  <p className="text-sm font-medium text-black">Active</p>
+                </div>
+              </div>
+              <div className="flex gap-2 w-full">
+                <Button
+                  colorScheme="teal"
+                  bgColor="teal.600"
                   w="full"
                   rounded="full"
-                />
-                <p className="text-xs text-teal-600 font-bold">83%</p>
-              </div>
-              <div className="flex justify-between items-center">
-                <p className="text-sm text-zinc-500">Token available</p>
-                <p className="text-sm font-medium text-black">8,210 token</p>
-              </div>
-            </div>
-            <div className="flex flex-col p-3 gap-3 w-full bg-zinc-100 rounded-lg">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-1">
-                  <p className="text-sm text-zinc-500">Rental Yield</p>
-                  <WarningCircle
-                    size={18}
-                    weight="fill"
-                    className="rotate-180 text-zinc-400"
-                  />
-                </div>
-                <p className="text-sm font-medium text-black">6.0%</p>
-              </div>
-              <Divider className="border-zinc-200 !m-0" />
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-1">
-                  <p className="text-sm text-zinc-500">
-                    Projected Rental Yield
-                  </p>
-                  <WarningCircle
-                    size={18}
-                    weight="fill"
-                    className="rotate-180 text-zinc-400"
-                  />
-                </div>
-                <p className="text-sm font-medium text-black">6.0%</p>
+                  fontWeight="normal"
+                  onClick={handleBuyButtonClick}
+                >
+                  Buy
+                </Button>
+                <Button
+                  colorScheme="teal"
+                  w="full"
+                  rounded="full"
+                  fontWeight="normal"
+                  isDisabled={!allowTrade}
+                  bgColor="teal.100"
+                  color="teal.700"
+                  _disabled={{ bgColor: "teal.50", color: "teal.600" }}
+                  _hover={{
+                    bgColor: allowTrade ? "teal.200" : "teal.50",
+                    color: allowTrade ? "teal.900" : "teal.600",
+                    cursor: allowTrade ? "pointer" : "no-drop",
+                  }}
+                  onClick={handleSellButtonClick}
+                >
+                  Sell
+                </Button>
               </div>
               <Divider className="border-zinc-200 !m-0" />
-              <div className="flex justify-between items-center">
-                <div className="flex items-center gap-1">
-                  <p className="text-sm text-zinc-500">
-                    Projected Annual Return
-                  </p>
-                  <WarningCircle
-                    size={18}
-                    weight="fill"
-                    className="rotate-180 text-zinc-400"
-                  />
-                </div>
-                <p className="text-sm font-medium text-black">8.6%</p>
-              </div>
-            </div>
-            <div className="flex gap-2 w-full">
-              <Button
-                colorScheme="teal"
-                bgColor="teal.600"
-                w="full"
-                rounded="full"
-                fontWeight="normal"
-                onClick={handleBuyButtonClick}
-              >
-                Buy
-              </Button>
-              <Button
-                colorScheme="teal"
-                w="full"
-                rounded="full"
-                fontWeight="normal"
-                isDisabled={!allowTrade}
-                bgColor="teal.100"
-                color="teal.700"
-                _disabled={{ bgColor: "teal.50", color: "teal.600" }}
-                _hover={{
-                  bgColor: allowTrade ? "teal.200" : "teal.50",
-                  color: allowTrade ? "teal.900" : "teal.600",
-                  cursor: allowTrade ? "pointer" : "no-drop",
-                }}
-                onClick={handleSellButtonClick}
-              >
-                Sell
-              </Button>
-            </div>
-            {allowTrade && (
-              <>
-                <Divider className="border-zinc-200 !m-0" />
-                <div className="w-full">
+              <div className="w-full flex items-center justify-stretch gap-2">
+                <Button
+                  colorScheme="white"
+                  color="teal.600"
+                  w="full"
+                  rounded="full"
+                  shadow="md"
+                >
+                  Rent property
+                </Button>
+                {allowTrade && (
                   <Button
                     colorScheme="white"
                     color="teal.600"
                     w="full"
                     rounded="full"
                     shadow="md"
+                    onClick={() => setTabIndex(2)}
                   >
                     View order book
                   </Button>
-                </div>
-              </>
-            )}
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
