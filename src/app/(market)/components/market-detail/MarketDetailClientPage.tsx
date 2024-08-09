@@ -450,7 +450,11 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
             </div>
           )} */}
           <div className="w-full">
-            <Tabs colorScheme="green" index={tabIndex} onChange={(index: number) => setTabIndex(index)}>
+            <Tabs
+              colorScheme="green"
+              index={tabIndex}
+              onChange={(index: number) => setTabIndex(index)}
+            >
               <TabList gap="2">
                 <Tab fontSize="sm">Description</Tab>
                 <Tab fontSize="sm">Financials</Tab>
@@ -478,95 +482,14 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
             </Tabs>
           </div>
         </div>
-        <div className="w-1/3 flex flex-col gap-6">
-          <div className="flex flex-col gap-1">
-            <h2 className="text-2xl font-bold">
-              Jl Pinangsia Raya Komplek Glodok Plaza Bl B-22
-            </h2>
-            <p className="text-lg text-zinc-500">DKI Jakarta</p>
-          </div>
-          {/* Tag Box of trading*/}
-          {allowTrade ? (
-            <Box
-              position="relative"
-              backgroundColor="#F0FDFA"
-              color="#0D9488"
-              padding="2px 8px"
-              borderWidth="1px"
-              borderRadius="full"
-              borderColor="#0D9488"
-              fontSize="xs"
-              zIndex={10}
-              width="fit-content"
-            >
-              Aftermarket Trading
-            </Box>
-          ) : (
-            <Box
-              position="relative"
-              backgroundColor="#F7FEE7"
-              color="#65A30D"
-              padding="2px 8px"
-              borderWidth="1px"
-              borderRadius="full"
-              borderColor="#65A30D"
-              fontSize="xs"
-              zIndex={10}
-              width="fit-content"
-            >
-              Initial Offering
-            </Box>
-          )}
-          <div className="flex p-4 gap-4 w-full rounded-2xl shadow-md items-center">
-            <House size={32} weight="fill" className="text-teal-600" />
-            <div className="flex flex-col justify-between">
-              <p className="text-sm text-zinc-500">Property type</p>
-              <p className="text-md font-bold text-teal-600">House</p>
-            </div>
-          </div>
-          <div className="flex flex-col gap-4 p-4 w-full rounded-2xl shadow-md">
-            <div
-              className="relative flex flex-col justify-center"
-              onMouseEnter={() => setIsInfoAreaHovered(true)}
-              onMouseLeave={() => setIsInfoAreaHovered(false)}
-            >
-              <div className="flex items-center gap-1">
-                <p className="text-sm text-zinc-500">Starting at</p>
-                <WarningCircle
-                  size={18}
-                  weight="fill"
-                  className="rotate-180 text-zinc-400"
-                />
-              </div>
-              <p className="text-lg font-bold text-teal-600">600,000 USD</p>
-              {isInfoAreaHovered && (
-                <div className="absolute flex flex-col items-start p-3 gap-1 bg-white shadow-lg rounded-lg w-[240px] h-[78px] left-[140px] z-50">
-                  <p className="w-[216px] h-[54px] font-normal text-sm leading-5 text-zinc-500">
-                    This is the lowest current price per token available for
-                    this property.
-                  </p>
-                </div>
-              )}
-            </div>
-
-        <div
-          onMouseEnter={() => setIsInfoAreaHovered(true)}
-          onMouseLeave={() => setIsInfoAreaHovered(false)}
-          className="w-1/3 relative"
-        >
-          <div className={cn(
-            "flex flex-col gap-6 sticky top-0",
-            account?.address ? 'top-[92px]' : 'top-[84px]'
-          )}>
+        <div className="w-1/3 relative">
+          <div
+            className={cn(
+              "flex flex-col gap-6 sticky top-0",
+              account?.address ? "top-[92px]" : "top-[84px]"
+            )}
+          >
             <div className="flex flex-col gap-1">
-              {isInfoAreaHovered && (
-                <div className="absolute flex flex-col items-start p-3 gap-1 bg-white shadow-lg rounded-lg w-[240px] h-[78px] right-[120px] top-[260px]">
-                  <p className="w-[216px] h-[54px] font-normal text-sm leading-5  text-zinc-500">
-                    This is the lowest current price per token available for this
-                    property.
-                  </p>
-                </div>
-              )}
               <h2 className="text-2xl font-bold">
                 Jl Pinangsia Raya Komplek Glodok Plaza Bl B-22
               </h2>
@@ -611,10 +534,16 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                 <p className="text-md font-bold text-teal-600">House</p>
               </div>
             </div>
-            <div className="flex flex-col gap-4 p-4 w-full rounded-2xl shadow-md">
+            <div
+              className="relative flex flex-col gap-4 p-4 w-full rounded-2xl shadow-md"
+              onMouseEnter={() => setIsInfoAreaHovered(true)}
+              onMouseLeave={() => setIsInfoAreaHovered(false)}
+            >
               <div className="flex flex-col justify-center">
                 <div className="flex items-center gap-1">
-                  <p className="text-sm text-zinc-500">{allowTrade ? 'Estimated Price' : 'Starting at'}</p>
+                  <p className="text-sm text-zinc-500">
+                    {allowTrade ? "Estimated Price" : "Starting at"}
+                  </p>
                   <WarningCircle
                     size={18}
                     weight="fill"
@@ -622,6 +551,14 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                   />
                 </div>
                 <p className="text-lg font-bold text-teal-600">600,000 LSK</p>
+                {isInfoAreaHovered && (
+                  <div className="absolute flex flex-col items-start p-3 gap-1 bg-white shadow-lg rounded-lg w-[240px] h-[78px] left-[140px] z-50">
+                    <p className="w-[216px] h-[54px] font-normal text-sm leading-5 text-zinc-500">
+                      This is the lowest current price per token available for
+                      this property.
+                    </p>
+                  </div>
+                )}
               </div>
               <div className="flex flex-col gap-1">
                 <div className="flex w-full gap-2 items-center">
@@ -642,9 +579,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
               <div className="flex flex-col p-3 gap-3 w-full bg-zinc-100 rounded-lg">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-1">
-                    <p className="text-sm text-zinc-500">
-                      Projected Yield
-                    </p>
+                    <p className="text-sm text-zinc-500">Projected Yield</p>
                     <WarningCircle
                       size={18}
                       weight="fill"
@@ -656,9 +591,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                 <Divider className="border-zinc-200 !m-0" />
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-1">
-                    <p className="text-sm text-zinc-500">
-                      Rental Status
-                    </p>
+                    <p className="text-sm text-zinc-500">Rental Status</p>
                     <WarningCircle
                       size={18}
                       weight="fill"
