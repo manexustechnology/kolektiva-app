@@ -84,7 +84,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
               borderColor="#0D9488"
               fontSize="xs"
             >
-              Aftermarket Trading
+              Aftermarket
             </Box>
           ) : (
             <Box

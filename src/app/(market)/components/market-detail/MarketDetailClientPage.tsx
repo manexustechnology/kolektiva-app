@@ -534,12 +534,12 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                 <p className="text-md font-bold text-teal-600">House</p>
               </div>
             </div>
-            <div
-              className="relative flex flex-col gap-4 p-4 w-full rounded-2xl shadow-md"
-              onMouseEnter={() => setIsInfoAreaHovered(true)}
-              onMouseLeave={() => setIsInfoAreaHovered(false)}
-            >
-              <div className="flex flex-col justify-center">
+            <div className="flex flex-col gap-4 p-4 w-full rounded-2xl shadow-md">
+              <div
+                className="relative flex flex-col justify-center"
+                onMouseEnter={() => setIsInfoAreaHovered(true)}
+                onMouseLeave={() => setIsInfoAreaHovered(false)}
+              >
                 <div className="flex items-center gap-1">
                   <p className="text-sm text-zinc-500">
                     {allowTrade ? "Estimated Price" : "Starting at"}
