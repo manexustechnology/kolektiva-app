@@ -39,7 +39,7 @@ const MyAssets: React.FC = () => {
                 Current rent balance
               </p>
               <p className="w-full h-6 text-lg font-bold text-[#042F2E] leading-[24px]">
-                1,233.92 LSK
+                1,233.92 USD
               </p>
             </div>
             <div className="mt-auto w-full flex justify-start">
@@ -70,7 +70,7 @@ const MyAssets: React.FC = () => {
                 Current account value
               </p>
               <p className="w-[362px] h-[24px] text-lg font-bold text-[#042F2E] leading-[24px]">
-                19,472.09 LSK
+                19,472.09 USD
               </p>
             </div>
 
@@ -79,7 +79,7 @@ const MyAssets: React.FC = () => {
                 Total property value
               </p>
               <p className="w-[362px] h-[24px] text-lg font-bold text-[#042F2E] leading-[24px] flex items-center">
-                <span>19,472.09 LSK</span>
+                <span>19,472.09 USD</span>
                 <span className="flex items-center ml-2">
                   <CaretUp size={16} color="#65A30D" weight="fill" />
                   <span className="text-sm font-medium text-[#65A30D] leading-[18px] ml-1">
@@ -95,7 +95,7 @@ const MyAssets: React.FC = () => {
                 Total Rent Earned
               </p>
               <p className="w-[362px] h-[24px] text-lg font-bold text-[#042F2E] leading-[24px]">
-                19,472.09 LSK
+                19,472.09 USD
               </p>
             </div>
 

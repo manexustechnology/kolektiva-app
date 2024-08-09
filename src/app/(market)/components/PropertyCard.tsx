@@ -177,7 +177,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             </p>
 
             <p className=" font-bold text-[12px] leading-[16px] text-[#0D9488]">
-              {price} LSK
+              {price} USD
             </p>
           </Box>
 

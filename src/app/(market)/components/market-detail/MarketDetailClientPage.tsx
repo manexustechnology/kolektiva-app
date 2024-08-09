@@ -22,7 +22,11 @@ import { ApexOptions } from "apexcharts";
 import { useEffect, useState } from "react";
 import PlaceBuyOrderModal from "./modals/PlaceBuyOrderModal";
 import PlaceSellOrderModal from "./modals/PlaceSellOrderModal";
-import { AfterMarketBuyOrderData, SellOrderData, BuyOrderData } from "@/types/order";
+import {
+  AfterMarketBuyOrderData,
+  SellOrderData,
+  BuyOrderData,
+} from "@/types/order";
 import InitialOfferingBuySuccessModal from "./modals/InitialOfferingBuySuccessModal";
 import LimitBuySuccessModal from "./modals/LimitBuySuccessModal";
 import LimitSellSuccessModal from "./modals/LimitSellSuccessModal";
@@ -365,13 +369,22 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
     });
 
   const [isInfoAreaHovered, setIsInfoAreaHovered] = useState<boolean>(false);
-  const [isBuyOrderModalOpen, setIsBuyOrderModalOpen] = useState<boolean>(false);
-  const [isSellOrderModalOpen, setIsSellOrderModalOpen] = useState<boolean>(false);
-  const [isInitialOfferingBuySuccessModalOpen, setIsInitialOfferingBuySuccessModalOpen] = useState<boolean>(false);
-  const [isLimitBuySuccessModalOpen, setIsLimitBuySuccessModalOpen] = useState<boolean>(false);
-  const [isLimitSellSuccessModalOpen, setIsLimitSellSuccessModalOpen] = useState<boolean>(false);
-  const [isMarketBuySuccessModalOpen, setIsMarketBuySuccessModalOpen] = useState<boolean>(false);
-  const [isMarketSellSuccessModalOpen, setIsMarketSellSuccessModalOpen] = useState<boolean>(false);
+  const [isBuyOrderModalOpen, setIsBuyOrderModalOpen] =
+    useState<boolean>(false);
+  const [isSellOrderModalOpen, setIsSellOrderModalOpen] =
+    useState<boolean>(false);
+  const [
+    isInitialOfferingBuySuccessModalOpen,
+    setIsInitialOfferingBuySuccessModalOpen,
+  ] = useState<boolean>(false);
+  const [isLimitBuySuccessModalOpen, setIsLimitBuySuccessModalOpen] =
+    useState<boolean>(false);
+  const [isLimitSellSuccessModalOpen, setIsLimitSellSuccessModalOpen] =
+    useState<boolean>(false);
+  const [isMarketBuySuccessModalOpen, setIsMarketBuySuccessModalOpen] =
+    useState<boolean>(false);
+  const [isMarketSellSuccessModalOpen, setIsMarketSellSuccessModalOpen] =
+    useState<boolean>(false);
 
   const handleBuyButtonClick = () => {
     setIsBuyOrderModalOpen(true);
@@ -390,28 +403,28 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
     }
 
     switch ((formData as AfterMarketBuyOrderData)?.type) {
-      case 'market':
+      case "market":
         setIsMarketBuySuccessModalOpen(true);
         break;
-      case 'limit':
+      case "limit":
         setIsLimitBuySuccessModalOpen(true);
         break;
     }
 
     return;
-  }
+  };
 
   const handleSellSuccess = (formData: SellOrderData) => {
     switch ((formData as SellOrderData)?.type) {
-      case 'market':
+      case "market":
         setIsMarketSellSuccessModalOpen(true);
         break;
-      case 'limit':
+      case "limit":
         setIsLimitSellSuccessModalOpen(true);
         break;
     }
     return;
-  }
+  };
 
   return (
     <div className="w-full flex justify-center py-4">
@@ -459,20 +472,8 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
             </Tabs>
           </div>
         </div>
-        <div
-          onMouseEnter={() => setIsInfoAreaHovered(true)}
-          onMouseLeave={() => setIsInfoAreaHovered(false)}
-          className="w-1/3 flex flex-col gap-6"
-        >
+        <div className="w-1/3 flex flex-col gap-6">
           <div className="flex flex-col gap-1">
-            {isInfoAreaHovered && (
-              <div className="absolute flex flex-col items-start p-3 gap-1 bg-white shadow-lg rounded-lg w-[240px] h-[78px] right-[120px] top-[260px]">
-                <p className="w-[216px] h-[54px] font-normal text-sm leading-5  text-zinc-500">
-                  This is the lowest current price per token available for this
-                  property.
-                </p>
-              </div>
-            )}
             <h2 className="text-2xl font-bold">
               Jl Pinangsia Raya Komplek Glodok Plaza Bl B-22
             </h2>
@@ -518,7 +519,11 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
             </div>
           </div>
           <div className="flex flex-col gap-4 p-4 w-full rounded-2xl shadow-md">
-            <div className="flex flex-col justify-center">
+            <div
+              className="relative flex flex-col justify-center"
+              onMouseEnter={() => setIsInfoAreaHovered(true)}
+              onMouseLeave={() => setIsInfoAreaHovered(false)}
+            >
               <div className="flex items-center gap-1">
                 <p className="text-sm text-zinc-500">Starting at</p>
                 <WarningCircle
@@ -527,8 +532,17 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                   className="rotate-180 text-zinc-400"
                 />
               </div>
-              <p className="text-lg font-bold text-teal-600">600,000 LSK</p>
+              <p className="text-lg font-bold text-teal-600">600,000 USD</p>
+              {isInfoAreaHovered && (
+                <div className="absolute flex flex-col items-start p-3 gap-1 bg-white shadow-lg rounded-lg w-[240px] h-[78px] left-[140px] z-50">
+                  <p className="w-[216px] h-[54px] font-normal text-sm leading-5 text-zinc-500">
+                    This is the lowest current price per token available for
+                    this property.
+                  </p>
+                </div>
+              )}
             </div>
+
             <div className="flex flex-col gap-1">
               <div className="flex w-full gap-2 items-center">
                 <Progress
@@ -635,13 +649,37 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
           </div>
         </div>
       </div>
-      <PlaceBuyOrderModal isOpen={isBuyOrderModalOpen} onClose={() => setIsBuyOrderModalOpen(false)} isAfterMarketTrading={allowTrade} onSuccess={handleBuySuccess} />
-      <PlaceSellOrderModal isOpen={isSellOrderModalOpen} onClose={() => setIsSellOrderModalOpen(false)} onSuccess={handleSellSuccess} />
-      <InitialOfferingBuySuccessModal isOpen={isInitialOfferingBuySuccessModalOpen} onClose={() => setIsInitialOfferingBuySuccessModalOpen(false)} />
-      <LimitBuySuccessModal isOpen={isLimitBuySuccessModalOpen} onClose={() => setIsLimitBuySuccessModalOpen(false)} />
-      <LimitSellSuccessModal isOpen={isLimitSellSuccessModalOpen} onClose={() => setIsLimitSellSuccessModalOpen(false)} />
-      <MarketBuySuccessModal isOpen={isMarketBuySuccessModalOpen} onClose={() => setIsMarketBuySuccessModalOpen(false)} />
-      <MarketSellSuccessModal isOpen={isMarketSellSuccessModalOpen} onClose={() => setIsMarketSellSuccessModalOpen(false)} />
+      <PlaceBuyOrderModal
+        isOpen={isBuyOrderModalOpen}
+        onClose={() => setIsBuyOrderModalOpen(false)}
+        isAfterMarketTrading={allowTrade}
+        onSuccess={handleBuySuccess}
+      />
+      <PlaceSellOrderModal
+        isOpen={isSellOrderModalOpen}
+        onClose={() => setIsSellOrderModalOpen(false)}
+        onSuccess={handleSellSuccess}
+      />
+      <InitialOfferingBuySuccessModal
+        isOpen={isInitialOfferingBuySuccessModalOpen}
+        onClose={() => setIsInitialOfferingBuySuccessModalOpen(false)}
+      />
+      <LimitBuySuccessModal
+        isOpen={isLimitBuySuccessModalOpen}
+        onClose={() => setIsLimitBuySuccessModalOpen(false)}
+      />
+      <LimitSellSuccessModal
+        isOpen={isLimitSellSuccessModalOpen}
+        onClose={() => setIsLimitSellSuccessModalOpen(false)}
+      />
+      <MarketBuySuccessModal
+        isOpen={isMarketBuySuccessModalOpen}
+        onClose={() => setIsMarketBuySuccessModalOpen(false)}
+      />
+      <MarketSellSuccessModal
+        isOpen={isMarketSellSuccessModalOpen}
+        onClose={() => setIsMarketSellSuccessModalOpen(false)}
+      />
     </div>
   );
 };

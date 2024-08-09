@@ -18,7 +18,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
           <div className="flex gap-4 w-full">
             <div className="flex flex-col gap-2 w-full rounded-2xl shadow-md p-4">
               <p className="text-base font-medium text-zinc-700">Last trade</p>
-              <p className="text-xl font-bold text-teal-600">600,000 LSK</p>
+              <p className="text-xl font-bold text-teal-600">600,000 USD</p>
               <p className="text-sm font-normal text-zinc-500">
                 Last traded value
               </p>
@@ -27,7 +27,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
               <p className="text-base font-medium text-zinc-700">
                 Estimated value
               </p>
-              <p className="text-xl font-bold text-teal-600">600,000 LSK</p>
+              <p className="text-xl font-bold text-teal-600">600,000 USD</p>
               <p className="text-sm font-normal text-zinc-500">
                 Market price analysis
               </p>
@@ -38,12 +38,12 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
               <p className="text-base font-medium text-zinc-700">
                 Trade volume
               </p>
-              <p className="text-xl font-bold text-teal-600">89,772,113 LSK</p>
+              <p className="text-xl font-bold text-teal-600">89,772,113 USD</p>
               <p className="text-sm font-normal text-zinc-500">Last 4 weeks</p>
             </div>
             <div className="flex flex-col gap-2 w-full rounded-2xl shadow-md p-4">
               <p className="text-base font-medium text-zinc-700">Market cap</p>
-              <p className="text-xl font-bold text-teal-600">389,772,113 LSK</p>
+              <p className="text-xl font-bold text-teal-600">389,772,113 USD</p>
               <p className="text-sm font-normal text-zinc-500">49,760 tokens</p>
             </div>
           </div>
@@ -80,7 +80,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                               width="50%"
                               className="py-3 px-4 text-sm font-normal relative z-10"
                             >
-                              52.00 LSK
+                              52.00 USD
                             </td>
                             <td
                               width="50%"
@@ -95,7 +95,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                               width="50%"
                               className="py-3 px-4 text-sm font-normal relative z-10"
                             >
-                              52.00 LSK
+                              52.00 USD
                             </td>
                             <td
                               width="50%"
@@ -110,7 +110,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                               width="50%"
                               className="py-3 px-4 text-sm font-normal relative z-10"
                             >
-                              52.00 LSK
+                              52.00 USD
                             </td>
                             <td
                               width="50%"
@@ -125,7 +125,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                               width="50%"
                               className="py-3 px-4 text-sm font-normal relative z-10"
                             >
-                              52.00 LSK
+                              52.00 USD
                             </td>
                             <td
                               width="50%"
@@ -168,7 +168,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                               width="50%"
                               className="py-3 px-4 text-sm font-normal relative z-10"
                             >
-                              52.00 LSK
+                              52.00 USD
                             </td>
                             <td
                               width="50%"
@@ -183,7 +183,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                               width="50%"
                               className="py-3 px-4 text-sm font-normal relative z-10"
                             >
-                              52.00 LSK
+                              52.00 USD
                             </td>
                             <td
                               width="50%"
@@ -198,7 +198,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                               width="50%"
                               className="py-3 px-4 text-sm font-normal relative z-10"
                             >
-                              52.00 LSK
+                              52.00 USD
                             </td>
                             <td
                               width="50%"
@@ -213,7 +213,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                               width="50%"
                               className="py-3 px-4 text-sm font-normal relative z-10"
                             >
-                              52.00 LSK
+                              52.00 USD
                             </td>
                             <td
                               width="50%"
@@ -297,7 +297,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                           1 Token
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">
-                          600,000 LSK
+                          600,000 USD
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">Buy</td>
                       </tr>
@@ -309,7 +309,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                           1 Token
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">
-                          600,000 LSK
+                          600,000 USD
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">Buy</td>
                       </tr>
@@ -321,7 +321,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                           2 Token
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">
-                          1,200,000 LSK
+                          1,200,000 USD
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">Buy</td>
                       </tr>
@@ -333,7 +333,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                           1 Token
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">
-                          600,000 LSK
+                          600,000 USD
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">Buy</td>
                       </tr>
@@ -345,7 +345,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                           1 Token
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">
-                          600,000 LSK
+                          600,000 USD
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">Buy</td>
                       </tr>
@@ -357,7 +357,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                           3 Token
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">
-                          1,800,000 LSK
+                          1,800,000 USD
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">Buy</td>
                       </tr>
@@ -369,7 +369,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                           1 Token
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">
-                          600,000 LSK
+                          600,000 USD
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">Buy</td>
                       </tr>
@@ -381,7 +381,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                           4 Token
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">
-                          2,400,000 LSK
+                          2,400,000 USD
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">Buy</td>
                       </tr>
@@ -393,7 +393,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                           1 Token
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">
-                          600,000 LSK
+                          600,000 USD
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">Buy</td>
                       </tr>
@@ -405,7 +405,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                           1 Token
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">
-                          600,000 LSK
+                          600,000 USD
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">Buy</td>
                       </tr>

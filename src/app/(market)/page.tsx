@@ -14,7 +14,7 @@ export default function Home() {
         <div className="flex flex-row justify-start items-center pt-[16px] gap-3 w-[1238px] max-w-[1238px] bg-[#042F2E]">
           <div className="flex-col  max-w-[600px]">
             <p className=" text-4xl font-bold text-white leading-[40px]">
-              Buy property ownership starting from 250,000 LSK
+              Buy property ownership starting from $50
             </p>
             <p className="  text-base font-normal text-[#14B8A6] leading-[18px]">
               Property investment that affordable and easy, start having your

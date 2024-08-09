@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { AnimatePresence, motion } from "framer-motion";
 import SellStep1 from "./SellStep1";
@@ -33,9 +33,12 @@ const variants = {
   }),
 };
 
-const SellFormWizard: React.FC<SellFormWizardProps> = ({ currentStep, onSubmitButtonClick }) => {
+const SellFormWizard: React.FC<SellFormWizardProps> = ({
+  currentStep,
+  onSubmitButtonClick,
+}) => {
   const [formData, setFormData] = useState<SellOrderData>({
-    type: 'market',
+    type: "market",
     qtyToken: 1,
     pricePerToken: 0,
     orderExpiration: 0,
@@ -54,7 +57,7 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({ currentStep, onSubmitBu
       case 2:
         return "Submit order";
     }
-  }
+  };
 
   const handleButtonSubmitClick = () => {
     onSubmitButtonClick(formData);
@@ -73,12 +76,17 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({ currentStep, onSubmitBu
               animate="center"
               exit="exit"
               transition={{
-                x: { type: 'spring', stiffness: 300, damping: 30 },
+                x: { type: "spring", stiffness: 300, damping: 30 },
                 opacity: { duration: 0.2 },
               }}
               className="absolute w-full"
             >
-              {steps[currentStep - 1].component({ formData, onDataChange: (data: SellOrderData) => { setFormData(prev => ({ ...prev, ...data })) } })}
+              {steps[currentStep - 1].component({
+                formData,
+                onDataChange: (data: SellOrderData) => {
+                  setFormData((prev) => ({ ...prev, ...data }));
+                },
+              })}
             </motion.div>
           </AnimatePresence>
         </div>
@@ -87,8 +95,12 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({ currentStep, onSubmitBu
         <div className="flex flex-col w-full gap-6">
           <Divider className="border-zinc-200 !m-0" />
           <div className="flex justify-between items-center">
-            <p className="text-sm text-zinc-500">{formData.type === 'market' ? 'Estimated total sell price' : 'Total sell price'}</p>
-            <p className="text-xl font-bold text-teal-600">4.89 LSK</p>
+            <p className="text-sm text-zinc-500">
+              {formData.type === "market"
+                ? "Estimated total sell price"
+                : "Total sell price"}
+            </p>
+            <p className="text-xl font-bold text-teal-600">4.89 USD</p>
           </div>
           <Button
             colorScheme="teal"

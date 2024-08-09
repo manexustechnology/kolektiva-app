@@ -25,9 +25,10 @@ interface LimitSellSuccessModalProps {
   onClose: () => void;
 }
 
-const LimitSellSuccessModal: React.FC<
-  LimitSellSuccessModalProps
-> = ({ isOpen, onClose }) => {
+const LimitSellSuccessModal: React.FC<LimitSellSuccessModalProps> = ({
+  isOpen,
+  onClose,
+}) => {
   const handleIconClick = (url: string) => {
     window.open(url, "_blank");
   };
@@ -131,7 +132,7 @@ const LimitSellSuccessModal: React.FC<
                       Limit price per token
                     </p>
                     <p className=" text-teal-950 font-bold text-base leading-[18px]">
-                      4,50 LSK
+                      4,50 USD
                     </p>
                   </Box>
                   {/* Dividing Line */}
@@ -186,7 +187,7 @@ const LimitSellSuccessModal: React.FC<
                     </p>
 
                     <p className="text-teal-600 font-bold text-base leading-[18px]">
-                      22,61 LSK
+                      22,61 USD
                     </p>
                   </Box>
                 </Box>

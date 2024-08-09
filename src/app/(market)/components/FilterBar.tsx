@@ -256,75 +256,89 @@ const FilterBar: React.FC<FilterBarProps> = ({
               justifyContent="center"
               backgroundColor="#F4F4F5"
               borderRadius="full"
-              paddingTop="4px"
-              paddingRight="6px"
-              paddingBottom="4px"
-              paddingLeft="6px"
+              padding="4px 6px"
             >
               <Tab
-                _selected={{ bg: "white", color: "#0D9488" }}
+                _selected={{
+                  bg: "white",
+                  color: "#0D9488",
+                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                  transform: "scale(1.05)",
+                  transition: "all 0.3s ease-in-out",
+                }}
+                _hover={{
+                  transform: "scale(1.02)",
+                  transition: "transform 0.2s ease-in-out",
+                }}
                 fontSize="14px"
                 fontWeight="500"
-                paddingLeft="16px"
-                paddingRight="16px"
+                padding="16px"
                 borderRadius="full"
+                transition="all 0.3s ease-in-out"
               >
                 All
               </Tab>
               <Tab
-                _selected={{ bg: "white", color: "#0D9488" }}
+                _selected={{
+                  bg: "white",
+                  color: "#0D9488",
+                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                  transform: "scale(1.05)",
+                  transition: "all 0.3s ease-in-out",
+                }}
+                _hover={{
+                  transform: "scale(1.02)",
+                  transition: "transform 0.2s ease-in-out",
+                }}
                 fontSize="14px"
                 fontWeight="500"
-                paddingLeft="16px"
-                paddingRight="16px"
+                padding="16px"
                 borderRadius="full"
+                transition="all 0.3s ease-in-out"
               >
                 Upcoming
               </Tab>
               <Tab
-                _selected={{ bg: "white", color: "#0D9488" }}
+                _selected={{
+                  bg: "white",
+                  color: "#0D9488",
+                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                  transform: "scale(1.05)",
+                  transition: "all 0.3s ease-in-out",
+                }}
+                _hover={{
+                  transform: "scale(1.02)",
+                  transition: "transform 0.2s ease-in-out",
+                }}
                 fontSize="14px"
                 fontWeight="500"
-                paddingLeft="16px"
-                paddingRight="16px"
+                padding="16px"
                 borderRadius="full"
+                transition="all 0.3s ease-in-out"
               >
                 Initial Offering
               </Tab>
               <Tab
-                _selected={{ bg: "white", color: "#0D9488" }}
+                _selected={{
+                  bg: "white",
+                  color: "#0D9488",
+                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                  transform: "scale(1.05)",
+                  transition: "all 0.3s ease-in-out",
+                }}
+                _hover={{
+                  transform: "scale(1.02)",
+                  transition: "transform 0.2s ease-in-out",
+                }}
                 fontSize="14px"
                 fontWeight="500"
-                paddingLeft="16px"
-                paddingRight="16px"
+                padding="16px"
                 borderRadius="full"
+                transition="all 0.3s ease-in-out"
               >
                 Aftermarket Trading
               </Tab>
             </TabList>
-
-            {/* <TabPanels>
-              <TabPanel>
-                <Box p="4">
-                  <p>Content for Phase 1</p>
-                </Box>
-              </TabPanel>
-              <TabPanel>
-                <Box p="4">
-                  <p>Content for Phase 2</p>
-                </Box>
-              </TabPanel>
-              <TabPanel>
-                <Box p="4">
-                  <p>Content for Phase 3</p>
-                </Box>
-              </TabPanel>
-              <TabPanel>
-                <Box p="4">
-                  <p>Content for Phase 4</p>
-                </Box>
-              </TabPanel>
-            </TabPanels> */}
           </Tabs>
         </div>
       </div>

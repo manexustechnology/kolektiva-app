@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { AnimatePresence, motion } from "framer-motion";
 import BuyStep1 from "./BuyStep1";
@@ -19,7 +19,7 @@ interface BuyFormWizardProps {
 const steps = [
   { id: 1, component: (props: any) => <BuyStep1 {...props} /> },
   { id: 2, component: (props: any) => <BuyStep2 {...props} /> },
-  { id: 3, component: (props: any) => <BuyStep3 {...props} /> }
+  { id: 3, component: (props: any) => <BuyStep3 {...props} /> },
 ];
 
 const variants = {
@@ -37,9 +37,13 @@ const variants = {
   }),
 };
 
-const BuyFormWizard: React.FC<BuyFormWizardProps> = ({ currentStep, isAfterMarketTrading, onSubmitButtonClick }) => {
+const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
+  currentStep,
+  isAfterMarketTrading,
+  onSubmitButtonClick,
+}) => {
   const [formData, setFormData] = useState<BuyOrderData>({
-    type: 'market',
+    type: "market",
     qtyToken: 1,
     pricePerToken: 0,
     orderExpiration: 0,
@@ -60,7 +64,7 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({ currentStep, isAfterMarke
       case 3:
         return "Agree";
     }
-  }
+  };
 
   const handleButtonSubmitClick = () => {
     onSubmitButtonClick(formData);
@@ -79,12 +83,18 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({ currentStep, isAfterMarke
               animate="center"
               exit="exit"
               transition={{
-                x: { type: 'spring', stiffness: 300, damping: 30 },
+                x: { type: "spring", stiffness: 300, damping: 30 },
                 opacity: { duration: 0.2 },
               }}
               className="absolute w-full"
             >
-              {steps[currentStep - 1].component({ isAfterMarketTrading, formData, onDataChange: (data: BuyOrderData) => { setFormData(prev => ({ ...prev, ...data })) } })}
+              {steps[currentStep - 1].component({
+                isAfterMarketTrading,
+                formData,
+                onDataChange: (data: BuyOrderData) => {
+                  setFormData((prev) => ({ ...prev, ...data }));
+                },
+              })}
             </motion.div>
           </AnimatePresence>
         </div>
@@ -96,12 +106,19 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({ currentStep, isAfterMarke
               <div className="flex items-center bg-teal-50 rounded-lg p-4 text-teal-600 gap-3">
                 <Warning weight="fill" size={24} className="!w-12 !h-auto" />
                 <div className="w-auto">
-                  <p className="text-sm">Please read the full terms of service and certify that you agree to proceed</p>
+                  <p className="text-sm">
+                    Please read the full terms of service and certify that you
+                    agree to proceed
+                  </p>
                 </div>
               </div>
               <div>
-                <Checkbox colorScheme="teal" display='flex' gap={2}>
-                  <span className="text-sm text-zinc-700">I certify that i have read Kolektiva’s Terms of Service in full and agree that I am qualified to invest in this offering</span>
+                <Checkbox colorScheme="teal" display="flex" gap={2}>
+                  <span className="text-sm text-zinc-700">
+                    I certify that i have read Kolektiva’s Terms of Service in
+                    full and agree that I am qualified to invest in this
+                    offering
+                  </span>
                 </Checkbox>
               </div>
             </>
@@ -109,16 +126,23 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({ currentStep, isAfterMarke
             <>
               {isAfterMarketTrading && (
                 <div className="flex items-center bg-teal-50 rounded-lg p-4 text-teal-700 gap-3">
-                  <WarningCircle weight="fill" size={24} className="!w-12 !h-auto" />
+                  <WarningCircle
+                    weight="fill"
+                    size={24}
+                    className="!w-12 !h-auto"
+                  />
                   <div className="w-auto">
-                    <p className="text-sm text-wrap w-auto">The default slippage price is 0%. An order is successful if the buy/sell price is the same as the estimated price.</p>
+                    <p className="text-sm text-wrap w-auto">
+                      The default slippage price is 0%. An order is successful
+                      if the buy/sell price is the same as the estimated price.
+                    </p>
                   </div>
                 </div>
               )}
               <Divider className="border-zinc-200 !m-0" />
               <div className="flex justify-between items-center">
                 <p className="text-sm text-zinc-500">Total</p>
-                <p className="text-xl font-bold text-teal-600">5.11 LSK</p>
+                <p className="text-xl font-bold text-teal-600">5.11 USD</p>
               </div>
             </>
           )}
