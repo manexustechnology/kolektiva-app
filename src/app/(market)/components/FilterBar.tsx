@@ -61,6 +61,25 @@ const FilterBar: React.FC<FilterBarProps> = ({
     >
       <div className="flex flex-row">
         <Select
+          id="sort"
+          placeholder="Sort"
+          backgroundColor="#F4F4F5"
+          _hover={{
+            backgroundColor: "#CCFBF1",
+          }}
+          _focus={{
+            backgroundColor: "#CCFBF1",
+          }}
+          icon={<CaretDown weight="fill" />}
+          width="200px"
+          rounded={100}
+        >
+          <option value="Featured">Featured</option>
+          <option value="Newest">Newest</option>
+          <option value="Oldest">Oldest</option>
+        </Select>
+
+        <Select
           id="location"
           placeholder="Location"
           backgroundColor="#F4F4F5"
@@ -99,24 +118,6 @@ const FilterBar: React.FC<FilterBarProps> = ({
           <option value="Property Type 3">Property Type 3</option>
         </Select>
 
-        <Select
-          id="sort"
-          placeholder="Sort"
-          backgroundColor="#F4F4F5"
-          _hover={{
-            backgroundColor: "#CCFBF1",
-          }}
-          _focus={{
-            backgroundColor: "#CCFBF1",
-          }}
-          icon={<CaretDown weight="fill" />}
-          width="200px"
-          rounded={100}
-        >
-          <option value="Featured">Featured</option>
-          <option value="Newest">Newest</option>
-          <option value="Oldest">Oldest</option>
-        </Select>
         <div className="absolute right-0">
           {/*Slider Filter if needed*/}
           {/* <Menu isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
@@ -272,7 +273,8 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 }}
                 fontSize="14px"
                 fontWeight="500"
-                padding="16px"
+                paddingLeft="16px"
+                paddingRight="16px"
                 borderRadius="full"
                 transition="all 0.3s ease-in-out"
               >
@@ -292,7 +294,8 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 }}
                 fontSize="14px"
                 fontWeight="500"
-                padding="16px"
+                paddingLeft="16px"
+                paddingRight="16px"
                 borderRadius="full"
                 transition="all 0.3s ease-in-out"
               >
@@ -312,7 +315,8 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 }}
                 fontSize="14px"
                 fontWeight="500"
-                padding="16px"
+                paddingLeft="16px"
+                paddingRight="16px"
                 borderRadius="full"
                 transition="all 0.3s ease-in-out"
               >
@@ -332,7 +336,8 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 }}
                 fontSize="14px"
                 fontWeight="500"
-                padding="16px"
+                paddingLeft="16px"
+                paddingRight="16px"
                 borderRadius="full"
                 transition="all 0.3s ease-in-out"
               >
