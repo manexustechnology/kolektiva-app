@@ -71,7 +71,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           fontSize="xs"
           zIndex={10}
         >
-          Aftermarket Trading
+          Aftermarket
         </Box>
       ) : (
         <Box
@@ -101,13 +101,6 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           objectFit="cover"
           className="w-full h-full"
         />
-        {isNew && (
-          <div className="absolute bottom-0 left-0 right-0 flex justify-center items-center bg-[#0D9488] py-1">
-            <p className="font-medium text-[10px] leading-[10px] text-white">
-              New Listing
-            </p>
-          </div>
-        )}
       </div>
 
       <Box paddingTop={2} marginLeft={2} marginRight={2}>
@@ -213,7 +206,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           flex="none"
           marginTop={4}
         >
-          {/* Projected Annual Return */}
+          {/* Projected Yield */}
           <Box
             display="flex"
             flexDirection="row"
@@ -227,9 +220,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             alignSelf="stretch"
             flexGrow={0}
           >
-            {/* Projected Annual Return */}
+            {/* Projected Yield */}
             <p className="w-[327px] font-normal text-[10px] leading-[10px] text-[#71717A]">
-              Projected Annual Return
+              Projected Yield
             </p>
 
             <p className="w-[80px] font-medium text-[10px] leading-[10px] text-right text-[#042F2E]">
@@ -261,11 +254,11 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           >
             {/* Projected Rental Yield */}
             <p className="w-[327px] font-normal text-[10px] leading-[10px] text-[#71717A]">
-              Projected Rental Yield
+              Rental status
             </p>
 
             <p className="w-[80px] font-medium text-[10px] leading-[10px] text-right text-[#042F2E]">
-              18.6%
+              Active
             </p>
           </Box>
         </Box>
