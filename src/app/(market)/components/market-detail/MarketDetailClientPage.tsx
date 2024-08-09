@@ -478,7 +478,6 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
             </Tabs>
           </div>
         </div>
-<<<<<<< HEAD
         <div className="w-1/3 flex flex-col gap-6">
           <div className="flex flex-col gap-1">
             <h2 className="text-2xl font-bold">
@@ -550,7 +549,6 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
               )}
             </div>
 
-=======
         <div
           onMouseEnter={() => setIsInfoAreaHovered(true)}
           onMouseLeave={() => setIsInfoAreaHovered(false)}
@@ -560,7 +558,6 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
             "flex flex-col gap-6 sticky top-0",
             account?.address ? 'top-[92px]' : 'top-[84px]'
           )}>
->>>>>>> fe7a69a270c20b6f41d5b94275720d5c38a2c125
             <div className="flex flex-col gap-1">
               {isInfoAreaHovered && (
                 <div className="absolute flex flex-col items-start p-3 gap-1 bg-white shadow-lg rounded-lg w-[240px] h-[78px] right-[120px] top-[260px]">
