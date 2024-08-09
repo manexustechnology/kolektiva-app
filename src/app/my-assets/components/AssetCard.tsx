@@ -84,7 +84,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
               borderColor="#0D9488"
               fontSize="xs"
             >
-              Aftermarket Trading
+              Aftermarket
             </Box>
           ) : (
             <Box
@@ -162,6 +162,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
             )}
           </div>
         </div>
+        <div className="w-[1037px] h-[1px] bg-zinc-200 self-stretch"></div>
 
         <div className="flex flex-row justify-between items-center gap-4 w-[1037px] h-[40px]">
           {/* Column 1 */}
@@ -212,7 +213,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
             </p>
             <div className="flex flex-row items-center gap-1 w-[207.4px] h-[18px]">
               <p className=" h-[18px] text-sm font-bold text-[#042F2E]">
-                1200 LSK
+                1200 USD
               </p>
             </div>
           </div>
@@ -224,7 +225,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
             </p>
             <div className="flex flex-row items-center gap-1 w-[207.4px] h-[18px]">
               <p className=" h-[18px] text-sm font-bold text-[#042F2E]">
-                69.69 LSK
+                69.69 USD
               </p>
             </div>
           </div>
@@ -236,7 +237,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
             </p>
             <div className="flex flex-row items-center gap-1 w-[207.4px] h-[18px]">
               <p className=" h-[18px] text-sm font-bold text-[#042F2E]">
-                200.01 LSK
+                200.01 USD
               </p>
             </div>
           </div>

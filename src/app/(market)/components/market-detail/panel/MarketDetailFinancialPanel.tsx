@@ -107,28 +107,28 @@ const MarketDetailFinancialPanel: React.FC = () => {
               <p className="text-base font-medium text-zinc-700">
                 Total Investment Value
               </p>
-              <p className="text-xl font-bold text-teal-600">389,772,113 LSK</p>
+              <p className="text-xl font-bold text-teal-600">389,772,113 USD</p>
             </div>
             <Divider className="border-zinc-200 !m-0" />
             <div className="flex flex-col gap-4">
               <div className="flex flex-col">
                 <p className="text-sm text-zinc-500">Underlying asset price</p>
                 <p className="text-sm font-medium text-zinc-700">
-                  370,700,100 LSK
+                  370,700,100 USD
                 </p>
               </div>
               <div className="flex flex-col">
                 <p className="text-sm text-zinc-500">Closing costs</p>
-                <p className="text-sm font-medium text-zinc-700">500,000 LSK</p>
+                <p className="text-sm font-medium text-zinc-700">500,000 USD</p>
               </div>
               <div className="flex flex-col">
                 <p className="text-sm text-zinc-500">Upfront DAO LLC fees</p>
-                <p className="text-sm font-medium text-zinc-700">60,000 LSK</p>
+                <p className="text-sm font-medium text-zinc-700">60,000 USD</p>
               </div>
               <div className="flex flex-col">
                 <p className="text-sm text-zinc-500">Operating reserve (2%)</p>
                 <p className="text-sm font-medium text-zinc-700">
-                  0 LSK/ 4,000,000 LSK
+                  0 USD/ 4,000,000 USD
                 </p>
               </div>
               <div className="flex flex-col">
@@ -136,7 +136,7 @@ const MarketDetailFinancialPanel: React.FC = () => {
                   Kolektiva AI listing fee (5%)
                 </p>
                 <p className="text-sm font-medium text-zinc-700">
-                  5,000,000 LSK
+                  5,000,000 USD
                 </p>
               </div>
             </div>
@@ -170,23 +170,23 @@ const MarketDetailFinancialPanel: React.FC = () => {
             <p className="text-base font-medium text-zinc-700">
               Annual gross rents
             </p>
-            <p className="text-xl font-bold text-teal-600">32,033,896 LSK</p>
+            <p className="text-xl font-bold text-teal-600">32,033,896 USD</p>
           </div>
           <Divider className="border-zinc-200 !m-0" />
           <div className="flex gap-4">
             <div className="flex flex-col gap-4 w-full">
               <div className="flex flex-col">
                 <p className="text-sm text-zinc-500">Property taxes</p>
-                <p className="text-sm font-medium text-zinc-700">0 LSK</p>
+                <p className="text-sm font-medium text-zinc-700">0 USD</p>
               </div>
               <div className="flex flex-col">
                 <p className="text-sm text-zinc-500">Homeowners insurance</p>
-                <p className="text-sm font-medium text-zinc-700">0 LSK</p>
+                <p className="text-sm font-medium text-zinc-700">0 USD</p>
               </div>
               <div className="flex flex-col">
                 <p className="text-sm text-zinc-500">Property management</p>
                 <p className="text-sm font-medium text-zinc-700">
-                  12,000,000 LSK
+                  12,000,000 USD
                 </p>
               </div>
               <div className="flex flex-col">
@@ -194,7 +194,7 @@ const MarketDetailFinancialPanel: React.FC = () => {
                   Annual DAO LLC administration and filing fees
                 </p>
                 <p className="text-sm font-medium text-zinc-700">
-                  5,000,000 LSK
+                  5,000,000 USD
                 </p>
               </div>
             </div>
@@ -202,13 +202,13 @@ const MarketDetailFinancialPanel: React.FC = () => {
               <div className="flex flex-col">
                 <p className="text-sm text-zinc-500">Annual cash flow</p>
                 <p className="text-sm font-medium text-zinc-700">
-                  149,380,200 LSK
+                  149,380,200 USD
                 </p>
               </div>
               <div className="flex flex-col">
                 <p className="text-sm text-zinc-500">Monthly cash flow</p>
                 <p className="text-sm font-medium text-zinc-700">
-                  12,448,332 LSK
+                  12,448,332 USD
                 </p>
               </div>
               <div className="flex flex-col">
@@ -229,7 +229,7 @@ const MarketDetailFinancialPanel: React.FC = () => {
             <div className="flex gap-4">
               <p className="text-sm text-zinc-500">Tokens purchased</p>
               <p className="text-sm font-medium text-teal-600">
-                2519 / 9.200,00 LSK
+                2519 / 9.200,00 USD
               </p>
             </div>
             <div className="flex gap-3 justify-between items-center">
@@ -394,16 +394,16 @@ const MarketDetailFinancialPanel: React.FC = () => {
                         Cumulative Net Cash Flow
                       </td>
                       <td className="py-3 px-4 text-sm font-medium">
-                        9.200,00 LSK
+                        9.200,00 USD
                       </td>
                       <td className="py-3 px-4 text-sm font-medium">
-                        9.200,00 LSK
+                        9.200,00 USD
                       </td>
                       <td className="py-3 px-4 text-sm font-medium">
-                        9.200,00 LSK
+                        9.200,00 USD
                       </td>
                       <td className="py-3 px-4 text-sm font-medium">
-                        9.200,00 LSK
+                        9.200,00 USD
                       </td>
                     </tr>
                     <tr>
@@ -411,16 +411,16 @@ const MarketDetailFinancialPanel: React.FC = () => {
                         Cumulative Appreciation Gain
                       </td>
                       <td className="py-3 px-4 text-sm font-medium">
-                        9.200,00 LSK
+                        9.200,00 USD
                       </td>
                       <td className="py-3 px-4 text-sm font-medium">
-                        9.200,00 LSK
+                        9.200,00 USD
                       </td>
                       <td className="py-3 px-4 text-sm font-medium">
-                        9.200,00 LSK
+                        9.200,00 USD
                       </td>
                       <td className="py-3 px-4 text-sm font-medium">
-                        9.200,00 LSK
+                        9.200,00 USD
                       </td>
                     </tr>
                     <tr>
@@ -428,16 +428,16 @@ const MarketDetailFinancialPanel: React.FC = () => {
                         Shining Star
                       </td>
                       <td className="py-3 px-4 text-sm font-medium">
-                        9.200,00 LSK
+                        9.200,00 USD
                       </td>
                       <td className="py-3 px-4 text-sm font-medium">
-                        9.200,00 LSK
+                        9.200,00 USD
                       </td>
                       <td className="py-3 px-4 text-sm font-medium">
-                        9.200,00 LSK
+                        9.200,00 USD
                       </td>
                       <td className="py-3 px-4 text-sm font-medium">
-                        9.200,00 LSK
+                        9.200,00 USD
                       </td>
                     </tr>
                   </tbody>
@@ -447,16 +447,16 @@ const MarketDetailFinancialPanel: React.FC = () => {
                         Shining Star
                       </td>
                       <td className="py-3 px-4 text-sm font-medium">
-                        9.200,00 LSK
+                        9.200,00 USD
                       </td>
                       <td className="py-3 px-4 text-sm font-medium">
-                        9.200,00 LSK
+                        9.200,00 USD
                       </td>
                       <td className="py-3 px-4 text-sm font-medium">
-                        9.200,00 LSK
+                        9.200,00 USD
                       </td>
                       <td className="py-3 px-4 text-sm font-medium">
-                        9.200,00 LSK
+                        9.200,00 USD
                       </td>
                     </tr>
                   </tfoot>

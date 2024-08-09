@@ -1,5 +1,5 @@
-import { Box, Image } from "@chakra-ui/react";
-import { CaretUp } from "@phosphor-icons/react/dist/ssr";
+import { Box, Button, Image } from "@chakra-ui/react";
+import { ArrowUpRight, CaretUp } from "@phosphor-icons/react/dist/ssr";
 import React from "react";
 import MyAssetListing from "./components/MyAssetListing";
 
@@ -15,9 +15,9 @@ const MyAssets: React.FC = () => {
             {/* Background Ellipse */}
             <Box
               position="absolute"
-              width="300px" // Adjust the width to fit half of the card
+              width="300px"
               height="485px"
-              right="-100px" // Adjust this to position it correctly
+              right="-100px"
               top="-240px"
               bg="#5EEAD4"
               filter="blur(50px)"
@@ -39,8 +39,28 @@ const MyAssets: React.FC = () => {
                 Current rent balance
               </p>
               <p className="w-full h-6 text-lg font-bold text-[#042F2E] leading-[24px]">
-                1,233.92 LSK
+                1,233.92 USD
               </p>
+            </div>
+            <div className="mt-auto w-full flex justify-start">
+              <Button
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                padding="12px 16px"
+                width="119px"
+                height="40px"
+                backgroundColor="#0D9488"
+                borderRadius="full"
+                color="white"
+                fontSize="14px"
+                fontWeight="500"
+                lineHeight="18px"
+                _hover={{ bg: "#0A7A6A" }}
+                leftIcon={<ArrowUpRight weight="fill" size={16} />}
+              >
+                Withdraw
+              </Button>
             </div>
           </div>
 
@@ -50,7 +70,7 @@ const MyAssets: React.FC = () => {
                 Current account value
               </p>
               <p className="w-[362px] h-[24px] text-lg font-bold text-[#042F2E] leading-[24px]">
-                19,472.09 LSK
+                19,472.09 USD
               </p>
             </div>
 
@@ -59,7 +79,7 @@ const MyAssets: React.FC = () => {
                 Total property value
               </p>
               <p className="w-[362px] h-[24px] text-lg font-bold text-[#042F2E] leading-[24px] flex items-center">
-                <span>19,472.09 LSK</span>
+                <span>19,472.09 USD</span>
                 <span className="flex items-center ml-2">
                   <CaretUp size={16} color="#65A30D" weight="fill" />
                   <span className="text-sm font-medium text-[#65A30D] leading-[18px] ml-1">
@@ -75,7 +95,7 @@ const MyAssets: React.FC = () => {
                 Total Rent Earned
               </p>
               <p className="w-[362px] h-[24px] text-lg font-bold text-[#042F2E] leading-[24px]">
-                19,472.09 LSK
+                19,472.09 USD
               </p>
             </div>
 

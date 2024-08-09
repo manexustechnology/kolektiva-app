@@ -164,7 +164,7 @@ const MarketDetailDescriptionPanel: React.FC = () => {
               2026
             </li>
             <li>
-              Dominos recently moved in and invested 250K LSK in renovations.
+              Dominos recently moved in and invested 250K USD in renovations.
               Their 10-yr lease expires in 2031
             </li>
             <li>
@@ -183,7 +183,7 @@ const MarketDetailDescriptionPanel: React.FC = () => {
             Amazon is building a 2.9M square foot robotics fulfillment center
             just a 12 minute drive from this strip mall. The warehouse is
             expected to open summer of 2024 and create a minimum annual economic
-            impact of 148M LSK to the region.
+            impact of 148M USD to the region.
           </p>
           <br />
           <br />

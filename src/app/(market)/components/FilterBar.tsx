@@ -18,6 +18,11 @@ import {
   SliderMark,
   SliderThumb,
   SliderTrack,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
   Tooltip,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -55,6 +60,25 @@ const FilterBar: React.FC<FilterBarProps> = ({
       borderRadius="md"
     >
       <div className="flex flex-row">
+        <Select
+          id="sort"
+          placeholder="Sort"
+          backgroundColor="#F4F4F5"
+          _hover={{
+            backgroundColor: "#CCFBF1",
+          }}
+          _focus={{
+            backgroundColor: "#CCFBF1",
+          }}
+          icon={<CaretDown weight="fill" />}
+          width="200px"
+          rounded={100}
+        >
+          <option value="Featured">Featured</option>
+          <option value="Newest">Newest</option>
+          <option value="Oldest">Oldest</option>
+        </Select>
+
         <Select
           id="location"
           placeholder="Location"
@@ -94,26 +118,9 @@ const FilterBar: React.FC<FilterBarProps> = ({
           <option value="Property Type 3">Property Type 3</option>
         </Select>
 
-        <Select
-          id="sort"
-          placeholder="Sort"
-          backgroundColor="#F4F4F5"
-          _hover={{
-            backgroundColor: "#CCFBF1",
-          }}
-          _focus={{
-            backgroundColor: "#CCFBF1",
-          }}
-          icon={<CaretDown weight="fill" />}
-          width="200px"
-          rounded={100}
-        >
-          <option value="Featured">Featured</option>
-          <option value="Newest">Newest</option>
-          <option value="Oldest">Oldest</option>
-        </Select>
         <div className="absolute right-0">
-          <Menu isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
+          {/*Slider Filter if needed*/}
+          {/* <Menu isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
             <MenuButton
               as={Button}
               rounded={100}
@@ -132,7 +139,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
               Filter
             </MenuButton>
             <MenuList zIndex={1000} width={400} p={4}>
-              {/*Sliders*/}
+        
               <Box p={1} gap={4}>
                 <Box mt={2} marginBottom={10}>
                   Projected Rental Yield
@@ -169,7 +176,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                   <p className="text-xs text-zinc-500 w-full max-w-10">100%</p>
                 </div>
 
-                {/* Dividing Line */}
+           
                 <Box
                   width="362px"
                   height="1px"
@@ -217,7 +224,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 </div>
               </Box>
 
-              {/*Buttons*/}
+           
               <Box mt={4} gap={4} display="flex" justifyContent="space-between">
                 <Button
                   width="full"
@@ -239,7 +246,105 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 </Button>
               </Box>
             </MenuList>
-          </Menu>
+          </Menu> */}
+
+          {/*Tabs*/}
+          <Tabs variant="soft-rounded" colorScheme="teal">
+            <TabList
+              display="flex"
+              flexDirection="row"
+              alignItems="center"
+              justifyContent="center"
+              backgroundColor="#F4F4F5"
+              borderRadius="full"
+              padding="4px 6px"
+            >
+              <Tab
+                _selected={{
+                  bg: "white",
+                  color: "#0D9488",
+                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                  transform: "scale(1.05)",
+                  transition: "all 0.3s ease-in-out",
+                }}
+                _hover={{
+                  transform: "scale(1.02)",
+                  transition: "transform 0.2s ease-in-out",
+                }}
+                fontSize="14px"
+                fontWeight="500"
+                paddingLeft="16px"
+                paddingRight="16px"
+                borderRadius="full"
+                transition="all 0.3s ease-in-out"
+              >
+                All
+              </Tab>
+              <Tab
+                _selected={{
+                  bg: "white",
+                  color: "#0D9488",
+                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                  transform: "scale(1.05)",
+                  transition: "all 0.3s ease-in-out",
+                }}
+                _hover={{
+                  transform: "scale(1.02)",
+                  transition: "transform 0.2s ease-in-out",
+                }}
+                fontSize="14px"
+                fontWeight="500"
+                paddingLeft="16px"
+                paddingRight="16px"
+                borderRadius="full"
+                transition="all 0.3s ease-in-out"
+              >
+                Upcoming
+              </Tab>
+              <Tab
+                _selected={{
+                  bg: "white",
+                  color: "#0D9488",
+                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                  transform: "scale(1.05)",
+                  transition: "all 0.3s ease-in-out",
+                }}
+                _hover={{
+                  transform: "scale(1.02)",
+                  transition: "transform 0.2s ease-in-out",
+                }}
+                fontSize="14px"
+                fontWeight="500"
+                paddingLeft="16px"
+                paddingRight="16px"
+                borderRadius="full"
+                transition="all 0.3s ease-in-out"
+              >
+                Initial Offering
+              </Tab>
+              <Tab
+                _selected={{
+                  bg: "white",
+                  color: "#0D9488",
+                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
+                  transform: "scale(1.05)",
+                  transition: "all 0.3s ease-in-out",
+                }}
+                _hover={{
+                  transform: "scale(1.02)",
+                  transition: "transform 0.2s ease-in-out",
+                }}
+                fontSize="14px"
+                fontWeight="500"
+                paddingLeft="16px"
+                paddingRight="16px"
+                borderRadius="full"
+                transition="all 0.3s ease-in-out"
+              >
+                Aftermarket Trading
+              </Tab>
+            </TabList>
+          </Tabs>
         </div>
       </div>
 

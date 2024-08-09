@@ -17,7 +17,8 @@ export default function Home() {
               Get property ownership starting from $50!
             </p>
             <p className="  text-base font-normal text-[#14B8A6] leading-[18px]">
-              Property investment made easy and affordable, start having your passive income & appraisal value on property asset now!
+              Property investment made easy and affordable, start having your
+              passive income & appraisal value on property asset now!
             </p>
           </div>
           <div className="ml-auto">
