@@ -237,6 +237,11 @@ contract KolektivaMarketTest is Test {
         usdtToken.mint(buyer, buyCost + buyFee);
         usdtToken.mint(seller, sellFee);
         kolektivaToken.transfer(seller, sellAmount);
+        // Emptied the handler balance just like initialOffering ended
+        kolektivaToken.transfer(
+            propertyOwner,
+            kolektivaToken.balanceOf(handler)
+        );
         vm.stopPrank();
 
         vm.startPrank(seller);
@@ -312,6 +317,11 @@ contract KolektivaMarketTest is Test {
         vm.startPrank(handler);
         usdtToken.mint(seller, fee);
         kolektivaToken.transfer(seller, amount);
+        // Emptied the handler balance just like initialOffering ended
+        kolektivaToken.transfer(
+            propertyOwner,
+            kolektivaToken.balanceOf(handler)
+        );
         vm.stopPrank();
 
         vm.startPrank(seller);
