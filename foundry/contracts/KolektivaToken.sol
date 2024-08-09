@@ -10,6 +10,7 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
  */
 contract KolektivaToken is ERC20, Ownable {
     error KolektivaToken__ExceedMaxSupply();
+    error KolektivaToken__CannotBeTransferredYet();
 
     uint256 public availableForSale;
     uint256 public propertyValue;
@@ -95,6 +96,9 @@ contract KolektivaToken is ERC20, Ownable {
         address to,
         uint256 amount
     ) public override returns (bool) {
+        if (msg.sender != tokenHandler && this.balanceOf(tokenHandler) != 0) {
+            revert KolektivaToken__CannotBeTransferredYet();
+        }
         return super.transfer(to, amount);
     }
 

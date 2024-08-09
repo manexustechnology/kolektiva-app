@@ -44,6 +44,19 @@ contract KolektivaTokenTest is Test {
         assertEq(kolektivaToken.balanceOf(owner), totalSupply - 500);
     }
 
+    function testTransferFailCannotBeTransferredYet() public {
+        vm.startPrank(owner);
+        kolektivaToken.transfer(user, 500);
+        vm.stopPrank();
+
+        vm.startPrank(user);
+        vm.expectRevert(
+            KolektivaToken.KolektivaToken__CannotBeTransferredYet.selector
+        );
+        kolektivaToken.transfer(owner, 500);
+        vm.stopPrank();
+    }
+
     function testApproveAndTransferFrom() public {
         uint256 transferAmount = 300;
 
