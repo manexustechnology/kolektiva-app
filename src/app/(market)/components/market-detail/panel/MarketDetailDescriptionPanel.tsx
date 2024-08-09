@@ -24,6 +24,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 import { Divider } from "antd";
 import Link from "next/link";
+import MapEmbed from "../../MapEmbed";
 
 const MarketDetailDescriptionPanel: React.FC = () => {
   return (
@@ -124,6 +125,8 @@ const MarketDetailDescriptionPanel: React.FC = () => {
             </AccordionItem>
           </Accordion>
         </div>
+        <Divider className="border-zinc-200 !m-0" />
+        <MapEmbed latitude={40.7295} longitude={-73.8553} width="100%" height="350px" className="rounded-2xl" />
         <Divider className="border-zinc-200 !m-0" />
         <div className="flex flex-col gap-3">
           <h2 className="text-black text-base font-medium">
