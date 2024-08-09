@@ -1,0 +1,36 @@
+{
+  "name": "@se-2/foundry",
+  "version": "0.0.1",
+  "scripts": {
+    "account": "node script/ListAccount.js",
+    "chain": "anvil --config-out localhost.json",
+    "compile": "forge compile",
+    "build": "make build",
+    "deploy": "make deploy",
+    "deploy:verify": "make deploy-verify",
+    "deploy:usdt": "make deploy-liskSepolia-usdt",
+    "deploy:oracle": "make deploy-liskSepolia-oracle",
+    "deploy:handler": "make deploy-liskSepolia-handler",
+    "flatten": "forge flatten",
+    "fork": "make fork",
+    "format": "forge fmt && prettier --write ./script/**/*.js",
+    "generate:account": "node script/generateAccount.js",
+    "generate:abi": "make generate-abi",
+    "lint": "forge fmt --check && prettier --check ./script/**/*.js",
+    "test": "forge test",
+    "verify": "make verify"
+  },
+  "dependencies": {
+    "dotenv": "~16.3.1",
+    "envfile": "~6.18.0",
+    "ethers": "~5.7.1",
+    "prettier": "~2.8.8",
+    "qrcode": "~1.5.3",
+    "solhint": "^5.0.3",
+    "toml": "~3.0.0"
+  },
+  "devDependencies": {
+    "@types/prettier": "2",
+    "@types/qrcode": "1"
+  }
+}
