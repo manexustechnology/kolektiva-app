@@ -550,7 +550,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                     className="rotate-180 text-zinc-400"
                   />
                 </div>
-                <p className="text-lg font-bold text-teal-600">600,000 LSK</p>
+                <p className="text-lg font-bold text-teal-600">50 USD</p>
                 {isInfoAreaHovered && (
                   <div className="absolute flex flex-col items-start p-3 gap-1 bg-white shadow-lg rounded-lg w-[240px] h-[78px] left-[140px] z-50">
                     <p className="w-[216px] h-[54px] font-normal text-sm leading-5 text-zinc-500">
