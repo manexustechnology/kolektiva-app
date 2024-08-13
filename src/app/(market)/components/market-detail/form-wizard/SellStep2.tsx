@@ -29,7 +29,7 @@ const SellStep2: React.FC<SellStep2Props> = ({ formData }) => {
     contractName: "MockUSDT",
     functionName: "approve",
     // args: ["_spender market address", formData.totalCost],
-    args: [marketContractAddress, , formData.fee],
+    args: [marketContractAddress, formData.fee],
   });
 
   const { data: allowanceTokenData, isLoading: isLoadingAllowanceToken } =
@@ -46,7 +46,7 @@ const SellStep2: React.FC<SellStep2Props> = ({ formData }) => {
     functionName: "approve",
     contractAddress: tokenContractAddress,
     // args: ["_spender market address", formData.totalCost],
-    args: [marketContractAddress, , formData.qtyToken],
+    args: [marketContractAddress, formData.qtyToken],
   });
 
   const allowanceUsdt = useMemo(
