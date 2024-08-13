@@ -403,7 +403,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
     useReadContractHook({
       contractName: "KolektivaMarket",
       functionName: "initialOfferingActive",
-      contractAddress: "0xb57e0dbc847bdd098838bf67646c381d5500d8cf", // market contract address
+      contractAddress: process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS, // market contract address
       args: [],
     });
 

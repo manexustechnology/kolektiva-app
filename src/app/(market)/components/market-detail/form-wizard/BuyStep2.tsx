@@ -17,20 +17,22 @@ const BuyStep2: React.FC<BuyStep2Props> = ({
 }) => {
   const activeAccount = useActiveAccount();
   const address = activeAccount?.address;
+  const marketContractAddress =
+    process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS!;
 
   const { data: allowanceData, isLoading: isLoadingAllowance } =
     useReadContractHook({
       contractName: "MockUSDT",
       functionName: "allowance",
       // args: [address, "_spender market address"],
-      args: [address, "0xb57e0dbc847bdd098838bf67646c381d5500d8cf"],
+      args: [address, marketContractAddress],
     });
 
   const { writeAsync: approveUsdt } = useWriteContractHook({
     contractName: "MockUSDT",
     functionName: "approve",
     // args: ["_spender market address", formData.totalCost],
-    args: ["0xb57e0dbc847bdd098838bf67646c381d5500d8cf", formData.totalCost],
+    args: [marketContractAddress, formData.totalCost],
   });
 
   const allowance = useMemo(

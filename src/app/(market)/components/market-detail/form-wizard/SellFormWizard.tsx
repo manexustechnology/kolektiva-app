@@ -48,18 +48,20 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
   });
   const prevStep = useRef(currentStep);
   const direction = currentStep > prevStep.current ? 1 : -1;
+  const marketContractAddress =
+    process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS!;
 
   const { writeAsync: marketSell } = useWriteContractHook({
     contractName: "KolektivaMarket",
     functionName: "instantSell",
-    contractAddress: "0xb57e0dbc847bdd098838bf67646c381d5500d8cf",
+    contractAddress: marketContractAddress,
     args: [formData.qtyToken],
   });
 
   const { writeAsync: limitSell } = useWriteContractHook({
     contractName: "KolektivaMarket",
     functionName: "placeSellOrder",
-    contractAddress: "0xb57e0dbc847bdd098838bf67646c381d5500d8cf",
+    contractAddress: marketContractAddress,
     args: [formData.qtyToken, formData.pricePerToken],
   });
 

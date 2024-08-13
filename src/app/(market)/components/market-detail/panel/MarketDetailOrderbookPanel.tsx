@@ -23,7 +23,8 @@ interface Order {
 const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
   allowTrade = false,
 }) => {
-  const marketContractAddress = "0xb57e0dbc847bdd098838bf67646c381d5500d8cf";
+  const marketContractAddress = process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS;
+
   const [buyOrders, setBuyOrders] = useState<Order[]>([]);
   const [loadingBuy, setLoadingBuy] = useState<boolean>(true);
   const [buyOrdersCount, setBuyOrdersCount] = useState<number | null>(null);

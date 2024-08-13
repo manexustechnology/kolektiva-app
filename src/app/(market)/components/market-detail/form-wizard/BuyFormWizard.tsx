@@ -53,25 +53,27 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
   });
   const prevStep = useRef(currentStep);
   const direction = currentStep > prevStep.current ? 1 : -1;
+  const marketContractAddress =
+    process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS!;
 
   const { writeAsync: initialOfferingBuy } = useWriteContractHook({
     contractName: "KolektivaMarket",
     functionName: "initialOfferingBuy",
-    contractAddress: "0xb57e0dbc847bdd098838bf67646c381d5500d8cf",
+    contractAddress: marketContractAddress,
     args: [formData.qtyToken],
   });
 
   const { writeAsync: marketBuy } = useWriteContractHook({
     contractName: "KolektivaMarket",
     functionName: "instantBuy",
-    contractAddress: "0xb57e0dbc847bdd098838bf67646c381d5500d8cf",
+    contractAddress: marketContractAddress,
     args: [formData.qtyToken],
   });
 
   const { writeAsync: limitBuy } = useWriteContractHook({
     contractName: "KolektivaMarket",
     functionName: "placeBuyOrder",
-    contractAddress: "0xb57e0dbc847bdd098838bf67646c381d5500d8cf",
+    contractAddress: marketContractAddress,
     args: [formData.qtyToken, formData.pricePerToken],
   });
 

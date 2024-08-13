@@ -13,37 +13,40 @@ interface SellStep2Props {
 const SellStep2: React.FC<SellStep2Props> = ({ formData }) => {
   const activeAccount = useActiveAccount();
   const address = activeAccount?.address;
+  const marketContractAddress =
+    process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS!;
+  const tokenContractAddress = process.env.NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS!;
 
   const { data: allowanceUsdtData, isLoading: isLoadingAllowanceUsdt } =
     useReadContractHook({
       contractName: "MockUSDT",
       functionName: "allowance",
       // args: [address, "_spender market address"],
-      args: [address, "0xb57e0dbc847bdd098838bf67646c381d5500d8cf"],
+      args: [address, marketContractAddress],
     });
 
   const { writeAsync: approveUsdt } = useWriteContractHook({
     contractName: "MockUSDT",
     functionName: "approve",
     // args: ["_spender market address", formData.totalCost],
-    args: ["0xb57e0dbc847bdd098838bf67646c381d5500d8cf", formData.fee],
+    args: [marketContractAddress, , formData.fee],
   });
 
   const { data: allowanceTokenData, isLoading: isLoadingAllowanceToken } =
     useReadContractHook({
       contractName: "KolektivaToken",
       functionName: "allowance",
-      contractAddress: "0xe3bbbbe47d0e19a0676e28093913c0ab62269f87",
+      contractAddress: tokenContractAddress,
       // args: [address, "_spender market address"],
-      args: [address, "0xb57e0dbc847bdd098838bf67646c381d5500d8cf"],
+      args: [address, marketContractAddress],
     });
 
   const { writeAsync: approveToken } = useWriteContractHook({
     contractName: "KolektivaToken",
     functionName: "approve",
-    contractAddress: "0xe3bbbbe47d0e19a0676e28093913c0ab62269f87",
+    contractAddress: tokenContractAddress,
     // args: ["_spender market address", formData.totalCost],
-    args: ["0xb57e0dbc847bdd098838bf67646c381d5500d8cf", formData.qtyToken],
+    args: [marketContractAddress, , formData.qtyToken],
   });
 
   const allowanceUsdt = useMemo(

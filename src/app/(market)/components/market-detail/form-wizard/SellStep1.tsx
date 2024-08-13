@@ -33,12 +33,15 @@ const SellStep1: React.FC<SellStep1Props> = ({ formData, onDataChange }) => {
   const [calculateSellProceeds, setCalculateSellProceeds] = useState<
     [number, number] | null
   >(null);
+  const marketContractAddress =
+    process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS!;
+  const tokenContractAddress = process.env.NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS!;
 
   const { data: salePriceData } = useReadContractHook({
     contractName: "KolektivaMarket",
     functionName: "salePrice",
     // contractAddress: "", // market contract address
-    contractAddress: "0xb57e0dbc847bdd098838bf67646c381d5500d8cf",
+    contractAddress: marketContractAddress,
 
     args: [],
   });
@@ -47,7 +50,7 @@ const SellStep1: React.FC<SellStep1Props> = ({ formData, onDataChange }) => {
     contractName: "KolektivaMarket",
     functionName: "feePercentage",
     // contractAddress: "", // market contract address
-    contractAddress: "0xb57e0dbc847bdd098838bf67646c381d5500d8cf",
+    contractAddress: marketContractAddress,
 
     args: [],
   });
@@ -56,7 +59,7 @@ const SellStep1: React.FC<SellStep1Props> = ({ formData, onDataChange }) => {
     contractName: "KolektivaMarket",
     functionName: "FEE_PRECISION",
     // contractAddress: "", // market contract address
-    contractAddress: "0xb57e0dbc847bdd098838bf67646c381d5500d8cf",
+    contractAddress: marketContractAddress,
 
     args: [],
   });
@@ -64,7 +67,7 @@ const SellStep1: React.FC<SellStep1Props> = ({ formData, onDataChange }) => {
   const { data: balanceTokenData } = useReadContractHook({
     contractName: "KolektivaToken",
     functionName: "balanceOf",
-    contractAddress: "0xe3bbbbe47d0e19a0676e28093913c0ab62269f87",
+    contractAddress: tokenContractAddress,
     // args: [address, "_spender market address"],
     args: [address],
   });
@@ -74,7 +77,7 @@ const SellStep1: React.FC<SellStep1Props> = ({ formData, onDataChange }) => {
       const data = await readContractFetch({
         contractName: "KolektivaMarket",
         functionName: "calculateSellProceeds",
-        contractAddress: "0xb57e0dbc847bdd098838bf67646c381d5500d8cf",
+        contractAddress: marketContractAddress,
         args: [formData.qtyToken],
       });
 

@@ -37,12 +37,14 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
   const [calculateBuyCost, setCalculateBuyCost] = useState<
     [number, number] | null
   >(null);
+  const marketContractAddress =
+    process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS!;
 
   const { data: salePriceData } = useReadContractHook({
     contractName: "KolektivaMarket",
     functionName: "salePrice",
     // contractAddress: "", // market contract address
-    contractAddress: "0xb57e0dbc847bdd098838bf67646c381d5500d8cf",
+    contractAddress: marketContractAddress,
 
     args: [],
   });
@@ -51,7 +53,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
     contractName: "KolektivaMarket",
     functionName: "feePercentage",
     // contractAddress: "", // market contract address
-    contractAddress: "0xb57e0dbc847bdd098838bf67646c381d5500d8cf",
+    contractAddress: marketContractAddress,
 
     args: [],
   });
@@ -60,7 +62,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
     contractName: "KolektivaMarket",
     functionName: "FEE_PRECISION",
     // contractAddress: "", // market contract address
-    contractAddress: "0xb57e0dbc847bdd098838bf67646c381d5500d8cf",
+    contractAddress: marketContractAddress,
 
     args: [],
   });
@@ -69,7 +71,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
     contractName: "KolektivaMarket",
     functionName: "initialOfferingSupply",
     // contractAddress: "", // market contract address
-    contractAddress: "0xb57e0dbc847bdd098838bf67646c381d5500d8cf",
+    contractAddress: marketContractAddress,
 
     args: [],
   });
@@ -79,7 +81,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
       const data = await readContractFetch({
         contractName: "KolektivaMarket",
         functionName: "calculateBuyCost",
-        contractAddress: "0xb57e0dbc847bdd098838bf67646c381d5500d8cf",
+        contractAddress: marketContractAddress,
         args: [formData.qtyToken],
       });
 
