@@ -123,6 +123,19 @@ contract KolektivaToken is ERC20, Ownable {
     }
 
     /**
+     * @dev Returns the number of decimals used to get its user representation.
+     * @return The number of decimals.
+     *
+     * Example:
+     * ```
+     * uint8 decimals = token.decimals();
+     * ```
+     */
+    function decimals() public view virtual override returns (uint8) {
+        return 0;
+    }
+
+    /**
      * @dev Retrieves the property information.
      * @return A tuple containing the property type, province, city, and location.
      *

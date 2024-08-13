@@ -34,16 +34,22 @@ import MarketBuySuccessModal from "./modals/MarketBuySuccessModal";
 import MarketSellSuccessModal from "./modals/MarketSellSuccessModal";
 import { useActiveAccount } from "thirdweb/react";
 import { cn } from "@/utils/cn";
+import {
+  useReadContractHook,
+  useWriteContractHook,
+  useContractEventHook,
+} from "@/utils/hooks";
 
 interface MarketDetailClientPageProps {
-  allowTrade: boolean;
+  // allowTrade: boolean;
 }
 
-const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
-  allowTrade,
-}) => {
+const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
+  {
+    // allowTrade,
+  }
+) => {
   const account = useActiveAccount();
-
   // https://blog.nirdeshpokhrel.com.np/nextjs-window-is-not-defined-react-apexcharts
   const [ReactApexChart, setReactApexChart] = useState<any>();
   useEffect(() => {
@@ -391,6 +397,22 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
   const [isMarketSellSuccessModalOpen, setIsMarketSellSuccessModalOpen] =
     useState<boolean>(false);
 
+  const [allowTrade, setAllowTrade] = useState<boolean>(false);
+
+  const { data: initialOfferingActive, isLoading: isLoadingInitialOffering } =
+    useReadContractHook({
+      contractName: "KolektivaMarket",
+      functionName: "initialOfferingActive",
+      contractAddress: "0xb57e0dbc847bdd098838bf67646c381d5500d8cf", // market contract address
+      args: [],
+    });
+
+  useEffect(() => {
+    if (!isLoadingInitialOffering) {
+      setAllowTrade(!initialOfferingActive);
+    }
+  }, [isLoadingInitialOffering]);
+
   const handleBuyButtonClick = () => {
     setIsBuyOrderModalOpen(true);
   };
@@ -622,9 +644,9 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                   color="teal.700"
                   _disabled={{ bgColor: "teal.50", color: "teal.600" }}
                   _hover={{
-                    bgColor: allowTrade ? "teal.200" : "teal.50",
-                    color: allowTrade ? "teal.900" : "teal.600",
-                    cursor: allowTrade ? "pointer" : "no-drop",
+                    bgColor: !allowTrade ? "teal.200" : "teal.50",
+                    color: !allowTrade ? "teal.900" : "teal.600",
+                    cursor: !allowTrade ? "pointer" : "no-drop",
                   }}
                   onClick={handleSellButtonClick}
                 >
@@ -662,7 +684,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
       <PlaceBuyOrderModal
         isOpen={isBuyOrderModalOpen}
         onClose={() => setIsBuyOrderModalOpen(false)}
-        isAfterMarketTrading={allowTrade}
+        isAfterMarketTrading={allowTrade} // change !isInitialOffering after implemented
         onSuccess={handleBuySuccess}
       />
       <PlaceSellOrderModal

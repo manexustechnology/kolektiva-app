@@ -7,6 +7,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Button, Checkbox, ModalBody, ModalFooter } from "@chakra-ui/react";
 import { Divider } from "antd";
 import { SellOrderData } from "@/types/order";
+import { useWriteContractHook } from "@/utils/hooks";
 
 interface SellFormWizardProps {
   currentStep: number;
@@ -42,9 +43,25 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
     qtyToken: 1,
     pricePerToken: 0,
     orderExpiration: 0,
+    totalProceeds: 0,
+    fee: 0,
   });
   const prevStep = useRef(currentStep);
   const direction = currentStep > prevStep.current ? 1 : -1;
+
+  const { writeAsync: marketSell } = useWriteContractHook({
+    contractName: "KolektivaMarket",
+    functionName: "instantSell",
+    contractAddress: "0xb57e0dbc847bdd098838bf67646c381d5500d8cf",
+    args: [formData.qtyToken],
+  });
+
+  const { writeAsync: limitSell } = useWriteContractHook({
+    contractName: "KolektivaMarket",
+    functionName: "placeSellOrder",
+    contractAddress: "0xb57e0dbc847bdd098838bf67646c381d5500d8cf",
+    args: [formData.qtyToken, formData.pricePerToken],
+  });
 
   useEffect(() => {
     prevStep.current = currentStep;
@@ -59,8 +76,34 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
     }
   };
 
-  const handleButtonSubmitClick = () => {
-    onSubmitButtonClick(formData);
+  const handleButtonSubmitClick = async () => {
+    console.log("formData", formData);
+
+    try {
+      switch (currentStep) {
+        case 1:
+          // Handle preview logic if necessary
+          break;
+        case 2:
+          // Handle submit order logic
+          let formDataType = (formData as SellOrderData).type;
+          if (formDataType === "market") {
+            const tx = await marketSell();
+            console.log("tx", tx);
+          } else {
+            // if (formDataType === "limit") {
+            const tx = await limitSell();
+            console.log("tx", tx);
+          }
+          break;
+        default:
+          console.warn("Unknown step");
+      }
+      // Call the submit button click handler if needed
+      onSubmitButtonClick(formData);
+    } catch (error) {
+      console.error("Transaction failed", error);
+    }
   };
 
   return (
