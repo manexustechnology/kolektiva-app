@@ -1,5 +1,9 @@
 export interface InitialOfferingBuyOrderData {
   qtyToken: number;
+  pricePerToken: number;
+  orderExpiration: number;
+  fee: number;
+  totalCost: number;
 }
 
 export interface AfterMarketBuyOrderData {
@@ -7,6 +11,8 @@ export interface AfterMarketBuyOrderData {
   qtyToken: number;
   pricePerToken: number;
   orderExpiration: number;
+  fee: number;
+  totalCost: number;
 }
 
 export type BuyOrderData =
@@ -18,4 +24,6 @@ export type SellOrderData = {
   qtyToken: number;
   pricePerToken: number;
   orderExpiration: number;
+  fee: number;
+  totalProceeds: number;
 };

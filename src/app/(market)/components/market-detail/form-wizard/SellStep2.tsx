@@ -1,13 +1,100 @@
 "use client";
 
 import { SellOrderData } from "@/types/order";
+import { useReadContractHook, useWriteContractHook } from "@/utils/hooks";
 import { Divider } from "antd";
+import { useMemo } from "react";
+import { useActiveAccount } from "thirdweb/react";
 
 interface SellStep2Props {
   formData: SellOrderData;
 }
 
 const SellStep2: React.FC<SellStep2Props> = ({ formData }) => {
+  const activeAccount = useActiveAccount();
+  const address = activeAccount?.address;
+  const marketContractAddress =
+    process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS!;
+  const tokenContractAddress = process.env.NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS!;
+
+  const { data: allowanceUsdtData, isLoading: isLoadingAllowanceUsdt } =
+    useReadContractHook({
+      contractName: "MockUSDT",
+      functionName: "allowance",
+      // args: [address, "_spender market address"],
+      args: [address, marketContractAddress],
+    });
+
+  const { writeAsync: approveUsdt } = useWriteContractHook({
+    contractName: "MockUSDT",
+    functionName: "approve",
+    // args: ["_spender market address", formData.totalCost],
+    args: [marketContractAddress, , formData.fee],
+  });
+
+  const { data: allowanceTokenData, isLoading: isLoadingAllowanceToken } =
+    useReadContractHook({
+      contractName: "KolektivaToken",
+      functionName: "allowance",
+      contractAddress: tokenContractAddress,
+      // args: [address, "_spender market address"],
+      args: [address, marketContractAddress],
+    });
+
+  const { writeAsync: approveToken } = useWriteContractHook({
+    contractName: "KolektivaToken",
+    functionName: "approve",
+    contractAddress: tokenContractAddress,
+    // args: ["_spender market address", formData.totalCost],
+    args: [marketContractAddress, , formData.qtyToken],
+  });
+
+  const allowanceUsdt = useMemo(
+    () => (allowanceUsdtData ? Number(allowanceUsdtData) : 0),
+    [allowanceUsdtData]
+  );
+
+  const allowanceToken = useMemo(
+    () => (allowanceTokenData ? Number(allowanceTokenData) : 0),
+    [allowanceTokenData]
+  );
+
+  const buttonText = useMemo(() => {
+    if (isLoadingAllowanceUsdt && isLoadingAllowanceToken) return "Loading...";
+    if (allowanceUsdt >= formData.fee && allowanceToken >= formData.qtyToken)
+      return "Submit Order";
+    if (allowanceToken < formData.qtyToken)
+      return `Approve ${formData.qtyToken} Token`;
+    return `Approve ${formData.fee} USDT`;
+  }, [
+    isLoadingAllowanceUsdt,
+    isLoadingAllowanceToken,
+    allowanceUsdt,
+    allowanceToken,
+    formData.fee,
+    formData.qtyToken,
+  ]);
+
+  const handleButtonClick = async () => {
+    try {
+      if (allowanceToken < formData.qtyToken) {
+        // If KolektivaToken allowance is insufficient, approve it first
+        await approveToken();
+        console.log("Approve KolektivaToken");
+      } else if (allowanceUsdt < formData.fee) {
+        // If USDT allowance is insufficient, approve it next
+        await approveUsdt();
+        console.log("Approve USDT");
+      } else {
+        // Both allowances are sufficient, proceed with order submission
+        console.log("Submit Order");
+        // Add your order submission logic here
+      }
+    } catch (error) {
+      console.error("Action failed", error);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-4">
@@ -64,6 +151,11 @@ const SellStep2: React.FC<SellStep2Props> = ({ formData }) => {
           <p className="text-base font-bold text-teal-950">0,11 USD</p>
         </div>
       </div>
+      {/* mark test */}
+      <div>
+        <button onClick={handleButtonClick}>{buttonText}</button>
+      </div>
+      {/* mark test */}
     </div>
   );
 };

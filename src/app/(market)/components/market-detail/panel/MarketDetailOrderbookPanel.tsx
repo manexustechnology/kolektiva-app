@@ -1,18 +1,181 @@
 "use client";
 
+import { useContractEventHook, useReadContractHook } from "@/utils/hooks";
 import { getOrderbookWidthStyle } from "@/utils/style";
 import { ListBullets } from "@phosphor-icons/react/dist/ssr";
 import { Divider } from "antd";
+import { useEffect, useState } from "react";
+// import { BuyOrderEvent } from "./MarketBuyOrderEvent";
+// import { SellOrderEvent } from "./MarketSellOrderEvent";
+import { readContractFetch } from "@/utils/fetch";
 
 interface MarketDetailOrderbookPanelProps {
   allowTrade?: boolean;
 }
 
+interface Order {
+  amount: number;
+  price: number;
+}
+
+// Contract address should be dynamic, fetched from backend
+
 const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
   allowTrade = false,
 }) => {
+  const marketContractAddress = process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS;
+
+  const [buyOrders, setBuyOrders] = useState<Order[]>([]);
+  const [loadingBuy, setLoadingBuy] = useState<boolean>(true);
+  const [buyOrdersCount, setBuyOrdersCount] = useState<number | null>(null);
+
+  const [sellOrders, setSellOrders] = useState<Order[]>([]);
+  const [loadingSell, setLoadingSell] = useState<boolean>(true);
+  const [sellOrdersCount, setSellOrdersCount] = useState<number | null>(null);
+
+  const { data: InitialOfferingPurchaseEvent } = useContractEventHook({
+    contractName: "KolektivaMarket",
+    eventName: "InitialOfferingPurchase",
+    contractAddress: marketContractAddress, // market contract address
+    fromBlock: BigInt(8906493),
+  });
+
+  const { data: OrderFulfilledEvent } = useContractEventHook({
+    contractName: "KolektivaMarket",
+    eventName: "OrderFulfilled",
+    contractAddress: marketContractAddress, // market contract address
+    fromBlock: BigInt(8906493),
+  });
+
+  const { data: sellOrdersCountData } = useReadContractHook({
+    contractName: "KolektivaMarket",
+    functionName: "getSellOrdersCount",
+    contractAddress: marketContractAddress, // market contract address
+    args: [],
+  });
+
+  const { data: buyOrdersCountData } = useReadContractHook({
+    contractName: "KolektivaMarket",
+    functionName: "getBuyOrdersCount",
+    contractAddress: marketContractAddress, // market contract address
+    args: [],
+  });
+
+  useEffect(() => {
+    if (buyOrdersCountData) {
+      setBuyOrdersCount(Number(buyOrdersCountData));
+    }
+  }, [buyOrdersCountData]);
+
+  useEffect(() => {
+    if (sellOrdersCountData) {
+      setSellOrdersCount(Number(sellOrdersCountData));
+    }
+  }, [sellOrdersCountData]);
+
+  // Fetch buy orders based on count and index
+  useEffect(() => {
+    const fetchBuyOrders = async () => {
+      if (buyOrdersCount === null) return;
+
+      const orders: { amount: number; price: number }[] = [];
+
+      for (let i = 0; i < buyOrdersCount; i++) {
+        const orderData = await readContractFetch({
+          contractName: "KolektivaMarket",
+          functionName: "getBuyOrderByIndex",
+          contractAddress: marketContractAddress,
+          args: [i],
+        });
+
+        console.log("from fetch buy", orderData);
+        if (orderData) {
+          let { amount, price } = orderData as any;
+          amount = Number(amount);
+          price = Number(price);
+
+          const existingOrder = orders.find((o) => o.price === price);
+          if (existingOrder) {
+            existingOrder.amount += amount;
+          } else {
+            orders.push({ amount, price });
+          }
+        }
+      }
+      setLoadingBuy(false);
+      setBuyOrders(orders);
+    };
+
+    fetchBuyOrders();
+  }, [buyOrdersCount]);
+
+  useEffect(() => {
+    const fetchSellOrders = async () => {
+      if (sellOrdersCount === null) return;
+
+      const orders: { amount: number; price: number }[] = [];
+
+      for (let i = 0; i < sellOrdersCount; i++) {
+        const orderData = await readContractFetch({
+          contractName: "KolektivaMarket",
+          functionName: "getSellOrderByIndex",
+          contractAddress: marketContractAddress,
+          args: [i],
+        });
+
+        console.log("from fetch sell", orderData);
+        if (orderData) {
+          let { amount, price } = orderData as any;
+          amount = Number(amount);
+          price = Number(price);
+          const existingOrder = orders.find((o) => o.price === price);
+          if (existingOrder) {
+            existingOrder.amount += amount;
+          } else {
+            orders.push({ amount, price });
+          }
+        }
+      }
+      setLoadingSell(false);
+      setSellOrders(orders);
+    };
+
+    fetchSellOrders();
+  }, [sellOrdersCount]);
+
   return (
     <>
+      {/* Mark test */}
+      <>
+        {
+          <div>
+            <h3>Buy Orders</h3>
+            <div>
+              {loadingBuy
+                ? "Loading..."
+                : buyOrders.map((order, index) => (
+                    <div key={index}>
+                      Price: {order.price.toString()}, Amount:{" "}
+                      {order.amount.toString()}
+                    </div>
+                  ))}
+            </div>
+            <h3>Sell Orders</h3>
+            <div>
+              {loadingSell
+                ? "Loading..."
+                : sellOrders.map((order, index) => (
+                    <div key={index}>
+                      Price: {order.price.toString()}, Amount:{" "}
+                      {order.amount.toString()}
+                    </div>
+                  ))}
+            </div>
+          </div>
+        }
+      </>
+      {/* Mark test */}
+
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4">
           <div className="flex gap-4 w-full">

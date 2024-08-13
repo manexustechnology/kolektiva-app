@@ -7,8 +7,9 @@ import BuyStep3 from "./BuyStep3";
 import React, { useEffect, useRef, useState } from "react";
 import { Button, Checkbox, ModalBody, ModalFooter } from "@chakra-ui/react";
 import { Divider } from "antd";
-import { BuyOrderData } from "@/types/order";
+import { AfterMarketBuyOrderData, BuyOrderData } from "@/types/order";
 import { Warning, WarningCircle } from "@phosphor-icons/react/dist/ssr";
+import { useWriteContractHook } from "@/utils/hooks";
 
 interface BuyFormWizardProps {
   currentStep: number;
@@ -47,9 +48,34 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
     qtyToken: 1,
     pricePerToken: 0,
     orderExpiration: 0,
+    totalCost: 0,
+    fee: 0,
   });
   const prevStep = useRef(currentStep);
   const direction = currentStep > prevStep.current ? 1 : -1;
+  const marketContractAddress =
+    process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS!;
+
+  const { writeAsync: initialOfferingBuy } = useWriteContractHook({
+    contractName: "KolektivaMarket",
+    functionName: "initialOfferingBuy",
+    contractAddress: marketContractAddress,
+    args: [formData.qtyToken],
+  });
+
+  const { writeAsync: marketBuy } = useWriteContractHook({
+    contractName: "KolektivaMarket",
+    functionName: "instantBuy",
+    contractAddress: marketContractAddress,
+    args: [formData.qtyToken],
+  });
+
+  const { writeAsync: limitBuy } = useWriteContractHook({
+    contractName: "KolektivaMarket",
+    functionName: "placeBuyOrder",
+    contractAddress: marketContractAddress,
+    args: [formData.qtyToken, formData.pricePerToken],
+  });
 
   useEffect(() => {
     prevStep.current = currentStep;
@@ -66,8 +92,50 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
     }
   };
 
-  const handleButtonSubmitClick = () => {
-    onSubmitButtonClick(formData);
+  const handleButtonSubmitClick = async () => {
+    console.log(formData.qtyToken);
+    console.log(formData.pricePerToken);
+
+    try {
+      switch (currentStep) {
+        case 1:
+          // Handle preview logic if necessary
+          break;
+        case 2:
+          // Handle submit order logic
+          let formDataType = (formData as AfterMarketBuyOrderData).type;
+          if (isAfterMarketTrading) {
+            if (formDataType === "market") {
+              const tx = await marketBuy();
+              console.log("market buy", tx);
+            } else if (formDataType === "limit") {
+              const tx = await limitBuy();
+              console.log("limit buy", tx);
+            }
+          } else {
+            console.warn(
+              "Initial offering buy should not be processed in this step."
+            );
+          }
+          break;
+        case 3:
+          // Handle agree logic
+          if (!isAfterMarketTrading) {
+            await initialOfferingBuy();
+          } else {
+            console.warn(
+              "Market trading operations should not be processed in this step."
+            );
+          }
+          break;
+        default:
+          console.warn("Unknown step");
+      }
+      // Call the submit button click handler if needed
+      onSubmitButtonClick(formData);
+    } catch (error) {
+      console.error("Transaction failed", error);
+    }
   };
 
   return (

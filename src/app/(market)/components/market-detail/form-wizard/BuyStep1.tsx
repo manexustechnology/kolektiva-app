@@ -5,8 +5,10 @@ import { cn } from "@/utils/cn";
 import { Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 import { Info, Wallet } from "@phosphor-icons/react/dist/ssr";
 import { Divider } from "antd";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
+import { useReadContractHook } from "@/utils/hooks";
+import { readContractFetch } from "@/utils/fetch";
 
 interface BuyStep1Props {
   isAfterMarketTrading: boolean;
@@ -25,15 +27,177 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
   onDataChange,
 }) => {
   const activeTab = (formData as AfterMarketBuyOrderData).type || "market";
+  // e.g. 5% => feePercentage = 500, feePrecision = 10_000
+  const [salePrice, setSalePrice] = useState<number | null>(null);
+  const [feePercentage, setFeePercentage] = useState<number | null>(null);
+  const [feePrecision, setFeePrecision] = useState<number | null>(null);
+  const [initialOfferingSupply, setInitialOfferingSupply] = useState<
+    number | null
+  >(null);
+  const [calculateBuyCost, setCalculateBuyCost] = useState<
+    [number, number] | null
+  >(null);
+  const marketContractAddress =
+    process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS!;
+
+  const { data: salePriceData } = useReadContractHook({
+    contractName: "KolektivaMarket",
+    functionName: "salePrice",
+    // contractAddress: "", // market contract address
+    contractAddress: marketContractAddress,
+
+    args: [],
+  });
+
+  const { data: feePercentageData } = useReadContractHook({
+    contractName: "KolektivaMarket",
+    functionName: "feePercentage",
+    // contractAddress: "", // market contract address
+    contractAddress: marketContractAddress,
+
+    args: [],
+  });
+
+  const { data: feePrecisionData } = useReadContractHook({
+    contractName: "KolektivaMarket",
+    functionName: "FEE_PRECISION",
+    // contractAddress: "", // market contract address
+    contractAddress: marketContractAddress,
+
+    args: [],
+  });
+
+  const { data: initialOfferingSupplyData } = useReadContractHook({
+    contractName: "KolektivaMarket",
+    functionName: "initialOfferingSupply",
+    // contractAddress: "", // market contract address
+    contractAddress: marketContractAddress,
+
+    args: [],
+  });
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await readContractFetch({
+        contractName: "KolektivaMarket",
+        functionName: "calculateBuyCost",
+        contractAddress: marketContractAddress,
+        args: [formData.qtyToken],
+      });
+
+      if (data) {
+        setCalculateBuyCost([Number(data[0]), Number(data[1])]);
+      }
+    };
+
+    fetchData();
+  }, [formData.qtyToken]);
+
+  useEffect(() => {
+    if (feePercentageData) {
+      setFeePercentage(Number(feePercentageData));
+    }
+  }, [feePercentageData]);
+
+  useEffect(() => {
+    if (feePrecisionData) {
+      setFeePrecision(Number(feePrecisionData));
+    }
+  }, [feePrecisionData]);
+
+  useEffect(() => {
+    if (salePriceData) {
+      setSalePrice(Number(salePriceData));
+    }
+  }, [salePriceData]);
+
+  useEffect(() => {
+    if (initialOfferingSupplyData) {
+      setInitialOfferingSupply(Number(initialOfferingSupplyData));
+    }
+  }, [initialOfferingSupplyData]);
+
+  const calculateCostAndFee = (amount: number, price: number) => {
+    const cost = amount * price;
+    const fee = (cost * feePercentage!) / feePrecision!;
+    const totalCost = cost + fee;
+    return { totalCost, fee };
+  };
+
+  const calculatedData = useMemo(() => {
+    if (feePercentage === null || feePrecision === null || salePrice == null)
+      return;
+
+    const qtyToken = formData.qtyToken;
+    let pricePerToken = isAfterMarketTrading
+      ? formData.pricePerToken
+      : salePrice;
+    let fee = 0;
+    let totalCost = 0;
+
+    if (isAfterMarketTrading && activeTab == "market") {
+      console.log("buy cost");
+      console.log(calculateBuyCost);
+
+      const [calculatedTotalCost, calculatedFee] = calculateBuyCost || [0, 0];
+      fee = Number(calculatedFee);
+      totalCost = Number(calculatedTotalCost);
+      pricePerToken = (totalCost - fee) / qtyToken;
+    } else {
+      const result = calculateCostAndFee(qtyToken, pricePerToken);
+      fee = result.fee;
+      totalCost = result.totalCost;
+    }
+
+    return { fee, totalCost, pricePerToken };
+  }, [
+    formData.qtyToken,
+    formData.pricePerToken,
+    calculateBuyCost,
+    feePercentage,
+    feePrecision,
+    salePrice,
+    isAfterMarketTrading,
+    activeTab,
+  ]);
+
+  useEffect(() => {
+    if (calculatedData) {
+      const updatedData = { ...formData, ...calculatedData };
+      onDataChange(updatedData);
+    }
+  }, [calculatedData]);
 
   const setTokenQty = (token: number) => {
-    const updatedData = { ...formData, qtyToken: token };
-    onDataChange(updatedData);
+    if (
+      !isAfterMarketTrading &&
+      initialOfferingSupply !== null &&
+      token > initialOfferingSupply
+    ) {
+      console.warn("Quantity exceeds initial offering supply.");
+      return; // Prevent proceeding if the quantity exceeds the supply
+    }
+    if (formData.qtyToken !== token) {
+      // Check if there's an actual change
+      const updatedData = { ...formData, qtyToken: token };
+      onDataChange(updatedData);
+    }
+  };
+
+  const setTokenPrice = (price: number) => {
+    if (formData.pricePerToken !== price) {
+      // Check if there's an actual change
+      const updatedData = { ...formData, pricePerToken: price };
+      onDataChange(updatedData);
+    }
   };
 
   const setActiveTab = (tab: (typeof tabs)[number]["id"]) => {
-    const updatedData = { ...formData, type: tab };
-    onDataChange(updatedData);
+    if ((formData as any).type !== tab) {
+      // Check if there's an actual change
+      const updatedData = { ...formData, type: tab };
+      onDataChange(updatedData);
+    }
   };
 
   return (
@@ -88,6 +252,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
                 type="number"
                 placeholder="Enter amount"
                 className="!bg-zinc-100 !rounded-full"
+                onChange={(e) => setTokenPrice(parseInt(e.target.value) || 0)}
               />
               <InputRightElement right={6}>
                 <span className="text-sm text-zinc-500">LSK</span>
@@ -213,6 +378,12 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
         </div>
         <p className="text-sm font-medium text-zinc-700">0.11 USD</p>
       </div>
+      {/* Mark test */}
+      <div>
+        <>Supply : </>
+        <>{initialOfferingSupply && <>{initialOfferingSupply.toString()} </>}</>
+      </div>
+      {/* Mark test */}
     </div>
   );
 };
