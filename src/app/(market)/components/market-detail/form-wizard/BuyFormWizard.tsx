@@ -210,7 +210,9 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
               <Divider className="border-zinc-200 !m-0" />
               <div className="flex justify-between items-center">
                 <p className="text-sm text-zinc-500">Total</p>
-                <p className="text-xl font-bold text-teal-600">5.11 USD</p>
+                <p className="text-xl font-bold text-teal-600">
+                  {formData.totalCost} USD
+                </p>
               </div>
             </>
           )}
