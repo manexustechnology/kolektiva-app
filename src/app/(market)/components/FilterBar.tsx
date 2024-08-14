@@ -341,7 +341,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 borderRadius="full"
                 transition="all 0.3s ease-in-out"
               >
-                Aftermarket Trading
+                Aftermarket
               </Tab>
             </TabList>
           </Tabs>
