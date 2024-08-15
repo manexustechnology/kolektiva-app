@@ -113,7 +113,9 @@ const SellStep2: React.FC<SellStep2Props> = ({ formData }) => {
           <>
             <div className="flex justify-between items-center">
               <p className="text-base text-zinc-500">Limit price per token</p>
-              <p className="text-base font-bold text-teal-950">6 USD</p>
+              <p className="text-base font-bold text-teal-950">
+                {formData.pricePerToken} USD
+              </p>
             </div>
           </>
         )}
@@ -132,7 +134,9 @@ const SellStep2: React.FC<SellStep2Props> = ({ formData }) => {
             <Divider className="border-zinc-200 !m-0" />
             <div className="flex justify-between items-center">
               <p className="text-base text-zinc-500">Estimated total price</p>
-              <p className="text-base font-bold text-teal-950">5,00 USD</p>
+              <p className="text-base font-bold text-teal-950">
+                {formData.totalProceeds} USD
+              </p>
             </div>
           </>
         )}
@@ -141,20 +145,24 @@ const SellStep2: React.FC<SellStep2Props> = ({ formData }) => {
             <Divider className="border-zinc-200 !m-0" />
             <div className="flex justify-between items-center">
               <p className="text-base text-zinc-500">Order Expiration</p>
-              <p className="text-base font-bold text-teal-950">30 Days</p>
+              <p className="text-base font-bold text-teal-950">
+                {formData.orderExpiration} Days
+              </p>
             </div>
           </>
         )}
         <Divider className="border-zinc-200 !m-0" />
         <div className="flex justify-between items-center">
           <p className="text-base text-zinc-500">Fees</p>
-          <p className="text-base font-bold text-teal-950">0,11 USD</p>
+          <p className="text-base font-bold text-teal-950">
+            {formData.fee} USD
+          </p>
         </div>
       </div>
       {/* mark test */}
-      <div>
+      {/* <div>
         <button onClick={handleButtonClick}>{buttonText}</button>
-      </div>
+      </div> */}
       {/* mark test */}
     </div>
   );

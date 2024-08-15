@@ -46,7 +46,7 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
   const [formData, setFormData] = useState<BuyOrderData>({
     type: "market",
     qtyToken: 1,
-    pricePerToken: 0,
+    pricePerToken: 100,
     orderExpiration: 0,
     totalCost: 0,
     fee: 0,

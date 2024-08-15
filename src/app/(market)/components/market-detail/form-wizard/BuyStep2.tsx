@@ -99,9 +99,9 @@ const BuyStep2: React.FC<BuyStep2Props> = ({
         </div>
       </div>
       {/* mark test */}
-      <div>
+      {/* <div>
         <button onClick={handleButtonClick}>{buttonText}</button>
-      </div>
+      </div> */}
       {/* mark test */}
     </div>
   );
