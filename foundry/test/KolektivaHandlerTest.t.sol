@@ -13,11 +13,11 @@ contract KolektivaHandlerTest is Test {
     MockUSDT usdtToken;
     address public owner = makeAddr("owner");
     address public propertyOwner = makeAddr("propertyOwner");
-
     string public tokenName = "TestToken";
     string public tokenSymbol = "TT";
     string public propertyType = "Property Type";
-    string public province = "Province";
+    string public country = "Country";
+    string public state = "State";
     string public city = "City";
     string public location = "Location";
     uint256 totalSupply = 1000;
@@ -34,7 +34,8 @@ contract KolektivaHandlerTest is Test {
             tokenName,
             tokenSymbol,
             propertyType,
-            province,
+            country,
+            state,
             city,
             location,
             totalSupply,
@@ -57,7 +58,8 @@ contract KolektivaHandlerTest is Test {
             tokenName,
             tokenSymbol,
             propertyType,
-            province,
+            country,
+            state,
             city,
             location,
             totalSupply,
@@ -70,14 +72,13 @@ contract KolektivaHandlerTest is Test {
 
     function testCreateTokenFailureTokenAlreadyExists() public createToken {
         vm.startPrank(owner);
-        vm.expectRevert(
-            KolektivaHandler.KolektivaHandler__TokenAlreadyExist.selector
-        );
+        vm.expectRevert(KolektivaHandler.TokenAlreadyExist.selector);
         handler.createToken(
             tokenName,
             tokenSymbol,
             propertyType,
-            province,
+            country,
+            state,
             city,
             location,
             totalSupply,
@@ -89,9 +90,7 @@ contract KolektivaHandlerTest is Test {
 
     function testMintTokensFailureExceedSupply() public createToken {
         vm.startPrank(owner);
-        vm.expectRevert(
-            KolektivaToken.KolektivaToken__ExceedMaxSupply.selector
-        );
+        vm.expectRevert(KolektivaToken.ExceedMaxSupply.selector);
         handler.mintTokens("TestToken", address(this), 100);
         vm.stopPrank();
     }
@@ -99,9 +98,7 @@ contract KolektivaHandlerTest is Test {
     function testMintTokensFailureTokenDoesNotExist() public {
         vm.startPrank(owner);
 
-        vm.expectRevert(
-            KolektivaHandler.KolektivaHandler__TokenDoesNotExist.selector
-        );
+        vm.expectRevert(KolektivaHandler.TokenDoesNotExist.selector);
         handler.mintTokens("NonExistentToken", address(this), 100);
 
         vm.stopPrank();
@@ -123,9 +120,7 @@ contract KolektivaHandlerTest is Test {
     function testBurnTokensFailureTokenDoesNotExist() public {
         vm.startPrank(owner);
 
-        vm.expectRevert(
-            KolektivaHandler.KolektivaHandler__TokenDoesNotExist.selector
-        );
+        vm.expectRevert(KolektivaHandler.TokenDoesNotExist.selector);
         handler.burnTokens("NonExistentToken", owner, 50);
 
         vm.stopPrank();
@@ -143,9 +138,7 @@ contract KolektivaHandlerTest is Test {
     function testRevokeTokenFailureTokenDoesNotExist() public {
         vm.startPrank(owner);
 
-        vm.expectRevert(
-            KolektivaHandler.KolektivaHandler__TokenDoesNotExist.selector
-        );
+        vm.expectRevert(KolektivaHandler.TokenDoesNotExist.selector);
         handler.revokeToken("NonExistentToken");
 
         vm.stopPrank();
@@ -166,9 +159,7 @@ contract KolektivaHandlerTest is Test {
     function testWithdrawTokenFailureTokenDoesNotExist() public {
         vm.startPrank(owner);
 
-        vm.expectRevert(
-            KolektivaHandler.KolektivaHandler__TokenDoesNotExist.selector
-        );
+        vm.expectRevert(KolektivaHandler.TokenDoesNotExist.selector);
         handler.withdrawToken("NonExistentToken", 500);
 
         vm.stopPrank();
@@ -177,9 +168,7 @@ contract KolektivaHandlerTest is Test {
     function testWithdrawTokenFailureInsufficientBalance() public createToken {
         vm.startPrank(owner);
 
-        vm.expectRevert(
-            KolektivaHandler.KolektivaHandler__InsufficientBalance.selector
-        );
+        vm.expectRevert(KolektivaHandler.InsufficientBalance.selector);
         handler.withdrawToken(tokenName, totalSupply + 1);
 
         vm.stopPrank();
@@ -198,9 +187,7 @@ contract KolektivaHandlerTest is Test {
     function testWithdrawFeeFailureInsufficientBalance() public createToken {
         vm.startPrank(owner);
 
-        vm.expectRevert(
-            KolektivaHandler.KolektivaHandler__InsufficientBalance.selector
-        );
+        vm.expectRevert(KolektivaHandler.InsufficientBalance.selector);
         handler.withdrawFee(500 * 1e6);
 
         vm.stopPrank();
@@ -221,9 +208,7 @@ contract KolektivaHandlerTest is Test {
     function testSetFeePercentageFailureMarketDoesNotExist() public {
         vm.startPrank(owner);
 
-        vm.expectRevert(
-            KolektivaHandler.KolektivaHandler__MarketDoesNotExist.selector
-        );
+        vm.expectRevert(KolektivaHandler.MarketDoesNotExist.selector);
         handler.setFeePercentage("NonExistentToken", 10);
 
         vm.stopPrank();
@@ -270,9 +255,7 @@ contract KolektivaHandlerTest is Test {
     function testCheckTokenBalanceFailureTokenDoesNotExist() public {
         vm.startPrank(owner);
 
-        vm.expectRevert(
-            KolektivaHandler.KolektivaHandler__TokenDoesNotExist.selector
-        );
+        vm.expectRevert(KolektivaHandler.TokenDoesNotExist.selector);
         handler.checkTokenBalance("NonExistentToken");
 
         vm.stopPrank();

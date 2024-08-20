@@ -12,7 +12,8 @@ contract KolektivaTokenTest is Test {
     string public tokenName = "TestToken";
     string public tokenSymbol = "TT";
     string public propertyType = "Property Type";
-    string public province = "Province";
+    string public country = "Country";
+    string public state = "State";
     string public city = "City";
     string public location = "Location";
     uint256 public totalSupply = 1_000_000;
@@ -22,7 +23,8 @@ contract KolektivaTokenTest is Test {
             tokenName,
             tokenSymbol,
             propertyType,
-            province,
+            country,
+            state,
             city,
             location,
             totalSupply,
@@ -50,9 +52,7 @@ contract KolektivaTokenTest is Test {
         vm.stopPrank();
 
         vm.startPrank(user);
-        vm.expectRevert(
-            KolektivaToken.KolektivaToken__CannotBeTransferredYet.selector
-        );
+        vm.expectRevert(KolektivaToken.CannotBeTransferredYet.selector);
         kolektivaToken.transfer(owner, 500);
         vm.stopPrank();
     }
@@ -76,9 +76,7 @@ contract KolektivaTokenTest is Test {
         uint256 mintAmount = 1;
 
         vm.startPrank(owner);
-        vm.expectRevert(
-            KolektivaToken.KolektivaToken__ExceedMaxSupply.selector
-        );
+        vm.expectRevert(KolektivaToken.ExceedMaxSupply.selector);
         kolektivaToken.mint(user, mintAmount);
         vm.stopPrank();
     }

@@ -57,9 +57,7 @@ contract KolektivaOracleTest is Test {
     {
         // Try to update before frequency time has passed
         vm.startPrank(owner);
-        vm.expectRevert(
-            KolektivaOracle.KolektivaOracle__FrequencyNotMet.selector
-        );
+        vm.expectRevert(KolektivaOracle.FrequencyNotMet.selector);
         oracle.updateCategoryPrice(CATEGORY_HASH, 1050_000000);
         vm.stopPrank();
     }
@@ -74,9 +72,7 @@ contract KolektivaOracleTest is Test {
 
         // Try to update with a price change above threshold (100%)
         uint256 newPrice = 2000 * oracle.PRICE_PRECISION(); // $2.000,000_000
-        vm.expectRevert(
-            KolektivaOracle.KolektivaOracle__PriceAboveThreshold.selector
-        );
+        vm.expectRevert(KolektivaOracle.PriceAboveThreshold.selector);
         oracle.updateCategoryPrice(CATEGORY_HASH, newPrice); // (100% increase)
         vm.stopPrank();
     }

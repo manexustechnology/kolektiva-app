@@ -11,10 +11,10 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
  * @dev This contract handles the creation, management, and revocation of Kolektiva tokens and markets.
  */
 contract KolektivaHandler is Ownable {
-    error KolektivaHandler__TokenAlreadyExist();
-    error KolektivaHandler__TokenDoesNotExist();
-    error KolektivaHandler__MarketDoesNotExist();
-    error KolektivaHandler__InsufficientBalance();
+    error TokenAlreadyExist();
+    error TokenDoesNotExist();
+    error MarketDoesNotExist();
+    error InsufficientBalance();
 
     IERC20 public immutable usdtToken;
 
@@ -49,21 +49,21 @@ contract KolektivaHandler is Ownable {
 
     modifier tokenShouldNotExist(string memory name) {
         if (tokenAddresses[name] != address(0)) {
-            revert KolektivaHandler__TokenAlreadyExist();
+            revert TokenAlreadyExist();
         }
         _;
     }
 
     modifier tokenShouldExist(string memory name) {
         if (tokenAddresses[name] == address(0)) {
-            revert KolektivaHandler__TokenDoesNotExist();
+            revert TokenDoesNotExist();
         }
         _;
     }
 
     modifier marketShouldExist(string memory name) {
         if (marketAddresses[name] == address(0)) {
-            revert KolektivaHandler__MarketDoesNotExist();
+            revert MarketDoesNotExist();
         }
         _;
     }
@@ -73,7 +73,8 @@ contract KolektivaHandler is Ownable {
      * @param name The name of the token.
      * @param symbol The symbol of the token.
      * @param propertyType The type of the property.
-     * @param province The province where the property is located.
+     * @param country The country where the property is located.
+     * @param state The state where the property is located.
      * @param city The city where the property is located.
      * @param location The specific location of the property.
      * @param totalSupply The total supply of the token.
@@ -84,7 +85,8 @@ contract KolektivaHandler is Ownable {
         string memory name,
         string memory symbol,
         string memory propertyType,
-        string memory province,
+        string memory country,
+        string memory state,
         string memory city,
         string memory location,
         uint256 totalSupply,
@@ -95,7 +97,8 @@ contract KolektivaHandler is Ownable {
             name,
             symbol,
             propertyType,
-            province,
+            country,
+            state,
             city,
             location,
             totalSupply,
@@ -189,7 +192,7 @@ contract KolektivaHandler is Ownable {
         IERC20 token = IERC20(tokenAddress);
         uint256 balance = token.balanceOf(address(this));
         if (balance < amount) {
-            revert KolektivaHandler__InsufficientBalance();
+            revert InsufficientBalance();
         }
 
         token.transfer(owner(), amount);
@@ -204,7 +207,7 @@ contract KolektivaHandler is Ownable {
         IERC20 token = IERC20(usdtToken);
         uint256 balance = usdtToken.balanceOf(address(this));
         if (balance < amount) {
-            revert KolektivaHandler__InsufficientBalance();
+            revert InsufficientBalance();
         }
 
         token.transfer(owner(), amount);
@@ -254,7 +257,7 @@ contract KolektivaHandler is Ownable {
     ) external view returns (uint256) {
         address tokenAddress = tokenAddresses[name];
         if (tokenAddress == address(0)) {
-            revert KolektivaHandler__TokenDoesNotExist();
+            revert TokenDoesNotExist();
         }
 
         IERC20 token = IERC20(tokenAddress);

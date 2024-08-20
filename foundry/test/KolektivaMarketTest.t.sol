@@ -5,6 +5,7 @@ import {Test, console} from "forge-std/Test.sol";
 import {KolektivaToken} from "../contracts/KolektivaToken.sol";
 import {KolektivaMarket} from "../contracts/KolektivaMarket.sol";
 import {MockUSDT} from "../contracts/mocks/MockUSDT.sol";
+import {OrderLib} from "../contracts/OrderLib.sol";
 
 contract KolektivaMarketTest is Test {
     KolektivaMarket public market;
@@ -19,7 +20,8 @@ contract KolektivaMarketTest is Test {
     string public tokenName = "TestToken";
     string public tokenSymbol = "TT";
     string public propertyType = "Property Type";
-    string public province = "Province";
+    string public country = "Country";
+    string public state = "State";
     string public city = "City";
     string public location = "Location";
 
@@ -28,6 +30,14 @@ contract KolektivaMarketTest is Test {
     uint128 private constant FEE_PRECISION = 1e4; // 5%
     uint256 private constant INITIAL_SUPPLY = 1000; // 1000 tokens
 
+    struct HelperOrder {
+        uint256 amount;
+        uint256 price; // Price in USDT (6 decimals)
+        uint256 cost;
+        uint256 fee;
+    }
+    mapping(address => HelperOrder) public HelperMappingOrder;
+
     function setUp() public {
         vm.startPrank(handler);
         // Deploy mock tokens
@@ -35,7 +45,8 @@ contract KolektivaMarketTest is Test {
             tokenName,
             tokenSymbol,
             propertyType,
-            province,
+            country,
+            state,
             city,
             location,
             INITIAL_SUPPLY,
@@ -92,9 +103,7 @@ contract KolektivaMarketTest is Test {
         // Execute the buy
         vm.startPrank(buyer);
         usdtToken.approve(address(market), totalCost + fee);
-        vm.expectRevert(
-            KolektivaMarket.KolektivaMarket__InsufficientSupply.selector
-        );
+        vm.expectRevert(KolektivaMarket.InsufficientSupply.selector);
         market.initialOfferingBuy(amount);
         vm.stopPrank();
     }
@@ -113,9 +122,7 @@ contract KolektivaMarketTest is Test {
         // Execute the buy order
         vm.startPrank(buyer);
         usdtToken.approve(address(market), totalCost + fee);
-        vm.expectRevert(
-            KolektivaMarket.KolektivaMarket__InitialOfferingOngoing.selector
-        );
+        vm.expectRevert(KolektivaMarket.InitialOfferingOngoing.selector);
         market.placeBuyOrder(amount, price);
         vm.stopPrank();
     }
@@ -131,9 +138,7 @@ contract KolektivaMarketTest is Test {
         vm.stopPrank();
 
         vm.startPrank(seller);
-        vm.expectRevert(
-            KolektivaMarket.KolektivaMarket__InitialOfferingOngoing.selector
-        );
+        vm.expectRevert(KolektivaMarket.InitialOfferingOngoing.selector);
         market.placeSellOrder(amount, price);
         vm.stopPrank();
     }
@@ -156,31 +161,189 @@ contract KolektivaMarketTest is Test {
         usdtToken.mint(buyer, totalCost + fee);
         vm.stopPrank();
 
-        // console.log("before");
-        // console.log(usdtToken.balanceOf(buyer));
-        // console.log(usdtToken.balanceOf(handler));
-        // console.log(usdtToken.balanceOf(address(market)));
-
         // Execute the buy order
         vm.startPrank(buyer);
         usdtToken.approve(address(market), totalCost + fee);
         market.placeBuyOrder(amount, price);
         vm.stopPrank();
 
-        KolektivaMarket.Order memory order = market.getBuyOrderByIndex(0);
+        OrderLib.Order memory order = market.getBuyOrderByIndex(0);
         assertEq(order.trader, buyer);
         assertEq(order.amount, amount);
         assertEq(order.price, price);
-
-        // console.log("after");
-        // console.log(usdtToken.balanceOf(buyer));
-        // console.log(usdtToken.balanceOf(handler));
-        // console.log(usdtToken.balanceOf(address(market)));
 
         assertEq(usdtToken.balanceOf(handler), fee);
         assertEq(usdtToken.balanceOf(address(market)), totalCost);
 
         assertEq(market.getBuyOrdersCount(), 1);
+    }
+
+    function helperCreateOrder(
+        address trader,
+        uint256 amount,
+        uint256 price,
+        bool isBuyOrder
+    ) public {
+        vm.startPrank(trader);
+        HelperOrder storage tradeOrder = HelperMappingOrder[trader];
+
+        tradeOrder.amount = amount;
+        tradeOrder.price = price;
+        tradeOrder.cost = tradeOrder.amount * tradeOrder.price;
+        tradeOrder.fee = (tradeOrder.cost * FEE_PERCENTAGE) / FEE_PRECISION;
+
+        if (isBuyOrder) {
+            usdtToken.approve(
+                address(market),
+                tradeOrder.cost + tradeOrder.fee
+            );
+            market.placeBuyOrder(tradeOrder.amount, tradeOrder.price);
+        } else {
+            kolektivaToken.approve(address(market), amount);
+            usdtToken.approve(address(market), tradeOrder.fee);
+            market.placeSellOrder(tradeOrder.amount, tradeOrder.price);
+        }
+        vm.stopPrank();
+    }
+
+    function testPlaceBuyOrderMoreThanOneSuccess() public endInitialOffering {
+        address[3] memory buyers = [
+            buyer,
+            makeAddr("buyer2"),
+            makeAddr("buyer3")
+        ];
+        uint256 amount = 100; // Example amount
+        uint256 price = 1e6; // Example price
+        uint256 usdtMint = amount * price;
+
+        // Mint USDT to buyers
+        vm.startPrank(handler);
+        usdtToken.mint(buyers[0], usdtMint);
+        usdtToken.mint(buyers[1], usdtMint);
+        usdtToken.mint(buyers[2], usdtMint);
+        vm.stopPrank();
+
+        // Execute the buy orders
+        helperCreateOrder(buyers[1], 15, 2 * price, true);
+        helperCreateOrder(buyers[0], 10, 1 * price, true);
+        helperCreateOrder(buyers[2], 20, 3 * price, true);
+
+        uint256 count = market.getBuyOrdersCount();
+        assertEq(count, 3);
+
+        for (uint256 i = 0; i < count; i++) {
+            OrderLib.Order memory order = market.getBuyOrderByIndex(i);
+            address trader = buyers[i];
+            HelperOrder storage tradeOrder = HelperMappingOrder[trader];
+
+            assertEq(order.trader, trader);
+            assertEq(order.amount, tradeOrder.amount);
+            assertEq(order.price, tradeOrder.price);
+
+            console.log("User: ", i);
+
+            uint256 kTokenBalance = kolektivaToken.balanceOf(trader);
+            console.log("kTokenBalance", kTokenBalance);
+            assertEq(kTokenBalance, 0);
+
+            uint256 usdtBalance = usdtToken.balanceOf(trader);
+            uint256 usdtInMarket = tradeOrder.cost + tradeOrder.fee;
+            uint256 expecteUsdtBalance = usdtMint - usdtInMarket;
+            console.log("expecteUsdtBalance", expecteUsdtBalance);
+
+            assertEq(usdtBalance, expecteUsdtBalance);
+        }
+    }
+
+    function testInstantSellOnMoreThanOneBuyOrdersSuccess()
+        public
+        endInitialOffering
+    {
+        address[3] memory buyers = [
+            buyer,
+            makeAddr("buyer2"),
+            makeAddr("buyer3")
+        ];
+        uint256 amount = 100; // Example amount
+        uint256 price = 1e6; // Example price
+        uint256 usdtMint = amount * price;
+
+        // Mint USDT to buyer
+        vm.startPrank(handler);
+        usdtToken.mint(buyers[0], usdtMint);
+        usdtToken.mint(buyers[1], usdtMint);
+        usdtToken.mint(buyers[2], usdtMint);
+        vm.stopPrank();
+
+        // Execute the buy order
+        helperCreateOrder(buyers[1], 15, 2 * price, true);
+        helperCreateOrder(buyers[0], 10, 1 * price, true);
+        helperCreateOrder(buyers[2], 20, 3 * price, true);
+
+        uint256 prevCount = market.getBuyOrdersCount();
+        assertEq(prevCount, 3);
+
+        vm.startPrank(handler);
+        usdtToken.mint(seller, usdtMint);
+        kolektivaToken.transfer(seller, amount);
+        // Emptied the handler balance just like initialOffering ended
+        kolektivaToken.transfer(
+            propertyOwner,
+            kolektivaToken.balanceOf(handler)
+        );
+        vm.stopPrank();
+
+        vm.startPrank(seller);
+        uint256 sellAmount = 30;
+        (uint256 totalProceeds, uint256 fee) = market.calculateSellProceeds(
+            sellAmount
+        );
+        // console.log("totalProceeds", totalProceeds, "fee", fee);
+        kolektivaToken.approve(address(market), sellAmount);
+        usdtToken.approve(address(market), fee);
+        market.instantSell(sellAmount);
+
+        // uint256 kTokenSellerBalance = kolektivaToken.balanceOf(seller);
+        uint256 expectedKTokenSellerBalance = amount - sellAmount;
+        assertEq(kolektivaToken.balanceOf(seller), expectedKTokenSellerBalance);
+
+        // uint256 usdtSellerBalance = usdtToken.balanceOf(seller);
+        uint256 expectedUsdtSellerBalance = usdtMint + totalProceeds;
+        assertEq(usdtToken.balanceOf(seller), expectedUsdtSellerBalance);
+        vm.stopPrank();
+
+        // uint256 currCount = market.getBuyOrdersCount();
+        assertEq(market.getBuyOrdersCount(), 2);
+
+        // Buyer 1
+        HelperOrder memory buyOrder0 = HelperMappingOrder[buyers[0]];
+        // Kolektiva Token balance
+        assertEq(kolektivaToken.balanceOf(buyers[0]), 0);
+        // USDT Balance
+        assertEq(
+            usdtToken.balanceOf(buyers[0]),
+            usdtMint - buyOrder0.fee - buyOrder0.cost
+        );
+
+        // Buyer 2
+        HelperOrder memory buyOrder1 = HelperMappingOrder[buyers[1]];
+        // Kolektiva Token balance
+        assertEq(kolektivaToken.balanceOf(buyers[1]), 10);
+        // USDT Balance
+        assertEq(
+            usdtToken.balanceOf(buyers[1]),
+            usdtMint - buyOrder1.fee - buyOrder1.cost
+        );
+
+        // Buyer 3
+        HelperOrder memory buyOrder2 = HelperMappingOrder[buyers[2]];
+        // Kolektiva Token balance
+        assertEq(kolektivaToken.balanceOf(buyers[2]), 20);
+        // USDT Balance
+        assertEq(
+            usdtToken.balanceOf(buyers[2]),
+            usdtMint - buyOrder2.fee - buyOrder2.cost
+        );
     }
 
     function testPlaceSellOrderSuccess() public endInitialOffering {
@@ -194,31 +357,177 @@ contract KolektivaMarketTest is Test {
         kolektivaToken.transfer(seller, amount);
         vm.stopPrank();
 
-        // console.log("before");
-        // console.log(usdtToken.balanceOf(seller));
-        // console.log(usdtToken.balanceOf(handler));
-        // console.log(kolektivaToken.balanceOf(address(market)));
-
         vm.startPrank(seller);
         kolektivaToken.approve(address(market), amount);
         usdtToken.approve(address(market), fee);
         market.placeSellOrder(amount, price);
         vm.stopPrank();
 
-        KolektivaMarket.Order memory order = market.getSellOrderByIndex(0);
+        OrderLib.Order memory order = market.getSellOrderByIndex(0);
         assertEq(order.trader, seller);
         assertEq(order.amount, amount);
         assertEq(order.price, price);
-
-        // console.log("after");
-        // console.log(usdtToken.balanceOf(seller));
-        // console.log(usdtToken.balanceOf(handler));
-        // console.log(kolektivaToken.balanceOf(address(market)));
 
         assertEq(usdtToken.balanceOf(handler), fee);
         assertEq(kolektivaToken.balanceOf(address(market)), amount);
 
         assertEq(market.getSellOrdersCount(), 1);
+    }
+
+    function testPlaceSellOrderMoreThanOneSuccess() public endInitialOffering {
+        address[3] memory sellers = [
+            seller,
+            makeAddr("seller2"),
+            makeAddr("seller3")
+        ];
+        uint256 tokenAmount = 100; // Example amount
+        uint256 price = 1e6; // Example price
+        uint256 usdtMint = tokenAmount * price;
+
+        // Mint USDT and transfer Kolektiva Token to sellers
+        vm.startPrank(handler);
+        usdtToken.mint(sellers[0], usdtMint);
+        kolektivaToken.transfer(sellers[0], tokenAmount);
+        usdtToken.mint(sellers[1], usdtMint);
+        kolektivaToken.transfer(sellers[1], tokenAmount);
+        usdtToken.mint(sellers[2], usdtMint);
+        kolektivaToken.transfer(sellers[2], tokenAmount);
+        vm.stopPrank();
+
+        // Execute the sell orders
+        helperCreateOrder(sellers[2], 30, 3 * price, false);
+        helperCreateOrder(sellers[0], 10, 1 * price, false);
+        helperCreateOrder(sellers[1], 15, 2 * price, false);
+
+        uint256 count = market.getSellOrdersCount();
+        assertEq(count, 3);
+
+        for (uint256 i = 0; i < count; i++) {
+            OrderLib.Order memory order = market.getSellOrderByIndex(i);
+            address trader = sellers[count - i - 1];
+            HelperOrder storage tradeOrder = HelperMappingOrder[trader];
+
+            assertEq(order.trader, trader);
+            assertEq(order.amount, tradeOrder.amount);
+            assertEq(order.price, tradeOrder.price);
+
+            console.log("User: ", i);
+
+            uint256 kTokenBalance = kolektivaToken.balanceOf(trader);
+            console.log("kTokenBalance", kTokenBalance);
+            assertEq(kTokenBalance, tokenAmount - tradeOrder.amount);
+
+            uint256 usdtBalance = usdtToken.balanceOf(trader);
+            uint256 expecteUsdtBalance = usdtMint - tradeOrder.fee;
+            console.log("expecteUsdtBalance", expecteUsdtBalance);
+            assertEq(usdtBalance, expecteUsdtBalance);
+        }
+    }
+
+    function testInstantBuyOnMoreThanOneSellOrdersSuccess()
+        public
+        endInitialOffering
+    {
+        address[3] memory sellers = [
+            seller,
+            makeAddr("seller2"),
+            makeAddr("seller3")
+        ];
+        uint256 tokenAmount = 100; // Example amount
+        uint256 price = 1e6; // Example price
+        uint256 usdtMint = tokenAmount * price;
+
+        // Mint USDT and transfer Kolektiva Token to sellers
+        vm.startPrank(handler);
+        usdtToken.mint(sellers[0], usdtMint);
+        kolektivaToken.transfer(sellers[0], tokenAmount);
+        usdtToken.mint(sellers[1], usdtMint);
+        kolektivaToken.transfer(sellers[1], tokenAmount);
+        usdtToken.mint(sellers[2], usdtMint);
+        kolektivaToken.transfer(sellers[2], tokenAmount);
+        vm.stopPrank();
+
+        // Execute the sell orders
+        helperCreateOrder(sellers[2], 20, 3 * price, false);
+        helperCreateOrder(sellers[0], 10, 1 * price, false);
+        helperCreateOrder(sellers[1], 15, 2 * price, false);
+
+        uint256 count = market.getSellOrdersCount();
+        assertEq(count, 3);
+
+        vm.startPrank(handler);
+        usdtToken.mint(buyer, usdtMint);
+        // Emptied the handler balance just like initialOffering ended
+        kolektivaToken.transfer(
+            propertyOwner,
+            kolektivaToken.balanceOf(handler)
+        );
+        vm.stopPrank();
+
+        for (uint256 i = 0; i < count; i++) {
+            OrderLib.Order memory order = market.getSellOrderByIndex(i);
+            console.log("User: ", i);
+            console.log("order.trader", order.trader);
+            console.log("order.amount", order.amount);
+            console.log("order.price", order.price);
+        }
+
+        console.log("========/=======/=======");
+
+        vm.startPrank(buyer);
+        uint256 buyAmount = 30;
+        (uint256 totalCost, ) = market.calculateBuyCost(buyAmount);
+        usdtToken.approve(address(market), totalCost);
+        market.instantBuy(buyAmount);
+
+        assertEq(kolektivaToken.balanceOf(buyer), buyAmount);
+
+        uint256 expectedUsdtBuyerBalance = usdtMint - totalCost;
+        assertEq(usdtToken.balanceOf(buyer), expectedUsdtBuyerBalance);
+        vm.stopPrank();
+
+        uint256 currCount = market.getSellOrdersCount();
+        assertEq(market.getSellOrdersCount(), 2);
+
+        for (uint256 i = 0; i < currCount; i++) {
+            OrderLib.Order memory order = market.getSellOrderByIndex(i);
+            console.log("User: ", i);
+            console.log("order.trader", order.trader);
+            console.log("order.amount", order.amount);
+            console.log("order.price", order.price);
+        }
+
+        console.log("========/=======/=======");
+
+        // Seller 1
+        HelperOrder memory sellOrder0 = HelperMappingOrder[sellers[0]];
+        // Kolektiva Token balance
+        assertEq(kolektivaToken.balanceOf(sellers[0]), tokenAmount - 10);
+        // USDT Balance
+        assertEq(
+            usdtToken.balanceOf(sellers[0]),
+            usdtMint - sellOrder0.fee + (0 * sellOrder0.price)
+        );
+
+        // Seller 2
+        HelperOrder memory sellOrder1 = HelperMappingOrder[sellers[1]];
+        // Kolektiva Token balance
+        assertEq(kolektivaToken.balanceOf(sellers[1]), tokenAmount - 15);
+        // USDT Balance
+        assertEq(
+            usdtToken.balanceOf(sellers[1]),
+            usdtMint - sellOrder1.fee + (10 * sellOrder1.price)
+        );
+
+        // Seller 3
+        HelperOrder memory sellOrder2 = HelperMappingOrder[sellers[2]];
+        // Kolektiva Token balance
+        assertEq(kolektivaToken.balanceOf(sellers[2]), tokenAmount - 20);
+        // USDT Balance
+        assertEq(
+            usdtToken.balanceOf(sellers[2]),
+            usdtMint - sellOrder2.fee + (20 * sellOrder2.price)
+        );
     }
 
     function testInstantBuySuccess() public endInitialOffering {
@@ -247,8 +556,13 @@ contract KolektivaMarketTest is Test {
         vm.startPrank(seller);
         usdtToken.approve(address(market), sellFee);
         kolektivaToken.approve(address(market), sellAmount);
+
         market.placeSellOrder(sellAmount, sellPrice);
         vm.stopPrank();
+
+        (uint256 totalCost, uint256 fee) = market.calculateBuyCost(buyAmount);
+        console.log("totalCost", totalCost);
+        console.log("fee", fee);
 
         vm.startPrank(buyer);
         usdtToken.approve(address(market), buyCost + buyFee);
@@ -273,9 +587,7 @@ contract KolektivaMarketTest is Test {
         uint256 buyAmount = 100; // More than available in the market
 
         vm.startPrank(handler);
-        vm.expectRevert(
-            KolektivaMarket.KolektivaMarket__InsufficientSupply.selector
-        );
+        vm.expectRevert(KolektivaMarket.InsufficientSupply.selector);
         market.instantBuy(buyAmount);
         vm.stopPrank();
     }
@@ -296,7 +608,7 @@ contract KolektivaMarketTest is Test {
         vm.startPrank(buyer);
         usdtToken.approve(address(market), totalCost + fee);
         market.placeBuyOrder(amount, price);
-        market.cancelBuyOrder(0); // Assuming it's the first order
+        market.cancelOrder(0, true); // Assuming it's the first order
         vm.stopPrank();
 
         // Assert that no Kolektiva tokens were received by the buyer
@@ -328,7 +640,7 @@ contract KolektivaMarketTest is Test {
         usdtToken.approve(address(market), fee);
         kolektivaToken.approve(address(market), amount);
         market.placeSellOrder(amount, price);
-        market.cancelSellOrder(0); // Assuming it's the first order
+        market.cancelOrder(0, false); // Assuming it's the first ord, falseer
         vm.stopPrank();
 
         // Assert that the seller's Kolektiva tokens are returned correctly
@@ -354,8 +666,8 @@ contract KolektivaMarketTest is Test {
         vm.stopPrank();
 
         vm.prank(address(0x789)); // Different address
-        vm.expectRevert(KolektivaMarket.KolektivaMarket__Unauthorized.selector);
-        market.cancelBuyOrder(0);
+        vm.expectRevert(KolektivaMarket.Unauthorized.selector);
+        market.cancelOrder(0, true);
     }
 
     function testCancelSellOrderUnauthorized() public endInitialOffering {
@@ -376,8 +688,8 @@ contract KolektivaMarketTest is Test {
         vm.stopPrank();
 
         vm.prank(address(0x789)); // Different address
-        vm.expectRevert(KolektivaMarket.KolektivaMarket__Unauthorized.selector);
-        market.cancelSellOrder(0);
+        vm.expectRevert(KolektivaMarket.Unauthorized.selector);
+        market.cancelOrder(0, false);
     }
 
     function testSetFeePercentage() public {
@@ -393,9 +705,7 @@ contract KolektivaMarketTest is Test {
         uint256 newFeePercentage = 2000; // Greater than 1000
 
         vm.prank(handler);
-        vm.expectRevert(
-            KolektivaMarket.KolektivaMarket__InvalidAmount.selector
-        );
+        vm.expectRevert(KolektivaMarket.InvalidAmount.selector);
         market.setFeePercentage(newFeePercentage);
     }
 
@@ -433,9 +743,7 @@ contract KolektivaMarketTest is Test {
 
     function testWithdrawPropertyOwnerFundsNoFunds() public endInitialOffering {
         vm.prank(propertyOwner);
-        vm.expectRevert(
-            KolektivaMarket.KolektivaMarket__NoFundsToWithdraw.selector
-        );
+        vm.expectRevert(KolektivaMarket.NoFundsToWithdraw.selector);
         market.withdrawPropertyOwnerFunds();
     }
 
