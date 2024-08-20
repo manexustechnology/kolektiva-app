@@ -9,6 +9,7 @@ import { Divider } from "antd";
 import { SellOrderData } from "@/types/order";
 import { useReadContractHook, useWriteContractHook } from "@/utils/hooks";
 import { useActiveAccount } from "thirdweb/react";
+import { getTransactionStatus } from "@/app/api/tx-hash";
 
 interface SellFormWizardProps {
   currentStep: number;
@@ -152,8 +153,9 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
                 console.log("tx", tx);
               } else {
                 // if (formDataType === "limit") {
-                const tx = await limitSell();
-                console.log("tx", tx);
+                const txHash = await limitSell();
+                const txStatus = await getTransactionStatus(txHash!);
+                console.log("tx", txHash);
               }
             }
           } catch (error) {

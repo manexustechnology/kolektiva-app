@@ -39,6 +39,8 @@ import {
   useWriteContractHook,
   useContractEventHook,
 } from "@/utils/hooks";
+import { getTransactionStatus } from "@/app/api/tx-hash";
+
 import Link from "next/link";
 
 interface MarketDetailClientPageProps {
