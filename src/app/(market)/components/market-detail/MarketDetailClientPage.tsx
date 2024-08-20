@@ -39,7 +39,10 @@ import {
   useWriteContractHook,
   useContractEventHook,
 } from "@/utils/hooks";
+import { getTransactionStatus } from "@/app/api/tx-hash";
 import { PropertyData } from "@/types/property";
+
+import Link from "next/link";
 
 interface MarketDetailClientPageProps {
   propertyData: PropertyData;
@@ -519,47 +522,55 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
               <h2 className="text-2xl font-bold">
                 {propertyData.address}
               </h2>
-              <p className="text-lg text-zinc-500">{propertyData.city}, {propertyData.state}, {propertyData.country}</p>
+              <Link href="/?location={propertyData.city}, {propertyData.state}, {propertyData.country}">
+                <p className="text-lg text-zinc-500">{propertyData.city}, {propertyData.state}, {propertyData.country}</p>
+              </Link>
             </div>
             {/* Tag Box of trading*/}
             {allowTrade ? (
-              <Box
-                position="relative"
-                backgroundColor="#F0FDFA"
-                color="#0D9488"
-                padding="2px 8px"
-                borderWidth="1px"
-                borderRadius="full"
-                borderColor="#0D9488"
-                fontSize="xs"
-                zIndex={10}
-                width="fit-content"
-              >
-                Aftermarket
-              </Box>
+              <Link href="/?status=aftermarket">
+                <Box
+                  position="relative"
+                  backgroundColor="#F0FDFA"
+                  color="#0D9488"
+                  padding="2px 8px"
+                  borderWidth="1px"
+                  borderRadius="full"
+                  borderColor="#0D9488"
+                  fontSize="xs"
+                  zIndex={10}
+                  width="fit-content"
+                >
+                  Aftermarket
+                </Box>
+              </Link>
             ) : (
-              <Box
-                position="relative"
-                backgroundColor="#F7FEE7"
-                color="#65A30D"
-                padding="2px 8px"
-                borderWidth="1px"
-                borderRadius="full"
-                borderColor="#65A30D"
-                fontSize="xs"
-                zIndex={10}
-                width="fit-content"
-              >
-                Initial Offering
-              </Box>
+              <Link href="/?status=initial-offering">
+                <Box
+                  position="relative"
+                  backgroundColor="#F7FEE7"
+                  color="#65A30D"
+                  padding="2px 8px"
+                  borderWidth="1px"
+                  borderRadius="full"
+                  borderColor="#65A30D"
+                  fontSize="xs"
+                  zIndex={10}
+                  width="fit-content"
+                >
+                  Initial Offering
+                </Box>
+              </Link>
             )}
-            <div className="flex p-4 gap-4 w-full rounded-2xl shadow-md items-center">
-              <House size={32} weight="fill" className="text-teal-600" />
-              <div className="flex flex-col justify-between">
-                <p className="text-sm text-zinc-500">Property type</p>
-                <p className="text-md font-bold text-teal-600">{propertyData.type}</p>
+            <Link href="/?propertyType=house">
+              <div className="flex p-4 gap-4 w-full rounded-2xl shadow-md items-center">
+                <House size={32} weight="fill" className="text-teal-600" />
+                <div className="flex flex-col justify-between">
+                  <p className="text-sm text-zinc-500">Property type</p>
+                  <p className="text-md font-bold text-teal-600">{propertyData.type}</p>
+                </div>
               </div>
-            </div>
+            </Link>
             <div className="flex flex-col gap-4 p-4 w-full rounded-2xl shadow-md">
               <div
                 className="relative flex flex-col justify-center"
@@ -602,7 +613,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
                   <p className="text-sm font-medium text-black">8,210 token</p>
                 </div>
               </div>
-              <div className="flex flex-col p-3 gap-3 w-full bg-zinc-100 rounded-lg">
+              <div className="flex flex-col p-3 gap-3 w-full bg-teal-50 rounded-lg">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-1">
                     <p className="text-sm text-zinc-500">Projected Yield</p>

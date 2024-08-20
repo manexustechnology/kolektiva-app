@@ -3,7 +3,9 @@
 import { Box } from "@chakra-ui/react";
 import PropertyCards from "./PropertyCards";
 import FilterBar from "./FilterBar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { IMarketFilter } from "@/types/filter";
 
 interface FilterBarProps {
   locations: string[];
@@ -11,17 +13,32 @@ interface FilterBarProps {
   sortOptions: string[];
   onFilterApply: (newFilters: any) => void;
   onFilterReset: () => void;
-  initialSliderValue1?: number;
-  initialSliderValue2?: number;
+  filters: IMarketFilter;
 }
 
 const PropertyListings: React.FC = () => {
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<IMarketFilter>({
     location: "",
     propertyType: "",
+    status: "",
     sortOption: "",
     priceRange: [0, 1000],
   });
+
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const filterLocation = searchParams.get('location') || '';
+    const filterPropertyType = searchParams.get('propertyType') || '';
+    const filterStatus = searchParams.get('status') || '';
+
+    setFilters((prev) => ({
+      ...prev,
+      location: filterLocation,
+      propertyType: filterPropertyType,
+      status: filterStatus,
+    }))
+  }, []);
 
   const handleFilterApply = (newFilters: any) => {
     setFilters(newFilters);
@@ -31,19 +48,19 @@ const PropertyListings: React.FC = () => {
     setFilters({
       location: "",
       propertyType: "",
+      status: "",
       sortOption: "",
       priceRange: [0, 1000],
     });
   };
 
   const filterBarProps: FilterBarProps = {
-    locations: ["Location 1", "Location 2", "Location 3"],
-    propertyTypes: ["Property Type 1", "Property Type 2", "Property Type 3"],
+    locations: ["DKI Jakarta", "Surabaya", "Denpasar"],
+    propertyTypes: ["House", "Apartment"],
     sortOptions: ["Featured", "Newest", "Oldest"],
     onFilterApply: handleFilterApply,
     onFilterReset: handleFilterReset,
-    initialSliderValue1: filters.priceRange[0],
-    initialSliderValue2: filters.priceRange[1],
+    filters,
   };
 
   return (

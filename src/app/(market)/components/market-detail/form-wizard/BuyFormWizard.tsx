@@ -4,12 +4,13 @@ import { AnimatePresence, motion } from "framer-motion";
 import BuyStep1 from "./BuyStep1";
 import BuyStep2 from "./BuyStep2";
 import BuyStep3 from "./BuyStep3";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Button, Checkbox, ModalBody, ModalFooter } from "@chakra-ui/react";
 import { Divider } from "antd";
 import { AfterMarketBuyOrderData, BuyOrderData } from "@/types/order";
 import { Warning, WarningCircle } from "@phosphor-icons/react/dist/ssr";
-import { useWriteContractHook } from "@/utils/hooks";
+import { useReadContractHook, useWriteContractHook } from "@/utils/hooks";
+import { useActiveAccount } from "thirdweb/react";
 
 interface BuyFormWizardProps {
   currentStep: number;
@@ -46,9 +47,9 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
   const [formData, setFormData] = useState<BuyOrderData>({
     type: "market",
     qtyToken: 1,
-    pricePerToken: 0,
+    pricePerToken: 100,
     orderExpiration: 0,
-    totalCost: 0,
+    totalCost: 1000,
     fee: 0,
   });
   const prevStep = useRef(currentStep);
@@ -91,6 +92,28 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
         return "Agree";
     }
   };
+  const activeAccount = useActiveAccount();
+  const address = activeAccount?.address;
+
+  const { data: allowanceData, isLoading: isLoadingAllowance } =
+    useReadContractHook({
+      contractName: "MockUSDT",
+      functionName: "allowance",
+      // args: [address, "_spender market address"],
+      args: [address, marketContractAddress],
+    });
+
+  const { writeAsync: approveUsdt } = useWriteContractHook({
+    contractName: "MockUSDT",
+    functionName: "approve",
+    // args: ["_spender market address", formData.totalCost],
+    args: [marketContractAddress, formData.totalCost],
+  });
+
+  const allowance = useMemo(
+    () => (allowanceData ? Number(allowanceData) : 0),
+    [allowanceData]
+  );
 
   const handleButtonSubmitClick = async () => {
     console.log(formData.qtyToken);
@@ -102,22 +125,32 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
           // Handle preview logic if necessary
           break;
         case 2:
-          // Handle submit order logic
-          let formDataType = (formData as AfterMarketBuyOrderData).type;
-          if (isAfterMarketTrading) {
-            if (formDataType === "market") {
-              const tx = await marketBuy();
-              console.log("market buy", tx);
-            } else if (formDataType === "limit") {
-              const tx = await limitBuy();
-              console.log("limit buy", tx);
+          if (allowance < formData.totalCost) {
+            try {
+              await approveUsdt(); // Call approve function here
+              console.log("Approve USDT");
+            } catch (error) {
+              console.error("Approval failed", error);
             }
           } else {
-            console.warn(
-              "Initial offering buy should not be processed in this step."
-            );
+            let formDataType = (formData as AfterMarketBuyOrderData).type;
+            if (isAfterMarketTrading) {
+              if (formDataType === "market") {
+                const tx = await marketBuy();
+                console.log("market buy", tx);
+              } else if (formDataType === "limit") {
+                const tx = await limitBuy();
+                console.log("limit buy", tx);
+              }
+            } else {
+              console.warn(
+                "Initial offering buy should not be processed in this step."
+              );
+            }
+            console.log("Submit Order");
           }
           break;
+
         case 3:
           // Handle agree logic
           if (!isAfterMarketTrading) {
@@ -210,7 +243,9 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
               <Divider className="border-zinc-200 !m-0" />
               <div className="flex justify-between items-center">
                 <p className="text-sm text-zinc-500">Total</p>
-                <p className="text-xl font-bold text-teal-600">5.11 USD</p>
+                <p className="text-xl font-bold text-teal-600">
+                  {formData.totalCost} USD
+                </p>
               </div>
             </>
           )}
