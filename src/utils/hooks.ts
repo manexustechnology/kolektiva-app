@@ -99,7 +99,7 @@ export function useWriteContractHook({
         contract,
         method: functionName,
         params: args,
-        gas: BigInt(200_000),
+        gas: BigInt(500_000),
       });
 
       const account = await wallet.connect({ client });

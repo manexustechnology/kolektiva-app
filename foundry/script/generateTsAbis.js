@@ -147,7 +147,19 @@ function main() {
     `${TARGET_DIR}deployedContracts.ts`,
     prettier.format(
       `${generatedContractComment} \n\n
-export const deployedContracts = {${fileContent}} as const;`,
+interface ContractDetails {
+  address: string;
+  abi: any[];
+  inheritedFunctions?: any;
+}
+
+interface DeployedContracts {
+  [chainId: string]: {
+    [contractName: string]: ContractDetails;
+  };
+}
+
+export const deployedContracts: DeployedContracts = {${fileContent}} as const;`,
       {
         parser: "typescript",
       }

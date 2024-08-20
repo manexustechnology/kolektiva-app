@@ -9,8 +9,8 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
  * @dev ERC20 token representing a property, with additional metadata and controlled minting and burning.
  */
 contract KolektivaToken is ERC20, Ownable {
-    error KolektivaToken__ExceedMaxSupply();
-    error KolektivaToken__CannotBeTransferredYet();
+    error ExceedMaxSupply();
+    error CannotBeTransferredYet();
 
     uint256 public availableForSale;
     uint256 public propertyValue;
@@ -18,7 +18,8 @@ contract KolektivaToken is ERC20, Ownable {
     address public tokenHandler;
 
     string private propertyType;
-    string private province;
+    string private country;
+    string private state;
     string private city;
     string private location;
 
@@ -27,7 +28,8 @@ contract KolektivaToken is ERC20, Ownable {
      * @param name The name of the token.
      * @param symbol The symbol of the token.
      * @param _propertyType The type of the property.
-     * @param _province The province where the property is located.
+     * @param _country The country where the property is located.
+     * @param _state The state where the property is located.
      * @param _city The city where the property is located.
      * @param _location The specific location of the property.
      * @param _totalSupply The total supply of tokens.
@@ -37,14 +39,16 @@ contract KolektivaToken is ERC20, Ownable {
         string memory name,
         string memory symbol,
         string memory _propertyType,
-        string memory _province,
+        string memory _country,
+        string memory _state,
         string memory _city,
         string memory _location,
         uint256 _totalSupply,
         address _tokenHandler
     ) ERC20(name, symbol) Ownable(_tokenHandler) {
         propertyType = _propertyType;
-        province = _province;
+        country = _country;
+        state = _state;
         city = _city;
         location = _location;
         tokenHandler = _tokenHandler;
@@ -64,7 +68,7 @@ contract KolektivaToken is ERC20, Ownable {
      */
     function mint(address to, uint256 amount) external onlyOwner {
         if (totalSupply() + amount >= totalSupply()) {
-            revert KolektivaToken__ExceedMaxSupply();
+            revert ExceedMaxSupply();
         }
         _mint(to, amount);
     }
@@ -97,7 +101,7 @@ contract KolektivaToken is ERC20, Ownable {
         uint256 amount
     ) public override returns (bool) {
         if (msg.sender != tokenHandler && this.balanceOf(tokenHandler) != 0) {
-            revert KolektivaToken__CannotBeTransferredYet();
+            revert CannotBeTransferredYet();
         }
         return super.transfer(to, amount);
     }
@@ -137,18 +141,28 @@ contract KolektivaToken is ERC20, Ownable {
 
     /**
      * @dev Retrieves the property information.
-     * @return A tuple containing the property type, province, city, and location.
+     * @return propertyType The type of the property.
+     * @return country The country where the property is located.
+     * @return state The state where the property is located.
+     * @return city The city where the property is located.
+     * @return location The specific location of the property.
      *
      * Example:
      * ```
-     * (string memory type, string memory province, string memory city, string memory location) = token.getInformation();
+     * (string memory propertyType, string memory country, string memory state, string memory city, string memory location) = token.getInformation();
      * ```
      */
     function getInformation()
         external
         view
-        returns (string memory, string memory, string memory, string memory)
+        returns (
+            string memory,
+            string memory,
+            string memory,
+            string memory,
+            string memory
+        )
     {
-        return (propertyType, province, city, location);
+        return (propertyType, country, state, city, location);
     }
 }

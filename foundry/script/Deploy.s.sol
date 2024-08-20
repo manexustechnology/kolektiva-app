@@ -22,7 +22,7 @@ contract DeployScript is ScaffoldETHDeploy {
         deployKolektivaOracle.run(deployerPrivateKey);
 
         DeployKolektivaHandler deployKolektivaHandler = new DeployKolektivaHandler();
-        vm.allowCheatcodes(address(deployKolektivaOracle));
+        vm.allowCheatcodes(address(deployKolektivaHandler));
         deployKolektivaHandler.run(deployerPrivateKey, usdtTokenAddress);
 
         // vm.stopBroadcast();

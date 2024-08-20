@@ -9,10 +9,10 @@ import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
  * @dev This contract manages the price data for different property categories, allowing updates and retrievals.
  */
 contract KolektivaOracle is Ownable, Pausable {
-    error KolektivaOracle__FrequencyNotMet();
-    error KolektivaOracle__PriceAboveThreshold();
-    error KolektivaOracle__CategoryPriceNotSet();
-    error KolektivaOracle__MismatchHashesAndPricesLength();
+    error FrequencyNotMet();
+    error PriceAboveThreshold();
+    error CategoryPriceNotSet();
+    error MismatchHashesAndPricesLength();
 
     struct PriceData {
         uint256 averagePricePerSqm;
@@ -65,7 +65,7 @@ contract KolektivaOracle is Ownable, Pausable {
             currentTimestamp > 0 &&
             block.timestamp < currentTimestamp + _frequency
         ) {
-            revert KolektivaOracle__FrequencyNotMet();
+            revert FrequencyNotMet();
         }
         if (currentPrice > 0) {
             uint256 priceDifference = absDifference(
@@ -75,7 +75,7 @@ contract KolektivaOracle is Ownable, Pausable {
             uint256 threshold = (currentPrice * _threshold) / PRICE_PRECISION;
 
             if (priceDifference > threshold) {
-                revert KolektivaOracle__PriceAboveThreshold();
+                revert PriceAboveThreshold();
             }
         }
 
@@ -104,7 +104,7 @@ contract KolektivaOracle is Ownable, Pausable {
         uint256[] memory newPrices
     ) public onlyOwner whenNotPaused {
         if (categoryHashes.length != newPrices.length) {
-            revert KolektivaOracle__MismatchHashesAndPricesLength();
+            revert MismatchHashesAndPricesLength();
         }
         for (uint256 i = 0; i < categoryHashes.length; i++) {
             updateCategoryPrice(categoryHashes[i], newPrices[i]);
@@ -126,7 +126,7 @@ contract KolektivaOracle is Ownable, Pausable {
     ) public view returns (uint256) {
         PriceData memory data = categoryPriceData[categoryHash];
         if (data.averagePricePerSqm == 0) {
-            revert KolektivaOracle__CategoryPriceNotSet();
+            revert CategoryPriceNotSet();
         }
         return (data.averagePricePerSqm * totalArea);
     }
