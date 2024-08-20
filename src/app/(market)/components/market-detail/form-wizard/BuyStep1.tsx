@@ -255,7 +255,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
                 onChange={(e) => setTokenPrice(parseInt(e.target.value) || 0)}
               />
               <InputRightElement right={6}>
-                <span className="text-sm text-zinc-500">LSK</span>
+                <span className="text-sm text-zinc-500">USD</span>
               </InputRightElement>
             </InputGroup>
           </div>
@@ -276,7 +276,9 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
               onClick={() => setTokenQty(1)}
             >
               <p className="text-base font-medium text-teal-600">1 token</p>
-              <p className="text-xs text-zinc-700">5,00 USD</p>
+              <p className="text-xs text-zinc-700">
+                {formData.pricePerToken} USD
+              </p>
             </div>
             <div
               className={cn(
@@ -288,7 +290,9 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
               onClick={() => setTokenQty(5)}
             >
               <p className="text-base font-medium text-teal-600">5 token</p>
-              <p className="text-xs text-zinc-700">25,00 USD</p>
+              <p className="text-xs text-zinc-700">
+                {formData.pricePerToken * 5} USD
+              </p>
             </div>
             <div
               className={cn(
@@ -300,7 +304,9 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
               onClick={() => setTokenQty(10)}
             >
               <p className="text-base font-medium text-teal-600">10 token</p>
-              <p className="text-xs text-zinc-700">50,00 USD</p>
+              <p className="text-xs text-zinc-700">
+                {formData.pricePerToken * 10} USD
+              </p>
             </div>
             <div
               className={cn(
@@ -312,7 +318,9 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
               onClick={() => setTokenQty(25)}
             >
               <p className="text-base font-medium text-teal-600">25 token</p>
-              <p className="text-xs text-zinc-700">125,00 USD</p>
+              <p className="text-xs text-zinc-700">
+                {formData.pricePerToken * 25} USD
+              </p>
             </div>
             <div
               className={cn(
@@ -324,7 +332,9 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
               onClick={() => setTokenQty(50)}
             >
               <p className="text-base font-medium text-teal-600">50 token</p>
-              <p className="text-xs text-zinc-700">250,00 USD</p>
+              <p className="text-xs text-zinc-700">
+                {formData.pricePerToken * 50} USD
+              </p>
             </div>
             <div
               className={cn(
@@ -336,7 +346,9 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
               onClick={() => setTokenQty(100)}
             >
               <p className="text-base font-medium text-teal-600">100 token</p>
-              <p className="text-xs text-zinc-700">500,00 USD</p>
+              <p className="text-xs text-zinc-700">
+                {formData.pricePerToken * 100} USD
+              </p>
             </div>
           </div>
         </div>
@@ -376,7 +388,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
           <p className="text-sm text-zinc-500">Fees</p>
           <Info weight="fill" size={16} className="text-zinc-400" />
         </div>
-        <p className="text-sm font-medium text-zinc-700">0.11 USD</p>
+        <p className="text-sm font-medium text-zinc-700">{formData.fee} USD</p>
       </div>
       {/* Mark test */}
       <div>

@@ -3,11 +3,12 @@
 import { AnimatePresence, motion } from "framer-motion";
 import SellStep1 from "./SellStep1";
 import SellStep2 from "./SellStep2";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Button, Checkbox, ModalBody, ModalFooter } from "@chakra-ui/react";
 import { Divider } from "antd";
 import { SellOrderData } from "@/types/order";
-import { useWriteContractHook } from "@/utils/hooks";
+import { useReadContractHook, useWriteContractHook } from "@/utils/hooks";
+import { useActiveAccount } from "thirdweb/react";
 
 interface SellFormWizardProps {
   currentStep: number;
@@ -50,6 +51,9 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
   const direction = currentStep > prevStep.current ? 1 : -1;
   const marketContractAddress =
     process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS!;
+  const tokenContractAddress = process.env.NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS!;
+  const activeAccount = useActiveAccount();
+  const address = activeAccount?.address;
 
   const { writeAsync: marketSell } = useWriteContractHook({
     contractName: "KolektivaMarket",
@@ -77,6 +81,47 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
         return "Submit order";
     }
   };
+  const { data: allowanceUsdtData, isLoading: isLoadingAllowanceUsdt } =
+    useReadContractHook({
+      contractName: "MockUSDT",
+      functionName: "allowance",
+      // args: [address, "_spender market address"],
+      args: [address, marketContractAddress],
+    });
+
+  const { writeAsync: approveUsdt } = useWriteContractHook({
+    contractName: "MockUSDT",
+    functionName: "approve",
+    // args: ["_spender market address", formData.totalCost],
+    args: [marketContractAddress, , formData.fee],
+  });
+
+  const { data: allowanceTokenData, isLoading: isLoadingAllowanceToken } =
+    useReadContractHook({
+      contractName: "KolektivaToken",
+      functionName: "allowance",
+      contractAddress: tokenContractAddress,
+      // args: [address, "_spender market address"],
+      args: [address, marketContractAddress],
+    });
+
+  const { writeAsync: approveToken } = useWriteContractHook({
+    contractName: "KolektivaToken",
+    functionName: "approve",
+    contractAddress: tokenContractAddress,
+    // args: ["_spender market address", formData.totalCost],
+    args: [marketContractAddress, , formData.qtyToken],
+  });
+
+  const allowanceUsdt = useMemo(
+    () => (allowanceUsdtData ? Number(allowanceUsdtData) : 0),
+    [allowanceUsdtData]
+  );
+
+  const allowanceToken = useMemo(
+    () => (allowanceTokenData ? Number(allowanceTokenData) : 0),
+    [allowanceTokenData]
+  );
 
   const handleButtonSubmitClick = async () => {
     console.log("formData", formData);
@@ -87,16 +132,34 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
           // Handle preview logic if necessary
           break;
         case 2:
-          // Handle submit order logic
-          let formDataType = (formData as SellOrderData).type;
-          if (formDataType === "market") {
-            const tx = await marketSell();
-            console.log("tx", tx);
-          } else {
-            // if (formDataType === "limit") {
-            const tx = await limitSell();
-            console.log("tx", tx);
+          try {
+            if (allowanceToken < formData.qtyToken) {
+              // If KolektivaToken allowance is insufficient, approve it first
+              await approveToken();
+              console.log("Approve KolektivaToken");
+            } else if (allowanceUsdt < formData.fee) {
+              // If USDT allowance is insufficient, approve it next
+              await approveUsdt();
+              console.log("Approve USDT");
+            } else {
+              // Both allowances are sufficient, proceed with order submission
+              console.log("Submit Order");
+              // Add your order submission logic here
+              // Handle submit order logic
+              let formDataType = (formData as SellOrderData).type;
+              if (formDataType === "market") {
+                const tx = await marketSell();
+                console.log("tx", tx);
+              } else {
+                // if (formDataType === "limit") {
+                const tx = await limitSell();
+                console.log("tx", tx);
+              }
+            }
+          } catch (error) {
+            console.error("Action failed", error);
           }
+
           break;
         default:
           console.warn("Unknown step");
@@ -145,7 +208,9 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
                 ? "Estimated total sell price"
                 : "Total sell price"}
             </p>
-            <p className="text-xl font-bold text-teal-600">4.89 USD</p>
+            <p className="text-xl font-bold text-teal-600">
+              {formData.totalProceeds} USD
+            </p>
           </div>
           <Button
             colorScheme="teal"
