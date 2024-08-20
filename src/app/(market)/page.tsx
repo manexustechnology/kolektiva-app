@@ -1,6 +1,7 @@
 import { Image } from "@chakra-ui/react";
 import { Metadata } from "next";
 import PropertyListings from "./components/PropertyListings";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: "Kolektiva",
