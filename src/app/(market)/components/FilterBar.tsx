@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   CaretDown,
 } from "@phosphor-icons/react/dist/ssr";
@@ -12,14 +12,40 @@ import {
   Tabs,
   useDisclosure,
 } from "@chakra-ui/react";
+import { IMarketFilter } from "@/types/filter";
 
 interface FilterBarProps {
   locations: string[];
   propertyTypes: string[];
   sortOptions: string[];
   onFilterApply: (newFilters: any) => void;
-  initialSliderValue1?: number;
-  initialSliderValue2?: number;
+  filters: IMarketFilter;
+}
+
+const statusStringToIndex = (value: string): number => {
+  switch (value) {
+    case 'upcoming':
+      return 1;
+    case 'initial-offering':
+      return 2;
+    case 'aftermarket':
+      return 3;
+    default:
+      return 0;
+  }
+};
+
+const statusIndexToString = (value: number): string => {
+  switch (value) {
+    case 1:
+      return 'upcoming';
+    case 2:
+      return 'initial-offering';
+    case 3:
+      return 'aftermarket';
+    default:
+      return '';
+  }
 }
 
 const FilterBar: React.FC<FilterBarProps> = ({
@@ -27,21 +53,24 @@ const FilterBar: React.FC<FilterBarProps> = ({
   propertyTypes,
   sortOptions,
   onFilterApply,
-  initialSliderValue1 = 50,
-  initialSliderValue2 = 50,
+  filters,
 }) => {
-  const [filters, setFilters] = useState({
-    location: "",
-    propertyType: "",
-    sortOption: "",
-    priceRange: [initialSliderValue1, initialSliderValue2],
-  });
+  const [statusTabIndex, setStatusTabIndex] = useState(statusStringToIndex(filters.status));
+
+  useEffect(() => {
+    setStatusTabIndex(statusStringToIndex(filters.status));
+  }, [filters]);
 
   const handleFilterChange = (key: string, value: any) => {
     const updatedFilters = { ...filters, [key]: value };
-    setFilters(updatedFilters);
     onFilterApply(updatedFilters);
   };
+
+  const handleTabChange = (index: number) => {
+    setStatusTabIndex(index);
+    const updatedFilters = { ...filters, status: statusIndexToString(index) };
+    onFilterApply(updatedFilters);
+  }
 
   return (
     <Box
@@ -91,7 +120,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
           onChange={(e) => handleFilterChange("location", e.target.value)}
         >
           {locations.map((location, index) => (
-            <option key={index} value={location}>{location}</option>
+            <option key={index} value={location} selected={location.toLowerCase() === filters.location.toLowerCase()}>{location}</option>
           ))}
         </Select>
 
@@ -112,7 +141,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
           onChange={(e) => handleFilterChange("propertyType", e.target.value)}
         >
           {propertyTypes.map((type, index) => (
-            <option key={index} value={type}>{type}</option>
+            <option key={index} value={type} selected={type.toLowerCase() === filters.propertyType.toLowerCase()}>{type}</option>
           ))}
         </Select>
 
@@ -247,7 +276,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
           </Menu> */}
 
           {/*Tabs*/}
-          <Tabs variant="soft-rounded" colorScheme="teal">
+          <Tabs variant="soft-rounded" colorScheme="teal" index={statusTabIndex} onChange={handleTabChange}>
             <TabList
               display="flex"
               flexDirection="row"
