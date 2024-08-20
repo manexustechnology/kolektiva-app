@@ -33,12 +33,7 @@ import {
   useWalletDetailsModal,
 } from "thirdweb/react";
 
-interface NavbarProps {
-  topNavHeightChange?: (height: number | undefined) => void;
-}
-
-const Navbar: React.FC<NavbarProps> = ({ topNavHeightChange }) => {
-  const topNavRef = useRef<HTMLDivElement>(null);
+const Navbar: React.FC = () => {
   const activeAccount = useActiveAccount();
   const address = activeAccount?.address;
   const { disconnect } = useDisconnect();
@@ -49,12 +44,6 @@ const Navbar: React.FC<NavbarProps> = ({ topNavHeightChange }) => {
   const detailsModal = useWalletDetailsModal();
 
   useEffect(() => {
-    if (topNavHeightChange) {
-      topNavHeightChange(topNavRef.current?.offsetHeight);
-    }
-  }, [topNavRef.current?.offsetHeight, activeAccount, topNavHeightChange]);
-
-  useEffect(() => {
     console.log(activeChain);
   }, [activeChain]);
 
@@ -63,24 +52,8 @@ const Navbar: React.FC<NavbarProps> = ({ topNavHeightChange }) => {
   }
 
   return (
-    <Flex
-      as="div"
-      direction="row"
-      justify="center"
-      align="center"
-      p={3}
-      px={32}
-      gap={2}
-      bg="#042F2E"
-      w="100%"
-      h="auto"
-      minHeight="36px"
-      mx="auto"
-      position="fixed"
-      zIndex={100}
-      ref={topNavRef}
-    >
-      <Box width="1238px" mx="auto">
+    <div className="flex justify-center items-center gap-2 px-4 bg-[#042F2E] h-[64px] z-[100] fixed w-screen">
+      <div className="max-w-[1238px] w-full">
         <div className="flex justify-between items-center">
           <Link href="/" passHref>
             <Flex align="center">
@@ -258,8 +231,8 @@ const Navbar: React.FC<NavbarProps> = ({ topNavHeightChange }) => {
             )}
           </div>
         </div>
-      </Box>
-    </Flex>
+      </div>
+    </div>
   );
 };
 

@@ -18,40 +18,39 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <Box
-      as="footer"
-      className="relative bottom-0 left-0 right-0 bg-[#042F2E] text-white flex flex-col items-center p-0 gap-2.5"
+    <footer
+      className="relative bottom-0 left-0 right-0 bg-[#042F2E] text-white flex flex-col items-center p-0 gap-2.5 w-screen"
     >
-      <div className="flex flex-row justify-between items-center p-6 gap-6 w-[1238px] max-w-[1238px] bg-[#042F2E]">
-        <div className="flex flex-col items-start p-0 gap-6 w-[500px]">
+      <div className="flex flex-col md:flex-row md:justify-between items-center p-6 gap-6 w-full max-w-[1238px] bg-[#042F2E] h-full">
+        <div className="flex flex-col items-center md:items-start p-0 gap-6 w-full">
           <Link href="/" passHref>
             <div className="flex items-center">
               <Image src="/images/Kolektiva_Logo.png" alt="kolektiva logo" />
               <span className="text-white ml-2">Kolektiva</span>
             </div>
           </Link>
-          <div>
+          <div className="flex gap-4 flex-wrap justify-center md:justify-start">
             <a
               href="/about"
-              className="mr-5 text-white text-sm font-normal hover:underline"
+              className="text-white text-sm font-normal hover:underline"
             >
               About us
             </a>
             <a
               href="/privacy-policy"
-              className="mr-5 text-white text-sm font-normal hover:underline"
+              className="text-white text-sm font-normal hover:underline"
             >
               Privacy policy
             </a>
             <a
               href="/terms-of-service"
-              className="mr-5 text-white text-sm font-normal hover:underline"
+              className="text-white text-sm font-normal hover:underline"
             >
               Terms of service
             </a>
             <a
               href="/contact"
-              className="mr-5 text-white text-sm font-normal hover:underline"
+              className="text-white text-sm font-normal hover:underline"
             >
               Contact us
             </a>
@@ -92,13 +91,13 @@ const Footer: React.FC = () => {
             />
           </div>
         </div>
-        <div className="relative w-[400px] h-[122px]">
-          <p className="absolute bottom-0 right-0 text-white text-sm font-normal">
+        <div className="flex justify-center md:justify-end items-end self-end d w-full">
+          <p className="text-white text-sm font-normal">
             &copy; {new Date().getFullYear()} Kolektiva
           </p>
         </div>
       </div>
-    </Box>
+    </footer>
   );
 };
 
