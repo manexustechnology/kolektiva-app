@@ -12,19 +12,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [topNavHeight, setTopNavHeight] = useState<number | undefined>();
-
   return (
     <html lang="en">
       <body
         className={`${interGlobalFont.className} flex flex-col min-h-screen`}
       >
         <Providers>
-          <Navbar topNavHeightChange={(height) => setTopNavHeight(height)} />
+          <Navbar />
           <div
             className="flex-grow"
             style={{
-              paddingTop: topNavHeight ? `${topNavHeight}px` : "",
+              paddingTop: '64px',
             }}
           >
             {children}
