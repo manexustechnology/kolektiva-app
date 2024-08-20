@@ -1,9 +1,9 @@
 "use client";
 
-import { Box, Grid, Button, Flex } from "@chakra-ui/react";
+import { Box, Grid, Button, Flex, Skeleton } from "@chakra-ui/react";
 import PropertyCard from "./PropertyCard";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   CaretDoubleLeft,
   CaretLeft,
@@ -25,128 +25,65 @@ interface PropertyCardData {
 }
 
 interface PropertyCardsProps {
-  cards?: PropertyCardData[];
+  filters: {
+    location: string;
+    propertyType: string;
+    sortOption: string;
+    priceRange: number[];
+  };
 }
 
-const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
+const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
   const router = useRouter();
-
+  const [propertyData, setPropertyData] = useState<PropertyCardData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  const handleButtonClick = (slug: string) => {
-    router.push("/detail/" + slug);
-  };
+  const filtersRef = useRef(filters);
 
-  const cardData: PropertyCardData[] = [
-    {
-      name: "Luxury Villa",
-      slug: "luxury-villa",
-      location: "Beverly Hills, CA",
-      img: "/images/Property_Image.jpg",
-      price: "82,500",
-      isNew: true,
-      isFeatured: true,
-      isTraded: false,
-    },
-    {
-      name: "Modern Apartment",
-      slug: "modern-apartment",
-      location: "New York, NY",
-      img: "/images/Property_Image.jpg",
-      price: "26,000",
-      isNew: false,
-      isFeatured: true,
-      isTraded: false,
-    },
-    {
-      name: "The Den",
-      slug: "the-den",
-      location: "Los Angeles, LA",
-      img: "/images/Property_Image.jpg",
-      price: "9500",
-      isNew: true,
-      isFeatured: false,
-      isTraded: true,
-    },
-    {
-      name: "Modern Apartment3",
-      slug: "modern-apartment3",
-      location: "New York, NY",
-      img: "/images/Property_Image.jpg",
-      price: "15,000",
-      isNew: false,
-      isFeatured: false,
-      isTraded: false,
-    },
-    {
-      name: "Cozy Cottage",
-      slug: "cozy-cottage",
-      location: "Aspen, CO",
-      img: "/images/Property_Image.jpg",
-      price: "69,200",
-      isNew: true,
-      isFeatured: true,
-      isTraded: true,
-    },
-    {
-      name: "Luxury Villa",
-      slug: "luxury-villa",
-      location: "Beverly Hills, CA",
-      img: "/images/Property_Image.jpg",
-      price: "82,500",
-      isNew: true,
-      isFeatured: true,
-      isTraded: false,
-    },
-    {
-      name: "Modern Apartment",
-      slug: "modern-apartment",
-      location: "New York, NY",
-      img: "/images/Property_Image.jpg",
-      price: "26,000",
-      isNew: false,
-      isFeatured: true,
-      isTraded: true,
-    },
-    {
-      name: "The Den",
-      slug: "the-den",
-      location: "Los Angeles, LA",
-      img: "/images/Property_Image.jpg",
-      price: "9500",
-      isNew: true,
-      isFeatured: false,
-      isTraded: true,
-    },
-    {
-      name: "Modern Apartment3",
-      slug: "modern-apartment3",
-      location: "New York, NY",
-      img: "/images/Property_Image.jpg",
-      price: "15,000",
-      isNew: false,
-      isFeatured: false,
-      isTraded: true,
-    },
-    {
-      name: "Cozy Cottage",
-      slug: "cozy-cottage",
-      location: "Aspen, CO",
-      img: "/images/Property_Image.jpg",
-      price: "69,200",
-      isNew: true,
-      isFeatured: true,
-      isTraded: true,
-    },
-  ];
+  useEffect(() => {
+    filtersRef.current = filters;
+  }, [filters]);
 
-  const cardsToDisplay = cards || cardData;
+  useEffect(() => {
+    const fetchProperties = async () => {
+      setIsLoading(true);
+      try {
+        const currentFilters = filtersRef.current;
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_HOST}/property?${new URLSearchParams(currentFilters as any).toString()}`);
+        const data = await response.json();
 
-  const totalPages = Math.ceil(cardsToDisplay.length / itemsPerPage);
+        const mappedData = data.map((property: any) => ({
+          name: property.type,
+          slug: property.id,
+          location: `${property.address}, ${property.city}, ${property.state}, ${property.country}`,
+          img: property.images?.[0]?.image || "https://messagetech.com/wp-content/themes/ml_mti/images/no-image.jpg",
+          price: property.price || "N/A",
+          isNew: true,
+          isFeatured: property.isFeatured,
+          isTraded: property.isTraded,
+        }));
+
+        setPropertyData(mappedData);
+      } catch (error) {
+        console.error("Error fetching properties:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProperties();
+  }, [filters]);
+
+  const totalPages = Math.ceil(propertyData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentCards = cardsToDisplay.slice(startIndex, endIndex);
+  const currentCards = propertyData.slice(startIndex, endIndex);
+
+  const handleButtonClick = (slug: string) => {
+    router.push(`/detail/${slug}`);
+  };
 
   const handlePageChange = (newPage: number) => {
     if (newPage > 0 && newPage <= totalPages) {
@@ -158,7 +95,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
     const pages: (number | string)[] = [];
     const showAdjacent = 2;
 
-    if (currentPage > 0) pages.push(1);
+    if (currentPage > 1) pages.push(1);
 
     if (currentPage > showAdjacent + 2) {
       pages.push("...");
@@ -183,10 +120,27 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
 
   return (
     <Box width={1238} pl={0} py={4}>
-      {cardsToDisplay.length === 0 ? (
-        <div className="flex flex-col justify-center items-center p-12 gap-1 w-[1214px] h-[204px] ">
+      {isLoading ? (
+        <Grid
+          templateColumns={{
+            base: "repeat(1, 1fr)",
+            md: "repeat(2, 1fr)",
+            lg: "repeat(3, 1fr)",
+          }}
+          gap={4}
+        >
+          {Array(itemsPerPage)
+            .fill(0)
+            .map((_, index) => (
+              <Box key={index}>
+                <Skeleton height="321px" width="394px" borderRadius="lg" />
+              </Box>
+            ))}
+        </Grid>
+      ) : propertyData.length === 0 ? (
+        <div className="flex flex-col justify-center items-center p-12 gap-1 w-[1214px] h-[204px]">
           <div className="flex flex-row items-center p-3 gap-2 w-14 h-14 bg-zinc-100 rounded-full">
-            <div className=" relative flex items-center justify-center">
+            <div className="relative flex items-center justify-center">
               <FileMagnifyingGlass size={32} weight="fill" color="#A1A1AA" />
             </div>
           </div>
@@ -218,7 +172,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
             ))}
           </Grid>
 
-          {/*Pageation UI*/}
+          {/* Pagination UI */}
           <Flex
             mt={4}
             justifyContent="center"
@@ -267,33 +221,40 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
               <CaretLeft size={16} weight="fill" color="#0F766E" />
             </Button>
 
-            {getPageNumbers().map((page, index) => (
-              <Button
-                key={index}
-                onClick={() => {
-                  if (typeof page === "number") {
-                    handlePageChange(page);
-                  }
-                }}
-                bg={page === currentPage ? "#0D9488" : "#F4F4F5"}
-                color={page === currentPage ? "white" : "black"}
-                borderRadius="full"
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-                p={2}
-                w={10}
-                h={10}
-                isDisabled={page === "..."}
-                _disabled={{
-                  bg: "gray.300",
-                  cursor: "not-allowed",
-                  opacity: 0.4,
-                }}
-              >
-                {page}
-              </Button>
-            ))}
+            {getPageNumbers().map((page, index) =>
+              typeof page === "number" ? (
+                <Button
+                  key={index}
+                  onClick={() => handlePageChange(page)}
+                  bg={page === currentPage ? "#0F766E" : "#CCFBF1"}
+                  color={page === currentPage ? "white" : "black"}
+                  borderRadius="full"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  p={2}
+                  w={10}
+                  h={10}
+                >
+                  {page}
+                </Button>
+              ) : (
+                <Button
+                  key={index}
+                  bg="#CCFBF1"
+                  borderRadius="full"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  p={2}
+                  w={10}
+                  h={10}
+                  isDisabled
+                >
+                  {page}
+                </Button>
+              )
+            )}
 
             <Button
               onClick={() => handlePageChange(currentPage + 1)}
@@ -314,6 +275,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ cards }) => {
             >
               <CaretRight size={16} weight="fill" color="#0F766E" />
             </Button>
+
             <Button
               onClick={() => setCurrentPage(totalPages)}
               bg="#CCFBF1"

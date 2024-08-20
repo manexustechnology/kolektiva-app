@@ -3,27 +3,13 @@
 import { useState } from "react";
 import {
   CaretDown,
-  CaretUp,
-  SlidersHorizontal,
 } from "@phosphor-icons/react/dist/ssr";
 import {
   Box,
-  Button,
-  Menu,
-  MenuButton,
-  MenuList,
   Select,
-  Slider,
-  SliderFilledTrack,
-  SliderMark,
-  SliderThumb,
-  SliderTrack,
   Tab,
   TabList,
-  TabPanel,
-  TabPanels,
   Tabs,
-  Tooltip,
   useDisclosure,
 } from "@chakra-ui/react";
 
@@ -31,8 +17,7 @@ interface FilterBarProps {
   locations: string[];
   propertyTypes: string[];
   sortOptions: string[];
-  onFilterApply: () => void;
-  onFilterReset: () => void;
+  onFilterApply: (newFilters: any) => void;
   initialSliderValue1?: number;
   initialSliderValue2?: number;
 }
@@ -42,13 +27,21 @@ const FilterBar: React.FC<FilterBarProps> = ({
   propertyTypes,
   sortOptions,
   onFilterApply,
-  onFilterReset,
   initialSliderValue1 = 50,
   initialSliderValue2 = 50,
 }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [sliderValue1, setSliderValue1] = useState(50);
-  const [sliderValue2, setSliderValue2] = useState(50);
+  const [filters, setFilters] = useState({
+    location: "",
+    propertyType: "",
+    sortOption: "",
+    priceRange: [initialSliderValue1, initialSliderValue2],
+  });
+
+  const handleFilterChange = (key: string, value: any) => {
+    const updatedFilters = { ...filters, [key]: value };
+    setFilters(updatedFilters);
+    onFilterApply(updatedFilters);
+  };
 
   return (
     <Box
@@ -72,11 +65,13 @@ const FilterBar: React.FC<FilterBarProps> = ({
           }}
           icon={<CaretDown weight="fill" />}
           width="200px"
+          marginRight={5}
           rounded={100}
+          onChange={(e) => handleFilterChange("sortOption", e.target.value)}
         >
-          <option value="Featured">Featured</option>
-          <option value="Newest">Newest</option>
-          <option value="Oldest">Oldest</option>
+          {sortOptions.map((option, index) => (
+            <option key={index} value={option}>{option}</option>
+          ))}
         </Select>
 
         <Select
@@ -93,11 +88,13 @@ const FilterBar: React.FC<FilterBarProps> = ({
           rounded={100}
           width="200px"
           marginRight={5}
+          onChange={(e) => handleFilterChange("location", e.target.value)}
         >
-          <option value="Location 1">Location 1</option>
-          <option value="Location 2">Location 2</option>
-          <option value="Location 3">Location 3</option>
+          {locations.map((location, index) => (
+            <option key={index} value={location}>{location}</option>
+          ))}
         </Select>
+
         <Select
           id="propertytype"
           placeholder="Property Type"
@@ -112,10 +109,11 @@ const FilterBar: React.FC<FilterBarProps> = ({
           width="200px"
           rounded={100}
           marginRight={5}
+          onChange={(e) => handleFilterChange("propertyType", e.target.value)}
         >
-          <option value="Property Type 1">Property Type 1</option>
-          <option value="Property Type 2">Property Type 2</option>
-          <option value="Property Type 3">Property Type 3</option>
+          {propertyTypes.map((type, index) => (
+            <option key={index} value={type}>{type}</option>
+          ))}
         </Select>
 
         <div className="absolute right-0">
