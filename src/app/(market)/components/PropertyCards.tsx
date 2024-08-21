@@ -61,7 +61,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
           slug: property.id,
           location: `${property.city}, ${property.state}, ${property.country}`,
           img: property.images?.[0]?.image || "https://messagetech.com/wp-content/themes/ml_mti/images/no-image.jpg",
-          price: property.price || "N/A",
+          price: property.price || "-",
           isNew: true,
           isFeatured: property.isFeatured,
           isTraded: property.isTraded,
