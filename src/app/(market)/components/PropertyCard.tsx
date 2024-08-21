@@ -10,6 +10,7 @@ interface PropertyCardProps {
   isNew: boolean;
   isFeatured: boolean;
   isTraded: boolean;
+  isUpcoming: boolean;
   onButtonClick: () => void;
 }
 
@@ -21,6 +22,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   isNew,
   isFeatured,
   isTraded,
+  isUpcoming,
   onButtonClick,
 }) => {
   return (
@@ -56,8 +58,42 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
         </Box>
       )}
 
+      {/* Tag Box of Upcoming*/}
+      {isUpcoming && (
+        <Box
+          position="absolute"
+          top={2}
+          left={2}
+          backgroundColor="#FFFBEB"
+          color="#D97706"
+          padding="2px 8px"
+          borderWidth="1px"
+          borderRadius="full"
+          borderColor="#D97706"
+          fontSize="xs"
+          zIndex={10}
+        >
+          Upcoming
+        </Box>
+      )}
+
       {/* Tag Box of trading*/}
-      {isTraded ? (
+      {isTraded && <Box
+          position="absolute"
+          top={2}
+          left={2}
+          backgroundColor="#F0FDFA"
+          color="#0D9488"
+          padding="2px 8px"
+          borderWidth="1px"
+          borderRadius="full"
+          borderColor="#0D9488"
+          fontSize="xs"
+          zIndex={10}
+        >
+          Aftermarket
+      </Box>}
+      {/* {isTraded ? (
         <Box
           position="absolute"
           top={2}
@@ -89,7 +125,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
         >
           Initial Offering
         </Box>
-      )}
+      )} */}
 
       {/*Image*/}
       <div className="relative w-[394px] h-[140px]">
