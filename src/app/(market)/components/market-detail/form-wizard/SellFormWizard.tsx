@@ -211,7 +211,7 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
                 : "Total sell price"}
             </p>
             <p className="text-xl font-bold text-teal-600">
-              {formData.totalProceeds} USD
+              {formData.totalProceeds} USDT
             </p>
           </div>
           <Button

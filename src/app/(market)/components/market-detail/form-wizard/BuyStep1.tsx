@@ -241,7 +241,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
           <Wallet weight="fill" size={24} />
           <div className="flex flex-col justify-center">
             <p className="text-sm text-zinc-500">Your balance</p>
-            <p className="text-base font-medium">30,00 USD</p>
+            <p className="text-base font-medium">30,00 USDT</p>
           </div>
         </div>
         {isAfterMarketTrading && activeTab === tabs[1].id && (
@@ -255,7 +255,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
                 onChange={(e) => setTokenPrice(parseInt(e.target.value) || 0)}
               />
               <InputRightElement right={6}>
-                <span className="text-sm text-zinc-500">USD</span>
+                <span className="text-sm text-zinc-500">USDT</span>
               </InputRightElement>
             </InputGroup>
           </div>
@@ -277,7 +277,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             >
               <p className="text-base font-medium text-teal-600">1 token</p>
               <p className="text-xs text-zinc-700">
-                {formData.pricePerToken} USD
+                {formData.pricePerToken} USDT
               </p>
             </div>
             <div
@@ -291,7 +291,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             >
               <p className="text-base font-medium text-teal-600">5 token</p>
               <p className="text-xs text-zinc-700">
-                {formData.pricePerToken * 5} USD
+                {formData.pricePerToken * 5} USDT
               </p>
             </div>
             <div
@@ -305,7 +305,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             >
               <p className="text-base font-medium text-teal-600">10 token</p>
               <p className="text-xs text-zinc-700">
-                {formData.pricePerToken * 10} USD
+                {formData.pricePerToken * 10} USDT
               </p>
             </div>
             <div
@@ -319,7 +319,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             >
               <p className="text-base font-medium text-teal-600">25 token</p>
               <p className="text-xs text-zinc-700">
-                {formData.pricePerToken * 25} USD
+                {formData.pricePerToken * 25} USDT
               </p>
             </div>
             <div
@@ -333,7 +333,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             >
               <p className="text-base font-medium text-teal-600">50 token</p>
               <p className="text-xs text-zinc-700">
-                {formData.pricePerToken * 50} USD
+                {formData.pricePerToken * 50} USDT
               </p>
             </div>
             <div
@@ -347,7 +347,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             >
               <p className="text-base font-medium text-teal-600">100 token</p>
               <p className="text-xs text-zinc-700">
-                {formData.pricePerToken * 100} USD
+                {formData.pricePerToken * 100} USDT
               </p>
             </div>
           </div>
@@ -388,7 +388,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
           <p className="text-sm text-zinc-500">Fees</p>
           <Info weight="fill" size={16} className="text-zinc-400" />
         </div>
-        <p className="text-sm font-medium text-zinc-700">{formData.fee} USD</p>
+        <p className="text-sm font-medium text-zinc-700">{formData.fee} USDT</p>
       </div>
       {/* Mark test */}
       <div>

@@ -317,7 +317,7 @@ const SellStep1: React.FC<SellStep1Props> = ({ formData, onDataChange }) => {
             <p className="text-sm text-zinc-500">Estimated total price</p>
           </div>
           <p className="text-sm font-medium text-zinc-700">
-            {formData.totalProceeds} USD
+            {formData.totalProceeds} USDT
           </p>
         </div>
       )}
@@ -326,7 +326,7 @@ const SellStep1: React.FC<SellStep1Props> = ({ formData, onDataChange }) => {
           <p className="text-sm text-zinc-500">Fees</p>
           <Info weight="fill" size={16} className="text-zinc-400" />
         </div>
-        <p className="text-sm font-medium text-zinc-700">{formData.fee} USD</p>
+        <p className="text-sm font-medium text-zinc-700">{formData.fee} USDT</p>
       </div>
     </div>
   );

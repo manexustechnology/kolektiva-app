@@ -213,7 +213,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
             </p>
             <div className="flex flex-row items-center gap-1 w-[207.4px] h-[18px]">
               <p className=" h-[18px] text-sm font-bold text-[#042F2E]">
-                1200 USD
+                1200 USDT
               </p>
             </div>
           </div>
@@ -225,7 +225,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
             </p>
             <div className="flex flex-row items-center gap-1 w-[207.4px] h-[18px]">
               <p className=" h-[18px] text-sm font-bold text-[#042F2E]">
-                69.69 USD
+                69.69 USDT
               </p>
             </div>
           </div>
@@ -237,7 +237,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
             </p>
             <div className="flex flex-row items-center gap-1 w-[207.4px] h-[18px]">
               <p className=" h-[18px] text-sm font-bold text-[#042F2E]">
-                200.01 USD
+                200.01 USDT
               </p>
             </div>
           </div>
