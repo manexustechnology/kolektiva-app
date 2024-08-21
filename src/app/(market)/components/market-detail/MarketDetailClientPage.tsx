@@ -19,7 +19,7 @@ import MarketDetailOrderbookPanel from "./panel/MarketDetailOrderbookPanel";
 import MarketDetailDocumentPanel from "./panel/MarketDetailDocumentPanel";
 import MarketDetailMarketPanel from "./panel/MarketDetailMarketPanel";
 import { ApexOptions } from "apexcharts";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PlaceBuyOrderModal from "./modals/PlaceBuyOrderModal";
 import PlaceSellOrderModal from "./modals/PlaceSellOrderModal";
 import {
@@ -419,6 +419,22 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
     args: [],
   });
 
+  const { data: tokenTotalSupply } = useReadContractHook({
+    contractName: "KolektivaToken",
+    functionName: "totalSupply",
+    // contractAddress: "", // market contract address
+    contractAddress: propertyData.tokenAddress,
+    args: [],
+  });
+
+  const { data: initialOfferingSupply } = useReadContractHook({
+    contractName: "KolektivaMarket",
+    functionName: "initialOfferingSupply",
+    // contractAddress: "", // market contract address
+    contractAddress: propertyData.marketAddress,
+    args: [],
+  });
+
   useEffect(() => {
     if (!isLoadingInitialOffering) {
       setAllowTrade(!initialOfferingActive);
@@ -464,6 +480,16 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
     }
     return;
   };
+
+  const initialOfferingPercentage = useMemo(() => {
+    if (tokenTotalSupply > initialOfferingSupply) {
+      const totalSupply = Number(tokenTotalSupply);
+      const ioSupply = Number(initialOfferingSupply);
+      return ((totalSupply - ioSupply) / totalSupply) * 100
+    }
+
+    return 0;
+  }, [initialOfferingSupply, tokenTotalSupply])
 
   console.log('salePriceData', salePriceData);
 
@@ -609,20 +635,29 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                 )}
               </div>
               <div className="flex flex-col gap-1">
-                <div className="flex w-full gap-2 items-center">
-                  <Progress
-                    colorScheme="green"
-                    size="sm"
-                    value={83}
-                    w="full"
-                    rounded="full"
-                  />
-                  <p className="text-xs text-teal-600 font-bold">83%</p>
-                </div>
-                <div className="flex justify-between items-center">
-                  <p className="text-sm text-zinc-500">Token available</p>
-                  <p className="text-sm font-medium text-black">8,210 token</p>
-                </div>
+                {initialOfferingActive && (
+                  <div className="flex w-full gap-2 items-center">
+                    <Progress
+                      colorScheme="green"
+                      size="sm"
+                      value={initialOfferingPercentage}
+                      w="full"
+                      rounded="full"
+                    />
+                    <p className="text-xs text-teal-600 font-bold">{initialOfferingPercentage}%</p>
+                  </div>
+                )}
+                {allowTrade ? (
+                  <div className="flex justify-between items-center">
+                    <p className="text-sm text-zinc-500">Total Supply</p>
+                    <p className="text-sm font-medium text-black">{Number(tokenTotalSupply).toLocaleString()} token</p>
+                  </div>
+                ) : (
+                  <div className="flex justify-between items-center">
+                    <p className="text-sm text-zinc-500">Token available</p>
+                    <p className="text-sm font-medium text-black">{Number(initialOfferingSupply).toLocaleString()} token</p>
+                  </div>
+                )}
               </div>
               <div className="flex flex-col p-3 gap-3 w-full bg-teal-50 rounded-lg">
                 <div className="flex justify-between items-center">

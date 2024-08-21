@@ -77,7 +77,10 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
   // Fetch buy orders based on count and index
   useEffect(() => {
     const fetchBuyOrders = async () => {
-      if (buyOrdersCount === null) return;
+      if (buyOrdersCount === null) {
+        setLoadingBuy(false);
+        return;
+      }
 
       const orders: { amount: number; price: number }[] = [];
 
@@ -112,7 +115,10 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
 
   useEffect(() => {
     const fetchSellOrders = async () => {
-      if (sellOrdersCount === null) return;
+      if (sellOrdersCount === null) {
+        setLoadingSell(false);
+        return;
+      }
 
       const orders: { amount: number; price: number }[] = [];
 
@@ -217,7 +223,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
         <Divider className="border-zinc-200 !m-0" />
         <div className="flex flex-col gap-2">
           <p className="text-base font-medium text-zinc-700">Open orders</p>
-          {allowTrade ? (
+          {allowTrade && (buyOrdersCount || 0 > 0 || sellOrdersCount || 0 > 0) ? (
             <div className="flex gap-4">
               <div className="flex flex-col w-full">
                 <div className="-m-1.5 overflow-x-auto">
