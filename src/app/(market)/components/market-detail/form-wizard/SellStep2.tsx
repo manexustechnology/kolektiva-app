@@ -8,6 +8,7 @@ import { Divider } from "antd";
 import { useMemo } from "react";
 import { useActiveAccount } from "thirdweb/react";
 import { PropertyData } from "@/types/property";
+import { formatUSDTBalance } from "@/utils/formatter";
 
 interface SellStep2Props {
   propertyData: PropertyData;
@@ -103,9 +104,7 @@ const SellStep2: React.FC<SellStep2Props> = ({ propertyData, formData }) => {
           <h2 className="text-2xl font-bold text-teal-950">
             Preview your order
           </h2>
-          <p className="text-lg text-zinc-700">
-            {propertyData.address}
-          </p>
+          <p className="text-lg text-zinc-700">{propertyData.address}</p>
           <p className="text-lg text-zinc-500">{propertyData.city}</p>
         </div>
       </div>
@@ -115,7 +114,7 @@ const SellStep2: React.FC<SellStep2Props> = ({ propertyData, formData }) => {
             <div className="flex justify-between items-center">
               <p className="text-base text-zinc-500">Limit price per token</p>
               <p className="text-base font-bold text-teal-950">
-                {formData.pricePerToken} USDT
+                {formatUSDTBalance(formData.pricePerToken)} USDT
               </p>
             </div>
           </>
@@ -136,7 +135,7 @@ const SellStep2: React.FC<SellStep2Props> = ({ propertyData, formData }) => {
             <div className="flex justify-between items-center">
               <p className="text-base text-zinc-500">Estimated total price</p>
               <p className="text-base font-bold text-teal-950">
-                {formData.totalProceeds} USDT
+                {formatUSDTBalance(formData.totalProceeds)} USDT
               </p>
             </div>
           </>
@@ -156,7 +155,7 @@ const SellStep2: React.FC<SellStep2Props> = ({ propertyData, formData }) => {
         <div className="flex justify-between items-center">
           <p className="text-base text-zinc-500">Fees</p>
           <p className="text-base font-bold text-teal-950">
-            {formData.fee} USDT
+            {formatUSDTBalance(formData.fee)} USDT
           </p>
         </div>
       </div>

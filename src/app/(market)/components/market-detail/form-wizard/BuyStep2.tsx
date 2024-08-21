@@ -7,6 +7,7 @@ import { Divider } from "antd";
 import { useMemo } from "react";
 import { useActiveAccount } from "thirdweb/react";
 import { PropertyData } from "@/types/property";
+import { formatUSDTBalance } from "@/utils/formatter";
 
 interface BuyStep2Props {
   propertyData: PropertyData;
@@ -69,10 +70,8 @@ const BuyStep2: React.FC<BuyStep2Props> = ({
           <h2 className="text-2xl font-bold text-teal-950">
             Preview your order
           </h2>
-          <p className="text-lg text-zinc-700">
-            Jl Pinangsia Raya Komplek Glodok Plaza Bl B-22
-          </p>
-          <p className="text-lg text-zinc-500">DKI Jakarta</p>
+          <p className="text-lg text-zinc-700">{propertyData.address}</p>
+          <p className="text-lg text-zinc-500">{propertyData.city}</p>
         </div>
       </div>
       <div className="flex flex-col gap-4 shadow-md rounded-2xl p-4">
@@ -89,14 +88,14 @@ const BuyStep2: React.FC<BuyStep2Props> = ({
         <div className="flex justify-between items-center">
           <p className="text-base text-zinc-500">Price per token</p>
           <p className="text-base font-bold text-teal-950">
-            {formData.pricePerToken} USDT
+            {formatUSDTBalance(formData.pricePerToken)} USDT
           </p>
         </div>
         <Divider className="border-zinc-200 !m-0" />
         <div className="flex justify-between items-center">
           <p className="text-base text-zinc-500">Fees</p>
           <p className="text-base font-bold text-teal-950">
-            {formData.fee} USDT
+            {formatUSDTBalance(formData.fee)} USDT
           </p>
         </div>
       </div>

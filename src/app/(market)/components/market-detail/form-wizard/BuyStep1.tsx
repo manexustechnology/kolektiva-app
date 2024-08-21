@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { useReadContractHook } from "@/utils/hooks";
 import { readContractFetch } from "@/utils/fetch";
 import { PropertyData } from "@/types/property";
+import { formatUSDTBalance } from "@/utils/formatter";
 
 interface BuyStep1Props {
   propertyData: PropertyData;
@@ -78,21 +79,23 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
   });
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await readContractFetch({
-        contractName: "KolektivaMarket",
-        functionName: "calculateBuyCost",
-        contractAddress: propertyData.marketAddress,
-        args: [formData.qtyToken],
-      });
+    if (isAfterMarketTrading) {
+      const fetchData = async () => {
+        const data = await readContractFetch({
+          contractName: "KolektivaMarket",
+          functionName: "calculateBuyCost",
+          contractAddress: propertyData.marketAddress,
+          args: [formData.qtyToken],
+        });
 
-      if (data) {
-        setCalculateBuyCost([Number(data[0]), Number(data[1])]);
-      }
-    };
+        if (data) {
+          setCalculateBuyCost([Number(data[0]), Number(data[1])]);
+        }
+      };
 
-    fetchData();
-  }, [formData.qtyToken]);
+      fetchData();
+    }
+  }, [formData.qtyToken, isAfterMarketTrading]);
 
   useEffect(() => {
     if (feePercentageData) {
@@ -206,9 +209,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-0.5">
           <h2 className="text-2xl font-bold text-teal-950">Place buy order</h2>
-          <p className="text-lg text-zinc-700">
-            {propertyData.address}
-          </p>
+          <p className="text-lg text-zinc-700">{propertyData.address}</p>
           <p className="text-lg text-zinc-500">{propertyData.city}</p>
         </div>
         <Divider className="border-zinc-200 !m-0" />
@@ -278,7 +279,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             >
               <p className="text-base font-medium text-teal-600">1 token</p>
               <p className="text-xs text-zinc-700">
-                {formData.pricePerToken} USDT
+                {formatUSDTBalance(formData.pricePerToken)} USDT
               </p>
             </div>
             <div
@@ -292,7 +293,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             >
               <p className="text-base font-medium text-teal-600">5 token</p>
               <p className="text-xs text-zinc-700">
-                {formData.pricePerToken * 5} USDT
+                {formatUSDTBalance(formData.pricePerToken * 5)} USDT
               </p>
             </div>
             <div
@@ -306,7 +307,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             >
               <p className="text-base font-medium text-teal-600">10 token</p>
               <p className="text-xs text-zinc-700">
-                {formData.pricePerToken * 10} USDT
+                {formatUSDTBalance(formData.pricePerToken * 10)} USDT
               </p>
             </div>
             <div
@@ -320,7 +321,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             >
               <p className="text-base font-medium text-teal-600">25 token</p>
               <p className="text-xs text-zinc-700">
-                {formData.pricePerToken * 25} USDT
+                {formatUSDTBalance(formData.pricePerToken * 25)} USDT
               </p>
             </div>
             <div
@@ -334,7 +335,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             >
               <p className="text-base font-medium text-teal-600">50 token</p>
               <p className="text-xs text-zinc-700">
-                {formData.pricePerToken * 50} USDT
+                {formatUSDTBalance(formData.pricePerToken * 50)} USDT
               </p>
             </div>
             <div
@@ -348,7 +349,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             >
               <p className="text-base font-medium text-teal-600">100 token</p>
               <p className="text-xs text-zinc-700">
-                {formData.pricePerToken * 100} USDT
+                {formatUSDTBalance(formData.pricePerToken * 100)} USDT
               </p>
             </div>
           </div>
@@ -389,7 +390,9 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
           <p className="text-sm text-zinc-500">Fees</p>
           <Info weight="fill" size={16} className="text-zinc-400" />
         </div>
-        <p className="text-sm font-medium text-zinc-700">{formData.fee} USDT</p>
+        <p className="text-sm font-medium text-zinc-700">
+          {formatUSDTBalance(formData.fee)} USDT
+        </p>
       </div>
       {/* Mark test */}
       <div>

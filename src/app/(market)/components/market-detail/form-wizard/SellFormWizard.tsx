@@ -193,6 +193,7 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
             >
               {steps[currentStep - 1].component({
                 formData,
+                propertyData,
                 onDataChange: (data: SellOrderData) => {
                   setFormData((prev) => ({ ...prev, ...data }));
                 },

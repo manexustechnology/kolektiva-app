@@ -23,7 +23,11 @@ const tabs = [
   { id: "limit" as const, label: "Limit" },
 ];
 
-const SellStep1: React.FC<SellStep1Props> = ({ propertyData, formData, onDataChange }) => {
+const SellStep1: React.FC<SellStep1Props> = ({
+  propertyData,
+  formData,
+  onDataChange,
+}) => {
   const activeAccount = useActiveAccount();
   const address = activeAccount?.address;
 
@@ -196,9 +200,7 @@ const SellStep1: React.FC<SellStep1Props> = ({ propertyData, formData, onDataCha
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-0.5">
           <h2 className="text-2xl font-bold text-teal-950">Place sell order</h2>
-          <p className="text-lg text-zinc-700">
-            {propertyData.address}
-          </p>
+          <p className="text-lg text-zinc-700">{propertyData.address}</p>
           <p className="text-lg text-zinc-500">{propertyData.city}</p>
         </div>
         <Divider className="border-zinc-200 !m-0" />
@@ -282,7 +284,7 @@ const SellStep1: React.FC<SellStep1Props> = ({ propertyData, formData, onDataCha
               color: "teal.900",
               cursor: "pointer",
             }}
-            onClick={() => { }}
+            onClick={() => {}}
             className="!px-6 !text-sm !font-medium"
           >
             All
