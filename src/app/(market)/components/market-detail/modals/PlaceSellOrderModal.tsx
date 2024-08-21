@@ -13,14 +13,17 @@ import { ArrowLeft, X } from "@phosphor-icons/react/dist/ssr";
 import { Divider } from "antd";
 import SellFormWizard from "../form-wizard/SellFormWizard";
 import { SellOrderData } from "@/types/order";
+import { PropertyData } from "@/types/property";
 
 interface PlaceSellOrderModalProps {
+  propertyData: PropertyData;
   isOpen: boolean;
   onClose: () => void;
   onSuccess: (formData: SellOrderData) => void;
 }
 
 const PlaceSellOrderModal: React.FC<PlaceSellOrderModalProps> = ({
+  propertyData,
   isOpen,
   onClose,
   onSuccess,
@@ -104,7 +107,7 @@ const PlaceSellOrderModal: React.FC<PlaceSellOrderModalProps> = ({
               </div>
             </div>
           </ModalHeader>
-          <SellFormWizard currentStep={step} onSubmitButtonClick={handleNext} />
+          <SellFormWizard propertyData={propertyData} currentStep={step} onSubmitButtonClick={handleNext} />
         </ModalContent>
       </Modal>
     </>

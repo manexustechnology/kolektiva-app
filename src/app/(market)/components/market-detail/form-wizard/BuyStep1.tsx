@@ -9,8 +9,10 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useReadContractHook } from "@/utils/hooks";
 import { readContractFetch } from "@/utils/fetch";
+import { PropertyData } from "@/types/property";
 
 interface BuyStep1Props {
+  propertyData: PropertyData;
   isAfterMarketTrading: boolean;
   formData: BuyOrderData;
   onDataChange: (data: BuyOrderData) => void;
@@ -22,6 +24,7 @@ const tabs = [
 ];
 
 const BuyStep1: React.FC<BuyStep1Props> = ({
+  propertyData,
   isAfterMarketTrading,
   formData,
   onDataChange,
@@ -37,14 +40,12 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
   const [calculateBuyCost, setCalculateBuyCost] = useState<
     [number, number] | null
   >(null);
-  const marketContractAddress =
-    process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS!;
 
   const { data: salePriceData } = useReadContractHook({
     contractName: "KolektivaMarket",
     functionName: "salePrice",
     // contractAddress: "", // market contract address
-    contractAddress: marketContractAddress,
+    contractAddress: propertyData.marketAddress,
 
     args: [],
   });
@@ -53,7 +54,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
     contractName: "KolektivaMarket",
     functionName: "feePercentage",
     // contractAddress: "", // market contract address
-    contractAddress: marketContractAddress,
+    contractAddress: propertyData.marketAddress,
 
     args: [],
   });
@@ -62,7 +63,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
     contractName: "KolektivaMarket",
     functionName: "FEE_PRECISION",
     // contractAddress: "", // market contract address
-    contractAddress: marketContractAddress,
+    contractAddress: propertyData.marketAddress,
 
     args: [],
   });
@@ -71,7 +72,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
     contractName: "KolektivaMarket",
     functionName: "initialOfferingSupply",
     // contractAddress: "", // market contract address
-    contractAddress: marketContractAddress,
+    contractAddress: propertyData.marketAddress,
 
     args: [],
   });
@@ -81,7 +82,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
       const data = await readContractFetch({
         contractName: "KolektivaMarket",
         functionName: "calculateBuyCost",
-        contractAddress: marketContractAddress,
+        contractAddress: propertyData.marketAddress,
         args: [formData.qtyToken],
       });
 
@@ -206,9 +207,9 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
         <div className="flex flex-col gap-0.5">
           <h2 className="text-2xl font-bold text-teal-950">Place buy order</h2>
           <p className="text-lg text-zinc-700">
-            Jl Pinangsia Raya Komplek Glodok Plaza Bl B-22
+            {propertyData.address}
           </p>
-          <p className="text-lg text-zinc-500">DKI Jakarta</p>
+          <p className="text-lg text-zinc-500">{propertyData.city}</p>
         </div>
         <Divider className="border-zinc-200 !m-0" />
         {isAfterMarketTrading && (

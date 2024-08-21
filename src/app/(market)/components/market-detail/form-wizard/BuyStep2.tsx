@@ -6,34 +6,35 @@ import { getTransactionStatus } from "@/app/api/tx-hash";
 import { Divider } from "antd";
 import { useMemo } from "react";
 import { useActiveAccount } from "thirdweb/react";
+import { PropertyData } from "@/types/property";
 
 interface BuyStep2Props {
+  propertyData: PropertyData;
   isAfterMarketTrading: boolean;
   formData: BuyOrderData;
 }
 
 const BuyStep2: React.FC<BuyStep2Props> = ({
+  propertyData,
   isAfterMarketTrading,
   formData,
 }) => {
   const activeAccount = useActiveAccount();
   const address = activeAccount?.address;
-  const marketContractAddress =
-    process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS!;
 
   const { data: allowanceData, isLoading: isLoadingAllowance } =
     useReadContractHook({
       contractName: "MockUSDT",
       functionName: "allowance",
       // args: [address, "_spender market address"],
-      args: [address, marketContractAddress],
+      args: [address, propertyData.marketAddress],
     });
 
   const { writeAsync: approveUsdt } = useWriteContractHook({
     contractName: "MockUSDT",
     functionName: "approve",
     // args: ["_spender market address", formData.totalCost],
-    args: [marketContractAddress, formData.totalCost],
+    args: [propertyData.marketAddress, formData.totalCost],
   });
 
   const allowance = useMemo(

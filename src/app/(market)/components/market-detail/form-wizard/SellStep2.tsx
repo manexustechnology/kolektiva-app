@@ -7,48 +7,47 @@ import { getTransactionStatus } from "@/app/api/tx-hash";
 import { Divider } from "antd";
 import { useMemo } from "react";
 import { useActiveAccount } from "thirdweb/react";
+import { PropertyData } from "@/types/property";
 
 interface SellStep2Props {
+  propertyData: PropertyData;
   formData: SellOrderData;
 }
 
-const SellStep2: React.FC<SellStep2Props> = ({ formData }) => {
+const SellStep2: React.FC<SellStep2Props> = ({ propertyData, formData }) => {
   const activeAccount = useActiveAccount();
   const address = activeAccount?.address;
-  const marketContractAddress =
-    process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS!;
-  const tokenContractAddress = process.env.NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS!;
 
   const { data: allowanceUsdtData, isLoading: isLoadingAllowanceUsdt } =
     useReadContractHook({
       contractName: "MockUSDT",
       functionName: "allowance",
       // args: [address, "_spender market address"],
-      args: [address, marketContractAddress],
+      args: [address, propertyData.marketAddress],
     });
 
   const { writeAsync: approveUsdt } = useWriteContractHook({
     contractName: "MockUSDT",
     functionName: "approve",
     // args: ["_spender market address", formData.totalCost],
-    args: [marketContractAddress, , formData.fee],
+    args: [propertyData.marketAddress, , formData.fee],
   });
 
   const { data: allowanceTokenData, isLoading: isLoadingAllowanceToken } =
     useReadContractHook({
       contractName: "KolektivaToken",
       functionName: "allowance",
-      contractAddress: tokenContractAddress,
+      contractAddress: propertyData.tokenAddress,
       // args: [address, "_spender market address"],
-      args: [address, marketContractAddress],
+      args: [address, propertyData.marketAddress],
     });
 
   const { writeAsync: approveToken } = useWriteContractHook({
     contractName: "KolektivaToken",
     functionName: "approve",
-    contractAddress: tokenContractAddress,
+    contractAddress: propertyData.tokenAddress,
     // args: ["_spender market address", formData.totalCost],
-    args: [marketContractAddress, , formData.qtyToken],
+    args: [propertyData.marketAddress, , formData.qtyToken],
   });
 
   const allowanceUsdt = useMemo(
@@ -105,9 +104,9 @@ const SellStep2: React.FC<SellStep2Props> = ({ formData }) => {
             Preview your order
           </h2>
           <p className="text-lg text-zinc-700">
-            Jl Pinangsia Raya Komplek Glodok Plaza Bl B-22
+            {propertyData.address}
           </p>
-          <p className="text-lg text-zinc-500">DKI Jakarta</p>
+          <p className="text-lg text-zinc-500">{propertyData.city}</p>
         </div>
       </div>
       <div className="flex flex-col gap-4 shadow-md rounded-2xl p-4">
