@@ -40,20 +40,22 @@ import {
   useContractEventHook,
 } from "@/utils/hooks";
 import { getTransactionStatus } from "@/app/api/tx-hash";
+import { PropertyData } from "@/types/property";
 
 import Link from "next/link";
 
 interface MarketDetailClientPageProps {
+  propertyData: PropertyData;
   // allowTrade: boolean;
 }
 
 const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
   {
+    propertyData,
     // allowTrade,
   }
 ) => {
   const account = useActiveAccount();
-  // https://blog.nirdeshpokhrel.com.np/nextjs-window-is-not-defined-react-apexcharts
   const [ReactApexChart, setReactApexChart] = useState<any>();
   useEffect(() => {
     import("react-apexcharts").then((mod) => {
@@ -460,7 +462,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
     <div className="w-full flex justify-center py-4">
       <div className="flex max-w-[1238px] w-full p-2 gap-4">
         <div className="w-2/3 flex flex-col gap-6">
-          <MarketDetailPhotos />
+          <MarketDetailPhotos images={propertyData.images} />
           {/* Will be used later */}
           {/* {allowTrade && (
             <div className="w-full">
@@ -487,9 +489,11 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
                 <Tab fontSize="sm">Documents</Tab>
                 <Tab fontSize="sm">Markets</Tab>
               </TabList>
+
               <TabPanels>
                 <TabPanel px={0} py={4}>
-                  <MarketDetailDescriptionPanel />
+                  <MarketDetailDescriptionPanel property={propertyData}
+                  />
                 </TabPanel>
                 <TabPanel px={0} py={4}>
                   <MarketDetailFinancialPanel />
@@ -516,10 +520,10 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
           >
             <div className="flex flex-col gap-1">
               <h2 className="text-2xl font-bold">
-                Jl Pinangsia Raya Komplek Glodok Plaza Bl B-22
+                {propertyData.address}
               </h2>
-              <Link href="/?location=DKI Jakarta">
-                <p className="text-lg text-zinc-500">DKI Jakarta</p>
+              <Link href="/?location={propertyData.city}, {propertyData.state}, {propertyData.country}">
+                <p className="text-lg text-zinc-500">{propertyData.city}, {propertyData.state}, {propertyData.country}</p>
               </Link>
             </div>
             {/* Tag Box of trading*/}
@@ -563,7 +567,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
                 <House size={32} weight="fill" className="text-teal-600" />
                 <div className="flex flex-col justify-between">
                   <p className="text-sm text-zinc-500">Property type</p>
-                  <p className="text-md font-bold text-teal-600">House</p>
+                  <p className="text-md font-bold text-teal-600">{propertyData.type}</p>
                 </div>
               </div>
             </Link>
@@ -692,6 +696,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
           </div>
         </div>
       </div>
+      {/* Modals */}
       <PlaceBuyOrderModal
         isOpen={isBuyOrderModalOpen}
         onClose={() => setIsBuyOrderModalOpen(false)}
