@@ -49,12 +49,10 @@ interface MarketDetailClientPageProps {
   // allowTrade: boolean;
 }
 
-const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
-  {
-    propertyData,
-    // allowTrade,
-  }
-) => {
+const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
+  propertyData,
+  // allowTrade,
+}) => {
   const account = useActiveAccount();
   const [ReactApexChart, setReactApexChart] = useState<any>();
   useEffect(() => {
@@ -492,8 +490,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
 
               <TabPanels>
                 <TabPanel px={0} py={4}>
-                  <MarketDetailDescriptionPanel property={propertyData}
-                  />
+                  <MarketDetailDescriptionPanel property={propertyData} />
                 </TabPanel>
                 <TabPanel px={0} py={4}>
                   <MarketDetailFinancialPanel />
@@ -519,11 +516,12 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
             )}
           >
             <div className="flex flex-col gap-1">
-              <h2 className="text-2xl font-bold">
-                {propertyData.address}
-              </h2>
+              <h2 className="text-2xl font-bold">{propertyData.address}</h2>
               <Link href="/?location={propertyData.city}, {propertyData.state}, {propertyData.country}">
-                <p className="text-lg text-zinc-500">{propertyData.city}, {propertyData.state}, {propertyData.country}</p>
+                <p className="text-lg text-zinc-500">
+                  {propertyData.city}, {propertyData.state},{" "}
+                  {propertyData.country}
+                </p>
               </Link>
             </div>
             {/* Tag Box of trading*/}
@@ -567,7 +565,9 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
                 <House size={32} weight="fill" className="text-teal-600" />
                 <div className="flex flex-col justify-between">
                   <p className="text-sm text-zinc-500">Property type</p>
-                  <p className="text-md font-bold text-teal-600">{propertyData.type}</p>
+                  <p className="text-md font-bold text-teal-600">
+                    {propertyData.type}
+                  </p>
                 </div>
               </div>
             </Link>
@@ -587,7 +587,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
                     className="rotate-180 text-zinc-400"
                   />
                 </div>
-                <p className="text-lg font-bold text-teal-600">50 USD</p>
+                <p className="text-lg font-bold text-teal-600">50 USDT</p>
                 {isInfoAreaHovered && (
                   <div className="absolute flex flex-col items-start p-3 gap-1 bg-white shadow-lg rounded-lg w-[240px] h-[78px] left-[140px] z-50">
                     <p className="w-[216px] h-[54px] font-normal text-sm leading-5 text-zinc-500">

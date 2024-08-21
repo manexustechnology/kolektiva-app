@@ -116,7 +116,7 @@ const SellStep2: React.FC<SellStep2Props> = ({ formData }) => {
             <div className="flex justify-between items-center">
               <p className="text-base text-zinc-500">Limit price per token</p>
               <p className="text-base font-bold text-teal-950">
-                {formData.pricePerToken} USD
+                {formData.pricePerToken} USDT
               </p>
             </div>
           </>
@@ -137,7 +137,7 @@ const SellStep2: React.FC<SellStep2Props> = ({ formData }) => {
             <div className="flex justify-between items-center">
               <p className="text-base text-zinc-500">Estimated total price</p>
               <p className="text-base font-bold text-teal-950">
-                {formData.totalProceeds} USD
+                {formData.totalProceeds} USDT
               </p>
             </div>
           </>
@@ -157,7 +157,7 @@ const SellStep2: React.FC<SellStep2Props> = ({ formData }) => {
         <div className="flex justify-between items-center">
           <p className="text-base text-zinc-500">Fees</p>
           <p className="text-base font-bold text-teal-950">
-            {formData.fee} USD
+            {formData.fee} USDT
           </p>
         </div>
       </div>

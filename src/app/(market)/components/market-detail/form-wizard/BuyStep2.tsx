@@ -88,14 +88,14 @@ const BuyStep2: React.FC<BuyStep2Props> = ({
         <div className="flex justify-between items-center">
           <p className="text-base text-zinc-500">Price per token</p>
           <p className="text-base font-bold text-teal-950">
-            {formData.pricePerToken} USD
+            {formData.pricePerToken} USDT
           </p>
         </div>
         <Divider className="border-zinc-200 !m-0" />
         <div className="flex justify-between items-center">
           <p className="text-base text-zinc-500">Fees</p>
           <p className="text-base font-bold text-teal-950">
-            {formData.fee} USD
+            {formData.fee} USDT
           </p>
         </div>
       </div>

@@ -132,7 +132,7 @@ const LimitSellSuccessModal: React.FC<LimitSellSuccessModalProps> = ({
                       Limit price per token
                     </p>
                     <p className=" text-teal-950 font-bold text-base leading-[18px]">
-                      4,50 USD
+                      4,50 USDT
                     </p>
                   </Box>
                   {/* Dividing Line */}
@@ -187,7 +187,7 @@ const LimitSellSuccessModal: React.FC<LimitSellSuccessModalProps> = ({
                     </p>
 
                     <p className="text-teal-600 font-bold text-base leading-[18px]">
-                      22,61 USD
+                      22,61 USDT
                     </p>
                   </Box>
                 </Box>
