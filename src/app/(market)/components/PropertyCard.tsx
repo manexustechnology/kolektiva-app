@@ -147,7 +147,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
         </p>
 
         {/* Progress Bar */}
-        {isTraded ? (
+        {isTraded || isUpcoming ? (
           <>
             {/* Dividing Line */}
             <Box
@@ -223,7 +223,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
               Available Tokens
             </p>
             <p className=" font-medium text-[12px] leading-[16px] text-right text-[#042F2E]">
-              1000 Token
+              {isUpcoming ? "-" : "10000"}
             </p>
           </Box>
         </Box>
@@ -262,7 +262,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             </p>
 
             <p className="w-[80px] font-medium text-[10px] leading-[10px] text-right text-[#042F2E]">
-              8.7%
+              {isUpcoming ? "-" : "8.7%"}
             </p>
           </Box>
 
@@ -294,7 +294,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             </p>
 
             <p className="w-[80px] font-medium text-[10px] leading-[10px] text-right text-[#042F2E]">
-              Active
+            {isUpcoming ? "-" : "Active"}
             </p>
           </Box>
         </Box>

@@ -31,6 +31,7 @@ export interface Facility {
     type: string;
     description: string;
     isFeatured: boolean | null;
+    isUpcoming: boolean | null;
     createdBy: string;
     updatedBy: string;
     createdAt: string;

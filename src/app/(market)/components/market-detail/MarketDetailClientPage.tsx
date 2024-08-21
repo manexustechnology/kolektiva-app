@@ -519,8 +519,8 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
             >
               <TabList gap="2">
                 <Tab fontSize="sm">Description</Tab>
-                <Tab fontSize="sm">Financials</Tab>
-                <Tab fontSize="sm">Order book</Tab>
+                {!propertyData.isUpcoming && (<Tab fontSize="sm">Financials</Tab>)}
+                {!propertyData.isUpcoming && (<Tab fontSize="sm">Order book</Tab>)}
                 <Tab fontSize="sm">Documents</Tab>
                 <Tab fontSize="sm">Markets</Tab>
               </TabList>
@@ -579,24 +579,40 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                   Aftermarket
                 </Box>
               </Link>
-            ) : (
-              <Link href="/?status=initial-offering">
+            ) : propertyData.isUpcoming ? (
+              <Link href="/?status=upcoming">
                 <Box
                   position="relative"
-                  backgroundColor="#F7FEE7"
-                  color="#65A30D"
+                  backgroundColor="#FFFBEB"
+                  color="#D97706"
                   padding="2px 8px"
                   borderWidth="1px"
                   borderRadius="full"
-                  borderColor="#65A30D"
+                  borderColor="#D97706"
                   fontSize="xs"
                   zIndex={10}
                   width="fit-content"
                 >
-                  Initial Offering
+                  Upcoming
                 </Box>
               </Link>
-            )}
+            ) : 
+            <Link href="/?status=initial-offering">
+              <Box
+                position="relative"
+                backgroundColor="#F7FEE7"
+                color="#65A30D"
+                padding="2px 8px"
+                borderWidth="1px"
+                borderRadius="full"
+                borderColor="#65A30D"
+                fontSize="xs"
+                zIndex={10}
+                width="fit-content"
+              >
+                Initial Offering
+              </Box>
+            </Link>}
             <Link href="/?propertyType=house">
               <div className="flex p-4 gap-4 w-full rounded-2xl shadow-md items-center">
                 <House size={32} weight="fill" className="text-teal-600" />
@@ -608,7 +624,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                 </div>
               </div>
             </Link>
-            <div className="flex flex-col gap-4 p-4 w-full rounded-2xl shadow-md">
+            {!propertyData.isUpcoming && (<div className="flex flex-col gap-4 p-4 w-full rounded-2xl shadow-md">
               <div
                 className="relative flex flex-col justify-center"
                 onMouseEnter={() => setIsInfoAreaHovered(true)}
@@ -738,7 +754,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                   </Button>
                 )}
               </div>
-            </div>
+            </div>)}
           </div>
         </div>
       </div>
