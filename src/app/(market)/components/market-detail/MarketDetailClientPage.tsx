@@ -42,6 +42,8 @@ import {
 import { getTransactionStatus } from "@/app/api/tx-hash";
 
 import Link from "next/link";
+import { fetchContractMetadataFromAddress } from "@thirdweb-dev/sdk";
+import BuyFormWizard from "./form-wizard/BuyFormWizard";
 
 interface MarketDetailClientPageProps {
   // allowTrade: boolean;
@@ -456,6 +458,11 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
     return;
   };
 
+  const [txValue, setTxValue] = useState("");
+  const handleTxUpdate = (tx: any) => {
+    setTxValue(tx);
+  };
+
   return (
     <div className="w-full flex justify-center py-4">
       <div className="flex max-w-[1238px] w-full p-2 gap-4">
@@ -693,6 +700,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
         </div>
       </div>
       <PlaceBuyOrderModal
+        onTxUpdate={handleTxUpdate}
         isOpen={isBuyOrderModalOpen}
         onClose={() => setIsBuyOrderModalOpen(false)}
         isAfterMarketTrading={allowTrade} // change !isInitialOffering after implemented
@@ -716,6 +724,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
         onClose={() => setIsLimitSellSuccessModalOpen(false)}
       />
       <MarketBuySuccessModal
+        tnx={txValue}
         isOpen={isMarketBuySuccessModalOpen}
         onClose={() => setIsMarketBuySuccessModalOpen(false)}
       />

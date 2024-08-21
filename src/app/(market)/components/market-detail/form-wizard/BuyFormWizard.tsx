@@ -13,6 +13,7 @@ import { useReadContractHook, useWriteContractHook } from "@/utils/hooks";
 import { useActiveAccount } from "thirdweb/react";
 
 interface BuyFormWizardProps {
+  onTxUpdate: (tx: any) => void;
   currentStep: number;
   isAfterMarketTrading: boolean;
   onSubmitButtonClick: (formData: BuyOrderData) => void;
@@ -40,6 +41,7 @@ const variants = {
 };
 
 const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
+  onTxUpdate,
   currentStep,
   isAfterMarketTrading,
   onSubmitButtonClick,
@@ -137,6 +139,9 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
             if (isAfterMarketTrading) {
               if (formDataType === "market") {
                 const tx = await marketBuy();
+                if (tx) {
+                  onTxUpdate(tx);
+                }
                 console.log("market buy", tx);
               } else if (formDataType === "limit") {
                 const tx = await limitBuy();

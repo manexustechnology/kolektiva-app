@@ -15,6 +15,7 @@ import BuyFormWizard from "../form-wizard/BuyFormWizard";
 import { BuyOrderData } from "@/types/order";
 
 interface PlaceBuyOrderModalProps {
+  onTxUpdate: (tx: any) => void;
   isOpen: boolean;
   onClose: () => void;
   isAfterMarketTrading: boolean;
@@ -22,6 +23,7 @@ interface PlaceBuyOrderModalProps {
 }
 
 const PlaceBuyOrderModal: React.FC<PlaceBuyOrderModalProps> = ({
+  onTxUpdate,
   isOpen,
   onClose,
   isAfterMarketTrading,
@@ -107,6 +109,7 @@ const PlaceBuyOrderModal: React.FC<PlaceBuyOrderModalProps> = ({
             </div>
           </ModalHeader>
           <BuyFormWizard
+            onTxUpdate={onTxUpdate}
             currentStep={step}
             isAfterMarketTrading={isAfterMarketTrading}
             onSubmitButtonClick={handleNext}
