@@ -11,8 +11,11 @@ import { AfterMarketBuyOrderData, BuyOrderData } from "@/types/order";
 import { Warning, WarningCircle } from "@phosphor-icons/react/dist/ssr";
 import { useReadContractHook, useWriteContractHook } from "@/utils/hooks";
 import { useActiveAccount } from "thirdweb/react";
+import { PropertyData } from "@/types/property";
+import { formatUSDTBalance } from "@/utils/formatter";
 
 interface BuyFormWizardProps {
+  propertyData: PropertyData;
   currentStep: number;
   isAfterMarketTrading: boolean;
   onSubmitButtonClick: (formData: BuyOrderData) => void;
@@ -40,6 +43,7 @@ const variants = {
 };
 
 const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
+  propertyData,
   currentStep,
   isAfterMarketTrading,
   onSubmitButtonClick,
@@ -54,27 +58,25 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
   });
   const prevStep = useRef(currentStep);
   const direction = currentStep > prevStep.current ? 1 : -1;
-  const marketContractAddress =
-    process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS!;
 
   const { writeAsync: initialOfferingBuy } = useWriteContractHook({
     contractName: "KolektivaMarket",
     functionName: "initialOfferingBuy",
-    contractAddress: marketContractAddress,
+    contractAddress: propertyData.marketAddress,
     args: [formData.qtyToken],
   });
 
   const { writeAsync: marketBuy } = useWriteContractHook({
     contractName: "KolektivaMarket",
     functionName: "instantBuy",
-    contractAddress: marketContractAddress,
+    contractAddress: propertyData.marketAddress,
     args: [formData.qtyToken],
   });
 
   const { writeAsync: limitBuy } = useWriteContractHook({
     contractName: "KolektivaMarket",
     functionName: "placeBuyOrder",
-    contractAddress: marketContractAddress,
+    contractAddress: propertyData.marketAddress,
     args: [formData.qtyToken, formData.pricePerToken],
   });
 
@@ -100,14 +102,14 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
       contractName: "MockUSDT",
       functionName: "allowance",
       // args: [address, "_spender market address"],
-      args: [address, marketContractAddress],
+      args: [address, propertyData.marketAddress],
     });
 
   const { writeAsync: approveUsdt } = useWriteContractHook({
     contractName: "MockUSDT",
     functionName: "approve",
     // args: ["_spender market address", formData.totalCost],
-    args: [marketContractAddress, formData.totalCost],
+    args: [propertyData.marketAddress, formData.totalCost],
   });
 
   const allowance = useMemo(
@@ -191,6 +193,7 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
             >
               {steps[currentStep - 1].component({
                 isAfterMarketTrading,
+                propertyData,
                 formData,
                 onDataChange: (data: BuyOrderData) => {
                   setFormData((prev) => ({ ...prev, ...data }));
@@ -244,7 +247,7 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
               <div className="flex justify-between items-center">
                 <p className="text-sm text-zinc-500">Total</p>
                 <p className="text-xl font-bold text-teal-600">
-                  {formData.totalCost} USDT
+                  {formatUSDTBalance(formData.totalCost)} USDT
                 </p>
               </div>
             </>

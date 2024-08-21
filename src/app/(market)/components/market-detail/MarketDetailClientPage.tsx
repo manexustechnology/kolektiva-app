@@ -43,6 +43,7 @@ import { getTransactionStatus } from "@/app/api/tx-hash";
 import { PropertyData } from "@/types/property";
 
 import Link from "next/link";
+import { formatUSDTBalance } from "@/utils/formatter";
 
 interface MarketDetailClientPageProps {
   propertyData: PropertyData;
@@ -406,9 +407,17 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
     useReadContractHook({
       contractName: "KolektivaMarket",
       functionName: "initialOfferingActive",
-      contractAddress: process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS, // market contract address
+      contractAddress: propertyData.marketAddress, // market contract address
       args: [],
     });
+
+  const { data: salePriceData } = useReadContractHook({
+    contractName: "KolektivaMarket",
+    functionName: "salePrice",
+    // contractAddress: "", // market contract address
+    contractAddress: propertyData.marketAddress,
+    args: [],
+  });
 
   useEffect(() => {
     if (!isLoadingInitialOffering) {
@@ -456,6 +465,8 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
     return;
   };
 
+  console.log('salePriceData', salePriceData);
+
   return (
     <div className="w-full flex justify-center py-4">
       <div className="flex max-w-[1238px] w-full p-2 gap-4">
@@ -496,7 +507,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                   <MarketDetailFinancialPanel />
                 </TabPanel>
                 <TabPanel px={0} py={4}>
-                  <MarketDetailOrderbookPanel allowTrade={allowTrade} />
+                  <MarketDetailOrderbookPanel allowTrade={allowTrade} propertyData={propertyData} />
                 </TabPanel>
                 <TabPanel px={0} py={4}>
                   <MarketDetailDocumentPanel />
@@ -587,7 +598,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                     className="rotate-180 text-zinc-400"
                   />
                 </div>
-                <p className="text-lg font-bold text-teal-600">50 USDT</p>
+                <p className="text-lg font-bold text-teal-600">{formatUSDTBalance(salePriceData || 0)} USDT</p>
                 {isInfoAreaHovered && (
                   <div className="absolute flex flex-col items-start p-3 gap-1 bg-white shadow-lg rounded-lg w-[240px] h-[78px] left-[140px] z-50">
                     <p className="w-[216px] h-[54px] font-normal text-sm leading-5 text-zinc-500">
@@ -698,12 +709,14 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
       </div>
       {/* Modals */}
       <PlaceBuyOrderModal
+        propertyData={propertyData}
         isOpen={isBuyOrderModalOpen}
         onClose={() => setIsBuyOrderModalOpen(false)}
         isAfterMarketTrading={allowTrade} // change !isInitialOffering after implemented
         onSuccess={handleBuySuccess}
       />
       <PlaceSellOrderModal
+        propertyData={propertyData}
         isOpen={isSellOrderModalOpen}
         onClose={() => setIsSellOrderModalOpen(false)}
         onSuccess={handleSellSuccess}

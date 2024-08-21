@@ -33,6 +33,8 @@ export const readContractFetch = async ({
   args = [],
 }: UseContractParams) => {
   try {
+    console.log(args);
+
     const { address, abi } = getContractInstance(contractName, contractAddress);
     // Create a contract instance
     const data = await publicClient.readContract({

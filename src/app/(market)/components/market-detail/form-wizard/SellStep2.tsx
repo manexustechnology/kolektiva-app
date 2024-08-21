@@ -7,48 +7,48 @@ import { getTransactionStatus } from "@/app/api/tx-hash";
 import { Divider } from "antd";
 import { useMemo } from "react";
 import { useActiveAccount } from "thirdweb/react";
+import { PropertyData } from "@/types/property";
+import { formatUSDTBalance } from "@/utils/formatter";
 
 interface SellStep2Props {
+  propertyData: PropertyData;
   formData: SellOrderData;
 }
 
-const SellStep2: React.FC<SellStep2Props> = ({ formData }) => {
+const SellStep2: React.FC<SellStep2Props> = ({ propertyData, formData }) => {
   const activeAccount = useActiveAccount();
   const address = activeAccount?.address;
-  const marketContractAddress =
-    process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS!;
-  const tokenContractAddress = process.env.NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS!;
 
   const { data: allowanceUsdtData, isLoading: isLoadingAllowanceUsdt } =
     useReadContractHook({
       contractName: "MockUSDT",
       functionName: "allowance",
       // args: [address, "_spender market address"],
-      args: [address, marketContractAddress],
+      args: [address, propertyData.marketAddress],
     });
 
   const { writeAsync: approveUsdt } = useWriteContractHook({
     contractName: "MockUSDT",
     functionName: "approve",
     // args: ["_spender market address", formData.totalCost],
-    args: [marketContractAddress, , formData.fee],
+    args: [propertyData.marketAddress, , formData.fee],
   });
 
   const { data: allowanceTokenData, isLoading: isLoadingAllowanceToken } =
     useReadContractHook({
       contractName: "KolektivaToken",
       functionName: "allowance",
-      contractAddress: tokenContractAddress,
+      contractAddress: propertyData.tokenAddress,
       // args: [address, "_spender market address"],
-      args: [address, marketContractAddress],
+      args: [address, propertyData.marketAddress],
     });
 
   const { writeAsync: approveToken } = useWriteContractHook({
     contractName: "KolektivaToken",
     functionName: "approve",
-    contractAddress: tokenContractAddress,
+    contractAddress: propertyData.tokenAddress,
     // args: ["_spender market address", formData.totalCost],
-    args: [marketContractAddress, , formData.qtyToken],
+    args: [propertyData.marketAddress, , formData.qtyToken],
   });
 
   const allowanceUsdt = useMemo(
@@ -104,10 +104,8 @@ const SellStep2: React.FC<SellStep2Props> = ({ formData }) => {
           <h2 className="text-2xl font-bold text-teal-950">
             Preview your order
           </h2>
-          <p className="text-lg text-zinc-700">
-            Jl Pinangsia Raya Komplek Glodok Plaza Bl B-22
-          </p>
-          <p className="text-lg text-zinc-500">DKI Jakarta</p>
+          <p className="text-lg text-zinc-700">{propertyData.address}</p>
+          <p className="text-lg text-zinc-500">{propertyData.city}</p>
         </div>
       </div>
       <div className="flex flex-col gap-4 shadow-md rounded-2xl p-4">
@@ -116,7 +114,7 @@ const SellStep2: React.FC<SellStep2Props> = ({ formData }) => {
             <div className="flex justify-between items-center">
               <p className="text-base text-zinc-500">Limit price per token</p>
               <p className="text-base font-bold text-teal-950">
-                {formData.pricePerToken} USDT
+                {formatUSDTBalance(formData.pricePerToken)} USDT
               </p>
             </div>
           </>
@@ -137,7 +135,7 @@ const SellStep2: React.FC<SellStep2Props> = ({ formData }) => {
             <div className="flex justify-between items-center">
               <p className="text-base text-zinc-500">Estimated total price</p>
               <p className="text-base font-bold text-teal-950">
-                {formData.totalProceeds} USDT
+                {formatUSDTBalance(formData.totalProceeds)} USDT
               </p>
             </div>
           </>
@@ -157,7 +155,7 @@ const SellStep2: React.FC<SellStep2Props> = ({ formData }) => {
         <div className="flex justify-between items-center">
           <p className="text-base text-zinc-500">Fees</p>
           <p className="text-base font-bold text-teal-950">
-            {formData.fee} USDT
+            {formatUSDTBalance(formData.fee)} USDT
           </p>
         </div>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { SellOrderData } from "@/types/order";
+import { PropertyData } from "@/types/property";
 import { cn } from "@/utils/cn";
 import { readContractFetch } from "@/utils/fetch";
 import { useReadContractHook } from "@/utils/hooks";
@@ -12,6 +13,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useActiveAccount } from "thirdweb/react";
 
 interface SellStep1Props {
+  propertyData: PropertyData;
   formData: SellOrderData;
   onDataChange: (data: SellOrderData) => void;
 }
@@ -21,7 +23,11 @@ const tabs = [
   { id: "limit" as const, label: "Limit" },
 ];
 
-const SellStep1: React.FC<SellStep1Props> = ({ formData, onDataChange }) => {
+const SellStep1: React.FC<SellStep1Props> = ({
+  propertyData,
+  formData,
+  onDataChange,
+}) => {
   const activeAccount = useActiveAccount();
   const address = activeAccount?.address;
 
@@ -33,15 +39,12 @@ const SellStep1: React.FC<SellStep1Props> = ({ formData, onDataChange }) => {
   const [calculateSellProceeds, setCalculateSellProceeds] = useState<
     [number, number] | null
   >(null);
-  const marketContractAddress =
-    process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS!;
-  const tokenContractAddress = process.env.NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS!;
 
   const { data: salePriceData } = useReadContractHook({
     contractName: "KolektivaMarket",
     functionName: "salePrice",
     // contractAddress: "", // market contract address
-    contractAddress: marketContractAddress,
+    contractAddress: propertyData.marketAddress,
 
     args: [],
   });
@@ -50,7 +53,7 @@ const SellStep1: React.FC<SellStep1Props> = ({ formData, onDataChange }) => {
     contractName: "KolektivaMarket",
     functionName: "feePercentage",
     // contractAddress: "", // market contract address
-    contractAddress: marketContractAddress,
+    contractAddress: propertyData.marketAddress,
 
     args: [],
   });
@@ -59,7 +62,7 @@ const SellStep1: React.FC<SellStep1Props> = ({ formData, onDataChange }) => {
     contractName: "KolektivaMarket",
     functionName: "FEE_PRECISION",
     // contractAddress: "", // market contract address
-    contractAddress: marketContractAddress,
+    contractAddress: propertyData.marketAddress,
 
     args: [],
   });
@@ -67,7 +70,7 @@ const SellStep1: React.FC<SellStep1Props> = ({ formData, onDataChange }) => {
   const { data: balanceTokenData } = useReadContractHook({
     contractName: "KolektivaToken",
     functionName: "balanceOf",
-    contractAddress: tokenContractAddress,
+    contractAddress: propertyData.tokenAddress,
     // args: [address, "_spender market address"],
     args: [address],
   });
@@ -77,7 +80,7 @@ const SellStep1: React.FC<SellStep1Props> = ({ formData, onDataChange }) => {
       const data = await readContractFetch({
         contractName: "KolektivaMarket",
         functionName: "calculateSellProceeds",
-        contractAddress: marketContractAddress,
+        contractAddress: propertyData.marketAddress,
         args: [formData.qtyToken],
       });
 
@@ -197,10 +200,8 @@ const SellStep1: React.FC<SellStep1Props> = ({ formData, onDataChange }) => {
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-0.5">
           <h2 className="text-2xl font-bold text-teal-950">Place sell order</h2>
-          <p className="text-lg text-zinc-700">
-            Jl Pinangsia Raya Komplek Glodok Plaza Bl B-22
-          </p>
-          <p className="text-lg text-zinc-500">DKI Jakarta</p>
+          <p className="text-lg text-zinc-700">{propertyData.address}</p>
+          <p className="text-lg text-zinc-500">{propertyData.city}</p>
         </div>
         <Divider className="border-zinc-200 !m-0" />
         <div className="w-full flex justify-evenly bg-zinc-100 rounded-full">

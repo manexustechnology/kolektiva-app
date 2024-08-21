@@ -8,8 +8,10 @@ import { useEffect, useState } from "react";
 // import { BuyOrderEvent } from "./MarketBuyOrderEvent";
 // import { SellOrderEvent } from "./MarketSellOrderEvent";
 import { readContractFetch } from "@/utils/fetch";
+import { PropertyData } from "@/types/property";
 
 interface MarketDetailOrderbookPanelProps {
+  propertyData: PropertyData;
   allowTrade?: boolean;
 }
 
@@ -21,10 +23,9 @@ interface Order {
 // Contract address should be dynamic, fetched from backend
 
 const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
+  propertyData,
   allowTrade = false,
 }) => {
-  const marketContractAddress = process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS;
-
   const [buyOrders, setBuyOrders] = useState<Order[]>([]);
   const [loadingBuy, setLoadingBuy] = useState<boolean>(true);
   const [buyOrdersCount, setBuyOrdersCount] = useState<number | null>(null);
@@ -36,28 +37,28 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
   const { data: InitialOfferingPurchaseEvent } = useContractEventHook({
     contractName: "KolektivaMarket",
     eventName: "InitialOfferingPurchase",
-    contractAddress: marketContractAddress, // market contract address
+    contractAddress: propertyData.marketAddress, // market contract address
     fromBlock: BigInt(8906493),
   });
 
   const { data: OrderFulfilledEvent } = useContractEventHook({
     contractName: "KolektivaMarket",
     eventName: "OrderFulfilled",
-    contractAddress: marketContractAddress, // market contract address
+    contractAddress: propertyData.marketAddress, // market contract address
     fromBlock: BigInt(8906493),
   });
 
   const { data: sellOrdersCountData } = useReadContractHook({
     contractName: "KolektivaMarket",
     functionName: "getSellOrdersCount",
-    contractAddress: marketContractAddress, // market contract address
+    contractAddress: propertyData.marketAddress, // market contract address
     args: [],
   });
 
   const { data: buyOrdersCountData } = useReadContractHook({
     contractName: "KolektivaMarket",
     functionName: "getBuyOrdersCount",
-    contractAddress: marketContractAddress, // market contract address
+    contractAddress: propertyData.marketAddress, // market contract address
     args: [],
   });
 
@@ -84,7 +85,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
         const orderData = await readContractFetch({
           contractName: "KolektivaMarket",
           functionName: "getBuyOrderByIndex",
-          contractAddress: marketContractAddress,
+          contractAddress: propertyData.marketAddress,
           args: [i],
         });
 
@@ -119,7 +120,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
         const orderData = await readContractFetch({
           contractName: "KolektivaMarket",
           functionName: "getSellOrderByIndex",
-          contractAddress: marketContractAddress,
+          contractAddress: propertyData.marketAddress,
           args: [i],
         });
 
@@ -154,22 +155,22 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
               {loadingBuy
                 ? "Loading..."
                 : buyOrders.map((order, index) => (
-                    <div key={index}>
-                      Price: {order.price.toString()}, Amount:{" "}
-                      {order.amount.toString()}
-                    </div>
-                  ))}
+                  <div key={index}>
+                    Price: {order.price.toString()}, Amount:{" "}
+                    {order.amount.toString()}
+                  </div>
+                ))}
             </div>
             <h3>Sell Orders</h3>
             <div>
               {loadingSell
                 ? "Loading..."
                 : sellOrders.map((order, index) => (
-                    <div key={index}>
-                      Price: {order.price.toString()}, Amount:{" "}
-                      {order.amount.toString()}
-                    </div>
-                  ))}
+                  <div key={index}>
+                    Price: {order.price.toString()}, Amount:{" "}
+                    {order.amount.toString()}
+                  </div>
+                ))}
             </div>
           </div>
         }
