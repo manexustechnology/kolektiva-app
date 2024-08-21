@@ -22,6 +22,7 @@ interface PropertyCardData {
   isNew: boolean;
   isFeatured: boolean;
   isTraded: boolean;
+  isUpcoming: boolean;
 }
 
 interface PropertyCardsProps {
@@ -29,6 +30,7 @@ interface PropertyCardsProps {
     location: string;
     propertyType: string;
     sortOption: string;
+    status: string;
     priceRange: number[];
   };
 }
@@ -54,7 +56,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_HOST}/property?${new URLSearchParams(currentFilters as any).toString()}`);
         const data = await response.json();
 
-        const mappedData = data.map((property: any) => ({
+        let mappedData = data.map((property: any) => ({
           name: property.address,
           slug: property.id,
           location: `${property.city}, ${property.state}, ${property.country}`,
@@ -63,7 +65,12 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
           isNew: true,
           isFeatured: property.isFeatured,
           isTraded: property.isTraded,
+          isUpcoming: property.isUpcoming,
         }));
+
+        if (currentFilters.status && currentFilters.status == 'upcoming') {
+          mappedData = mappedData.filter((item: any) => item.isUpcoming)
+        }
 
         setPropertyData(mappedData);
       } catch (error) {
@@ -167,6 +174,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
                 isNew={card.isNew}
                 isFeatured={card.isFeatured}
                 isTraded={card.isTraded}
+                isUpcoming={card.isUpcoming}
                 onButtonClick={() => handleButtonClick(card.slug)}
               />
             ))}

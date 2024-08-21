@@ -304,6 +304,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 paddingRight="16px"
                 borderRadius="full"
                 transition="all 0.3s ease-in-out"
+                value="All Phase"
               >
                 All Phase
               </Tab>
@@ -325,6 +326,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 paddingRight="16px"
                 borderRadius="full"
                 transition="all 0.3s ease-in-out"
+                value="Upcoming"
               >
                 Upcoming
               </Tab>
@@ -346,6 +348,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 paddingRight="16px"
                 borderRadius="full"
                 transition="all 0.3s ease-in-out"
+                value="Initial Offering"
               >
                 Initial Offering
               </Tab>
@@ -367,6 +370,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
                 paddingRight="16px"
                 borderRadius="full"
                 transition="all 0.3s ease-in-out"
+                value="Aftermarket"
               >
                 Aftermarket
               </Tab>
