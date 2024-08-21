@@ -25,10 +25,10 @@ import {
 import { Divider } from "antd";
 import Link from "next/link";
 import MapEmbed from "../../MapEmbed";
-import { Property, Facility } from "@/types/property";
+import { PropertyData } from "@/types/property";
 
 interface MarketDetailDescriptionPanelProps {
-  property: Property;
+  property: PropertyData;
 }
 
 const MarketDetailDescriptionPanel: React.FC<
@@ -122,13 +122,13 @@ const MarketDetailDescriptionPanel: React.FC<
         </Accordion>
       </div>
       <Divider className="border-zinc-200 !m-0" />
-      {/* <MapEmbed
-        latitude={property.location.latitude}
-        longitude={property.location.longitude}
+      <MapEmbed
+        latitude={property.latitude}
+        longitude={property.longitude}
         width="100%"
         height="350px"
         className="rounded-2xl"
-      /> */}
+      />
       <Divider className="border-zinc-200 !m-0" />
       <div className="flex flex-col gap-3">
         <h2 className="text-black text-base font-medium">About the Property</h2>

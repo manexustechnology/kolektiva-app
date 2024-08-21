@@ -1,8 +1,8 @@
 import React from 'react';
 
 interface MapEmbedProps {
-  latitude: number;
-  longitude: number;
+  latitude: string;
+  longitude: string;
   width?: string;
   height?: string;
   className?: string;

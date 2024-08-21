@@ -26,6 +26,8 @@ export interface Facility {
     city: string;
     state: string;
     country: string;
+    latitude: string;
+    longitude: string;
     type: string;
     description: string;
     isFeatured: boolean | null;
