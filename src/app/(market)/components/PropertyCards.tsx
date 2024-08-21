@@ -55,9 +55,9 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
         const data = await response.json();
 
         const mappedData = data.map((property: any) => ({
-          name: property.type,
+          name: property.address,
           slug: property.id,
-          location: `${property.address}, ${property.city}, ${property.state}, ${property.country}`,
+          location: `${property.city}, ${property.state}, ${property.country}`,
           img: property.images?.[0]?.image || "https://messagetech.com/wp-content/themes/ml_mti/images/no-image.jpg",
           price: property.price || "N/A",
           isNew: true,
