@@ -11,6 +11,7 @@ import { useReadContractHook } from "@/utils/hooks";
 import { readContractFetch } from "@/utils/fetch";
 import { PropertyData } from "@/types/property";
 import { formatUSDTBalance } from "@/utils/formatter";
+import { useActiveAccount } from "thirdweb/react";
 
 interface BuyStep1Props {
   propertyData: PropertyData;
@@ -30,11 +31,15 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
   formData,
   onDataChange,
 }) => {
+  const activeAccount = useActiveAccount();
+  const address = activeAccount?.address;
+
   const activeTab = (formData as AfterMarketBuyOrderData).type || "market";
   // e.g. 5% => feePercentage = 500, feePrecision = 10_000
   const [salePrice, setSalePrice] = useState<number | null>(null);
   const [feePercentage, setFeePercentage] = useState<number | null>(null);
   const [feePrecision, setFeePrecision] = useState<number | null>(null);
+  const [balanceUsdt, setBalanceUsdt] = useState<number | null>(null);
   const [initialOfferingSupply, setInitialOfferingSupply] = useState<
     number | null
   >(null);
@@ -45,7 +50,6 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
   const { data: salePriceData } = useReadContractHook({
     contractName: "KolektivaMarket",
     functionName: "salePrice",
-    // contractAddress: "", // market contract address
     contractAddress: propertyData.marketAddress,
 
     args: [],
@@ -54,7 +58,6 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
   const { data: feePercentageData } = useReadContractHook({
     contractName: "KolektivaMarket",
     functionName: "feePercentage",
-    // contractAddress: "", // market contract address
     contractAddress: propertyData.marketAddress,
 
     args: [],
@@ -63,7 +66,6 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
   const { data: feePrecisionData } = useReadContractHook({
     contractName: "KolektivaMarket",
     functionName: "FEE_PRECISION",
-    // contractAddress: "", // market contract address
     contractAddress: propertyData.marketAddress,
 
     args: [],
@@ -72,30 +74,40 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
   const { data: initialOfferingSupplyData } = useReadContractHook({
     contractName: "KolektivaMarket",
     functionName: "initialOfferingSupply",
-    // contractAddress: "", // market contract address
     contractAddress: propertyData.marketAddress,
 
     args: [],
   });
 
+  const { data: balanceUsdtData } = useReadContractHook({
+    contractName: "MockUSDT",
+    functionName: "balanceOf",
+    args: [address],
+  });
+
   useEffect(() => {
-    if (isAfterMarketTrading) {
-      const fetchData = async () => {
-        const data = await readContractFetch({
-          contractName: "KolektivaMarket",
-          functionName: "calculateBuyCost",
-          contractAddress: propertyData.marketAddress,
-          args: [formData.qtyToken],
-        });
+    const fetchData = async () => {
+      console.log("market", propertyData.marketAddress);
+      console.log("token", propertyData.tokenAddress);
+      try {
+        if (isAfterMarketTrading && activeTab == "market") {
+          const data = await readContractFetch({
+            contractName: "KolektivaMarket",
+            functionName: "calculateBuyCost",
+            contractAddress: propertyData.marketAddress,
+            args: [formData.qtyToken],
+          });
 
-        if (data) {
-          setCalculateBuyCost([Number(data[0]), Number(data[1])]);
+          if (data) {
+            setCalculateBuyCost([Number(data[0]), Number(data[1])]);
+          }
         }
-      };
-
-      fetchData();
-    }
-  }, [formData.qtyToken, isAfterMarketTrading]);
+      } catch (error) {
+        console.error("Error fetching sell proceeds:", error);
+      }
+    };
+    fetchData();
+  }, [formData.qtyToken, activeTab, isAfterMarketTrading]);
 
   useEffect(() => {
     if (feePercentageData) {
@@ -120,6 +132,12 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
       setInitialOfferingSupply(Number(initialOfferingSupplyData));
     }
   }, [initialOfferingSupplyData]);
+
+  useEffect(() => {
+    if (balanceUsdtData) {
+      setBalanceUsdt(Number(balanceUsdtData));
+    }
+  }, [balanceUsdtData]);
 
   const calculateCostAndFee = (amount: number, price: number) => {
     const cost = amount * price;
@@ -243,7 +261,9 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
           <Wallet weight="fill" size={24} />
           <div className="flex flex-col justify-center">
             <p className="text-sm text-zinc-500">Your balance</p>
-            <p className="text-base font-medium">30,00 USDT</p>
+            <p className="text-base font-medium">
+              {balanceUsdt && formatUSDTBalance(balanceUsdt)} USDT
+            </p>
           </div>
         </div>
         {isAfterMarketTrading && activeTab === tabs[1].id && (
