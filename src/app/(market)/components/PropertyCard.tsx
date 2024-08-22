@@ -59,8 +59,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
       cursor="pointer"
       onClick={onButtonClick}
     >
-      {/* Tag Box of Featured*/}
-      {isFeatured && (
+      {isFeatured ? (
         <Box
           position="absolute"
           top={2}
@@ -76,10 +75,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
         >
           Featured
         </Box>
-      )}
-
-      {/* Tag Box of Upcoming*/}
-      {isUpcoming && (
+      ) : isUpcoming ? (
         <Box
           position="absolute"
           top={2}
@@ -95,10 +91,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
         >
           Upcoming
         </Box>
-      )}
-
-      {/* Tag Box of trading*/}
-      {isTraded ? (
+      ) : isTraded ? (
         <Box
           position="absolute"
           top={2}
