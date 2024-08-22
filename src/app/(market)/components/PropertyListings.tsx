@@ -55,7 +55,7 @@ const PropertyListings: React.FC = () => {
   };
 
   const filterBarProps: FilterBarProps = {
-    locations: ["DKI Jakarta", "Surabaya", "Denpasar"],
+    locations: ["DKI Jakarta", "Surabaya", "Denpasar", "Bandung"],
     propertyTypes: ["House", "Apartment"],
     sortOptions: ["Featured", "Newest", "Oldest"],
     onFilterApply: handleFilterApply,

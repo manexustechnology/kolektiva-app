@@ -10,8 +10,10 @@ import { SellOrderData } from "@/types/order";
 import { useReadContractHook, useWriteContractHook } from "@/utils/hooks";
 import { useActiveAccount } from "thirdweb/react";
 import { getTransactionStatus } from "@/app/api/tx-hash";
+import { PropertyData } from "@/types/property";
 
 interface SellFormWizardProps {
+  propertyData: PropertyData;
   currentStep: number;
   onSubmitButtonClick: (formData: SellOrderData) => void;
 }
@@ -37,6 +39,7 @@ const variants = {
 };
 
 const SellFormWizard: React.FC<SellFormWizardProps> = ({
+  propertyData,
   currentStep,
   onSubmitButtonClick,
 }) => {
@@ -50,23 +53,20 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
   });
   const prevStep = useRef(currentStep);
   const direction = currentStep > prevStep.current ? 1 : -1;
-  const marketContractAddress =
-    process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS!;
-  const tokenContractAddress = process.env.NEXT_PUBLIC_TOKEN_CONTRACT_ADDRESS!;
   const activeAccount = useActiveAccount();
   const address = activeAccount?.address;
 
   const { writeAsync: marketSell } = useWriteContractHook({
     contractName: "KolektivaMarket",
     functionName: "instantSell",
-    contractAddress: marketContractAddress,
+    contractAddress: propertyData.marketAddress,
     args: [formData.qtyToken],
   });
 
   const { writeAsync: limitSell } = useWriteContractHook({
     contractName: "KolektivaMarket",
     functionName: "placeSellOrder",
-    contractAddress: marketContractAddress,
+    contractAddress: propertyData.marketAddress,
     args: [formData.qtyToken, formData.pricePerToken],
   });
 
@@ -87,31 +87,31 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
       contractName: "MockUSDT",
       functionName: "allowance",
       // args: [address, "_spender market address"],
-      args: [address, marketContractAddress],
+      args: [address, propertyData.marketAddress],
     });
 
   const { writeAsync: approveUsdt } = useWriteContractHook({
     contractName: "MockUSDT",
     functionName: "approve",
     // args: ["_spender market address", formData.totalCost],
-    args: [marketContractAddress, , formData.fee],
+    args: [propertyData.marketAddress, , formData.fee],
   });
 
   const { data: allowanceTokenData, isLoading: isLoadingAllowanceToken } =
     useReadContractHook({
       contractName: "KolektivaToken",
       functionName: "allowance",
-      contractAddress: tokenContractAddress,
+      contractAddress: propertyData.tokenAddress,
       // args: [address, "_spender market address"],
-      args: [address, marketContractAddress],
+      args: [address, propertyData.marketAddress],
     });
 
   const { writeAsync: approveToken } = useWriteContractHook({
     contractName: "KolektivaToken",
     functionName: "approve",
-    contractAddress: tokenContractAddress,
+    contractAddress: propertyData.tokenAddress,
     // args: ["_spender market address", formData.totalCost],
-    args: [marketContractAddress, , formData.qtyToken],
+    args: [propertyData.marketAddress, , formData.qtyToken],
   });
 
   const allowanceUsdt = useMemo(
@@ -193,6 +193,7 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
             >
               {steps[currentStep - 1].component({
                 formData,
+                propertyData,
                 onDataChange: (data: SellOrderData) => {
                   setFormData((prev) => ({ ...prev, ...data }));
                 },
@@ -211,10 +212,20 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
                 : "Total sell price"}
             </p>
             <p className="text-xl font-bold text-teal-600">
-              {formData.totalProceeds} USD
+              {formData.totalProceeds} USDT
             </p>
           </div>
-          <Button
+          {formData.pricePerToken === 0 ? (<Button
+            colorScheme="teal"
+            bgColor="teal.600"
+            w="full"
+            rounded="full"
+            fontWeight="medium"
+            fontSize="sm"
+            isDisabled={true}
+          >
+            Empty Buy Order book
+          </Button>) : (<Button
             colorScheme="teal"
             bgColor="teal.600"
             w="full"
@@ -224,7 +235,7 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
             fontSize="sm"
           >
             {buttonLabel()}
-          </Button>
+          </Button>)}
         </div>
       </ModalFooter>
     </>

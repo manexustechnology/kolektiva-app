@@ -9,8 +9,12 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { useReadContractHook } from "@/utils/hooks";
 import { readContractFetch } from "@/utils/fetch";
+import { PropertyData } from "@/types/property";
+import { formatUSDTBalance } from "@/utils/formatter";
+import { useActiveAccount } from "thirdweb/react";
 
 interface BuyStep1Props {
+  propertyData: PropertyData;
   isAfterMarketTrading: boolean;
   formData: BuyOrderData;
   onDataChange: (data: BuyOrderData) => void;
@@ -22,29 +26,31 @@ const tabs = [
 ];
 
 const BuyStep1: React.FC<BuyStep1Props> = ({
+  propertyData,
   isAfterMarketTrading,
   formData,
   onDataChange,
 }) => {
+  const activeAccount = useActiveAccount();
+  const address = activeAccount?.address;
+
   const activeTab = (formData as AfterMarketBuyOrderData).type || "market";
   // e.g. 5% => feePercentage = 500, feePrecision = 10_000
   const [salePrice, setSalePrice] = useState<number | null>(null);
   const [feePercentage, setFeePercentage] = useState<number | null>(null);
   const [feePrecision, setFeePrecision] = useState<number | null>(null);
+  const [balanceUsdt, setBalanceUsdt] = useState<number | null>(null);
   const [initialOfferingSupply, setInitialOfferingSupply] = useState<
     number | null
   >(null);
   const [calculateBuyCost, setCalculateBuyCost] = useState<
     [number, number] | null
   >(null);
-  const marketContractAddress =
-    process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS!;
 
   const { data: salePriceData } = useReadContractHook({
     contractName: "KolektivaMarket",
     functionName: "salePrice",
-    // contractAddress: "", // market contract address
-    contractAddress: marketContractAddress,
+    contractAddress: propertyData.marketAddress,
 
     args: [],
   });
@@ -52,8 +58,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
   const { data: feePercentageData } = useReadContractHook({
     contractName: "KolektivaMarket",
     functionName: "feePercentage",
-    // contractAddress: "", // market contract address
-    contractAddress: marketContractAddress,
+    contractAddress: propertyData.marketAddress,
 
     args: [],
   });
@@ -61,8 +66,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
   const { data: feePrecisionData } = useReadContractHook({
     contractName: "KolektivaMarket",
     functionName: "FEE_PRECISION",
-    // contractAddress: "", // market contract address
-    contractAddress: marketContractAddress,
+    contractAddress: propertyData.marketAddress,
 
     args: [],
   });
@@ -70,28 +74,40 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
   const { data: initialOfferingSupplyData } = useReadContractHook({
     contractName: "KolektivaMarket",
     functionName: "initialOfferingSupply",
-    // contractAddress: "", // market contract address
-    contractAddress: marketContractAddress,
+    contractAddress: propertyData.marketAddress,
 
     args: [],
   });
 
+  const { data: balanceUsdtData } = useReadContractHook({
+    contractName: "MockUSDT",
+    functionName: "balanceOf",
+    args: [address],
+  });
+
   useEffect(() => {
     const fetchData = async () => {
-      const data = await readContractFetch({
-        contractName: "KolektivaMarket",
-        functionName: "calculateBuyCost",
-        contractAddress: marketContractAddress,
-        args: [formData.qtyToken],
-      });
+      console.log("market", propertyData.marketAddress);
+      console.log("token", propertyData.tokenAddress);
+      try {
+        if (isAfterMarketTrading && activeTab == "market") {
+          const data = await readContractFetch({
+            contractName: "KolektivaMarket",
+            functionName: "calculateBuyCost",
+            contractAddress: propertyData.marketAddress,
+            args: [formData.qtyToken],
+          });
 
-      if (data) {
-        setCalculateBuyCost([Number(data[0]), Number(data[1])]);
+          if (data) {
+            setCalculateBuyCost([Number(data[0]), Number(data[1])]);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching sell proceeds:", error);
       }
     };
-
     fetchData();
-  }, [formData.qtyToken]);
+  }, [formData.qtyToken, activeTab, isAfterMarketTrading]);
 
   useEffect(() => {
     if (feePercentageData) {
@@ -116,6 +132,12 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
       setInitialOfferingSupply(Number(initialOfferingSupplyData));
     }
   }, [initialOfferingSupplyData]);
+
+  useEffect(() => {
+    if (balanceUsdtData) {
+      setBalanceUsdt(Number(balanceUsdtData));
+    }
+  }, [balanceUsdtData]);
 
   const calculateCostAndFee = (amount: number, price: number) => {
     const cost = amount * price;
@@ -205,10 +227,8 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
       <div className="flex flex-col gap-4">
         <div className="flex flex-col gap-0.5">
           <h2 className="text-2xl font-bold text-teal-950">Place buy order</h2>
-          <p className="text-lg text-zinc-700">
-            Jl Pinangsia Raya Komplek Glodok Plaza Bl B-22
-          </p>
-          <p className="text-lg text-zinc-500">DKI Jakarta</p>
+          <p className="text-lg text-zinc-700">{propertyData.address}</p>
+          <p className="text-lg text-zinc-500">{propertyData.city}</p>
         </div>
         <Divider className="border-zinc-200 !m-0" />
         {isAfterMarketTrading && (
@@ -241,7 +261,9 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
           <Wallet weight="fill" size={24} />
           <div className="flex flex-col justify-center">
             <p className="text-sm text-zinc-500">Your balance</p>
-            <p className="text-base font-medium">30,00 USD</p>
+            <p className="text-base font-medium">
+              {balanceUsdt && formatUSDTBalance(balanceUsdt)} USDT
+            </p>
           </div>
         </div>
         {isAfterMarketTrading && activeTab === tabs[1].id && (
@@ -255,7 +277,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
                 onChange={(e) => setTokenPrice(parseInt(e.target.value) || 0)}
               />
               <InputRightElement right={6}>
-                <span className="text-sm text-zinc-500">USD</span>
+                <span className="text-sm text-zinc-500">USDT</span>
               </InputRightElement>
             </InputGroup>
           </div>
@@ -277,7 +299,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             >
               <p className="text-base font-medium text-teal-600">1 token</p>
               <p className="text-xs text-zinc-700">
-                {formData.pricePerToken} USD
+                {formatUSDTBalance(formData.pricePerToken)} USDT
               </p>
             </div>
             <div
@@ -291,7 +313,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             >
               <p className="text-base font-medium text-teal-600">5 token</p>
               <p className="text-xs text-zinc-700">
-                {formData.pricePerToken * 5} USD
+                {formatUSDTBalance(formData.pricePerToken * 5)} USDT
               </p>
             </div>
             <div
@@ -305,7 +327,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             >
               <p className="text-base font-medium text-teal-600">10 token</p>
               <p className="text-xs text-zinc-700">
-                {formData.pricePerToken * 10} USD
+                {formatUSDTBalance(formData.pricePerToken * 10)} USDT
               </p>
             </div>
             <div
@@ -319,7 +341,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             >
               <p className="text-base font-medium text-teal-600">25 token</p>
               <p className="text-xs text-zinc-700">
-                {formData.pricePerToken * 25} USD
+                {formatUSDTBalance(formData.pricePerToken * 25)} USDT
               </p>
             </div>
             <div
@@ -333,7 +355,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             >
               <p className="text-base font-medium text-teal-600">50 token</p>
               <p className="text-xs text-zinc-700">
-                {formData.pricePerToken * 50} USD
+                {formatUSDTBalance(formData.pricePerToken * 50)} USDT
               </p>
             </div>
             <div
@@ -347,7 +369,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             >
               <p className="text-base font-medium text-teal-600">100 token</p>
               <p className="text-xs text-zinc-700">
-                {formData.pricePerToken * 100} USD
+                {formatUSDTBalance(formData.pricePerToken * 100)} USDT
               </p>
             </div>
           </div>
@@ -388,7 +410,9 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
           <p className="text-sm text-zinc-500">Fees</p>
           <Info weight="fill" size={16} className="text-zinc-400" />
         </div>
-        <p className="text-sm font-medium text-zinc-700">{formData.fee} USD</p>
+        <p className="text-sm font-medium text-zinc-700">
+          {formatUSDTBalance(formData.fee)} USDT
+        </p>
       </div>
       {/* Mark test */}
       <div>

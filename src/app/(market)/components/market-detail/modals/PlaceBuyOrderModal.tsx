@@ -13,8 +13,10 @@ import { ArrowLeft, X } from "@phosphor-icons/react/dist/ssr";
 import { Divider } from "antd";
 import BuyFormWizard from "../form-wizard/BuyFormWizard";
 import { BuyOrderData } from "@/types/order";
+import { PropertyData } from "@/types/property";
 
 interface PlaceBuyOrderModalProps {
+  propertyData: PropertyData;
   onTxUpdate: (tx: any) => void;
   isOpen: boolean;
   onClose: () => void;
@@ -23,6 +25,7 @@ interface PlaceBuyOrderModalProps {
 }
 
 const PlaceBuyOrderModal: React.FC<PlaceBuyOrderModalProps> = ({
+  propertyData,
   onTxUpdate,
   isOpen,
   onClose,
@@ -109,6 +112,7 @@ const PlaceBuyOrderModal: React.FC<PlaceBuyOrderModalProps> = ({
             </div>
           </ModalHeader>
           <BuyFormWizard
+            propertyData={propertyData}
             onTxUpdate={onTxUpdate}
             currentStep={step}
             isAfterMarketTrading={isAfterMarketTrading}

@@ -19,7 +19,7 @@ import MarketDetailOrderbookPanel from "./panel/MarketDetailOrderbookPanel";
 import MarketDetailDocumentPanel from "./panel/MarketDetailDocumentPanel";
 import MarketDetailMarketPanel from "./panel/MarketDetailMarketPanel";
 import { ApexOptions } from "apexcharts";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import PlaceBuyOrderModal from "./modals/PlaceBuyOrderModal";
 import PlaceSellOrderModal from "./modals/PlaceSellOrderModal";
 import {
@@ -40,22 +40,23 @@ import {
   useContractEventHook,
 } from "@/utils/hooks";
 import { getTransactionStatus } from "@/app/api/tx-hash";
+import { PropertyData } from "@/types/property";
 
 import Link from "next/link";
+import { formatUSDTBalance } from "@/utils/formatter";
 import { fetchContractMetadataFromAddress } from "@thirdweb-dev/sdk";
 import BuyFormWizard from "./form-wizard/BuyFormWizard";
 
 interface MarketDetailClientPageProps {
+  propertyData: PropertyData;
   // allowTrade: boolean;
 }
 
-const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
-  {
-    // allowTrade,
-  }
-) => {
+const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
+  propertyData,
+  // allowTrade,
+}) => {
   const account = useActiveAccount();
-  // https://blog.nirdeshpokhrel.com.np/nextjs-window-is-not-defined-react-apexcharts
   const [ReactApexChart, setReactApexChart] = useState<any>();
   useEffect(() => {
     import("react-apexcharts").then((mod) => {
@@ -408,9 +409,33 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
     useReadContractHook({
       contractName: "KolektivaMarket",
       functionName: "initialOfferingActive",
-      contractAddress: process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS, // market contract address
+      contractAddress: propertyData.marketAddress, // market contract address
       args: [],
     });
+
+  const { data: salePriceData } = useReadContractHook({
+    contractName: "KolektivaMarket",
+    functionName: "salePrice",
+    // contractAddress: "", // market contract address
+    contractAddress: propertyData.marketAddress,
+    args: [],
+  });
+
+  const { data: tokenTotalSupply } = useReadContractHook({
+    contractName: "KolektivaToken",
+    functionName: "totalSupply",
+    // contractAddress: "", // market contract address
+    contractAddress: propertyData.tokenAddress,
+    args: [],
+  });
+
+  const { data: initialOfferingSupply } = useReadContractHook({
+    contractName: "KolektivaMarket",
+    functionName: "initialOfferingSupply",
+    // contractAddress: "", // market contract address
+    contractAddress: propertyData.marketAddress,
+    args: [],
+  });
 
   useEffect(() => {
     if (!isLoadingInitialOffering) {
@@ -458,6 +483,16 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
     return;
   };
 
+  const initialOfferingPercentage = useMemo(() => {
+    if (tokenTotalSupply > initialOfferingSupply) {
+      const totalSupply = Number(tokenTotalSupply);
+      const ioSupply = Number(initialOfferingSupply);
+      return ((totalSupply - ioSupply) / totalSupply) * 100;
+    }
+
+    return 0;
+  }, [initialOfferingSupply, tokenTotalSupply]);
+
   const [txValue, setTxValue] = useState("");
   const handleTxUpdate = (tx: any) => {
     setTxValue(tx);
@@ -467,7 +502,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
     <div className="w-full flex justify-center py-4">
       <div className="flex max-w-[1238px] w-full p-2 gap-4">
         <div className="w-2/3 flex flex-col gap-6">
-          <MarketDetailPhotos />
+          <MarketDetailPhotos images={propertyData.images} />
           {/* Will be used later */}
           {/* {allowTrade && (
             <div className="w-full">
@@ -489,20 +524,28 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
             >
               <TabList gap="2">
                 <Tab fontSize="sm">Description</Tab>
-                <Tab fontSize="sm">Financials</Tab>
-                <Tab fontSize="sm">Order book</Tab>
+                {!propertyData.isUpcoming && (
+                  <Tab fontSize="sm">Financials</Tab>
+                )}
+                {!propertyData.isUpcoming && (
+                  <Tab fontSize="sm">Order book</Tab>
+                )}
                 <Tab fontSize="sm">Documents</Tab>
                 <Tab fontSize="sm">Markets</Tab>
               </TabList>
+
               <TabPanels>
                 <TabPanel px={0} py={4}>
-                  <MarketDetailDescriptionPanel />
+                  <MarketDetailDescriptionPanel property={propertyData} />
                 </TabPanel>
                 <TabPanel px={0} py={4}>
                   <MarketDetailFinancialPanel />
                 </TabPanel>
                 <TabPanel px={0} py={4}>
-                  <MarketDetailOrderbookPanel allowTrade={allowTrade} />
+                  <MarketDetailOrderbookPanel
+                    allowTrade={allowTrade}
+                    propertyData={propertyData}
+                  />
                 </TabPanel>
                 <TabPanel px={0} py={4}>
                   <MarketDetailDocumentPanel />
@@ -522,11 +565,12 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
             )}
           >
             <div className="flex flex-col gap-1">
-              <h2 className="text-2xl font-bold">
-                Jl Pinangsia Raya Komplek Glodok Plaza Bl B-22
-              </h2>
-              <Link href="/?location=DKI Jakarta">
-                <p className="text-lg text-zinc-500">DKI Jakarta</p>
+              <h2 className="text-2xl font-bold">{propertyData.address}</h2>
+              <Link href="/?location={propertyData.city}, {propertyData.state}, {propertyData.country}">
+                <p className="text-lg text-zinc-500">
+                  {propertyData.city}, {propertyData.state},{" "}
+                  {propertyData.country}
+                </p>
               </Link>
             </div>
             {/* Tag Box of trading*/}
@@ -545,6 +589,23 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
                   width="fit-content"
                 >
                   Aftermarket
+                </Box>
+              </Link>
+            ) : propertyData.isUpcoming ? (
+              <Link href="/?status=upcoming">
+                <Box
+                  position="relative"
+                  backgroundColor="#FFFBEB"
+                  color="#D97706"
+                  padding="2px 8px"
+                  borderWidth="1px"
+                  borderRadius="full"
+                  borderColor="#D97706"
+                  fontSize="xs"
+                  zIndex={10}
+                  width="fit-content"
+                >
+                  Upcoming
                 </Box>
               </Link>
             ) : (
@@ -570,136 +631,159 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
                 <House size={32} weight="fill" className="text-teal-600" />
                 <div className="flex flex-col justify-between">
                   <p className="text-sm text-zinc-500">Property type</p>
-                  <p className="text-md font-bold text-teal-600">House</p>
+                  <p className="text-md font-bold text-teal-600">
+                    {propertyData.type}
+                  </p>
                 </div>
               </div>
             </Link>
-            <div className="flex flex-col gap-4 p-4 w-full rounded-2xl shadow-md">
-              <div
-                className="relative flex flex-col justify-center"
-                onMouseEnter={() => setIsInfoAreaHovered(true)}
-                onMouseLeave={() => setIsInfoAreaHovered(false)}
-              >
-                <div className="flex items-center gap-1">
-                  <p className="text-sm text-zinc-500">
-                    {allowTrade ? "Estimated Price" : "Starting at"}
-                  </p>
-                  <WarningCircle
-                    size={18}
-                    weight="fill"
-                    className="rotate-180 text-zinc-400"
-                  />
-                </div>
-                <p className="text-lg font-bold text-teal-600">50 USD</p>
-                {isInfoAreaHovered && (
-                  <div className="absolute flex flex-col items-start p-3 gap-1 bg-white shadow-lg rounded-lg w-[240px] h-[78px] left-[140px] z-50">
-                    <p className="w-[216px] h-[54px] font-normal text-sm leading-5 text-zinc-500">
-                      This is the lowest current price per token available for
-                      this property.
+            {!propertyData.isUpcoming && (
+              <div className="flex flex-col gap-4 p-4 w-full rounded-2xl shadow-md">
+                <div
+                  className="relative flex flex-col justify-center"
+                  onMouseEnter={() => setIsInfoAreaHovered(true)}
+                  onMouseLeave={() => setIsInfoAreaHovered(false)}
+                >
+                  <div className="flex items-center gap-1">
+                    <p className="text-sm text-zinc-500">
+                      {allowTrade ? "Estimated Price" : "Starting at"}
                     </p>
+                    <WarningCircle
+                      size={18}
+                      weight="fill"
+                      className="rotate-180 text-zinc-400"
+                    />
                   </div>
-                )}
-              </div>
-              <div className="flex flex-col gap-1">
-                <div className="flex w-full gap-2 items-center">
-                  <Progress
-                    colorScheme="green"
-                    size="sm"
-                    value={83}
+                  <p className="text-lg font-bold text-teal-600">
+                    {formatUSDTBalance(salePriceData || 0)} USDT
+                  </p>
+                  {isInfoAreaHovered && (
+                    <div className="absolute flex flex-col items-start p-3 gap-1 bg-white shadow-lg rounded-lg w-[240px] h-[78px] left-[140px] z-50">
+                      <p className="w-[216px] h-[54px] font-normal text-sm leading-5 text-zinc-500">
+                        This is the lowest current price per token available for
+                        this property.
+                      </p>
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-col gap-1">
+                  {initialOfferingActive && (
+                    <div className="flex w-full gap-2 items-center">
+                      <Progress
+                        colorScheme="green"
+                        size="sm"
+                        value={initialOfferingPercentage}
+                        w="full"
+                        rounded="full"
+                      />
+                      <p className="text-xs text-teal-600 font-bold">
+                        {initialOfferingPercentage}%
+                      </p>
+                    </div>
+                  )}
+                  {allowTrade ? (
+                    <div className="flex justify-between items-center">
+                      <p className="text-sm text-zinc-500">Total Supply</p>
+                      <p className="text-sm font-medium text-black">
+                        {Number(tokenTotalSupply).toLocaleString()} token
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="flex justify-between items-center">
+                      <p className="text-sm text-zinc-500">Token available</p>
+                      <p className="text-sm font-medium text-black">
+                        {Number(initialOfferingSupply).toLocaleString()} token
+                      </p>
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-col p-3 gap-3 w-full bg-teal-50 rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-1">
+                      <p className="text-sm text-zinc-500">Projected Yield</p>
+                      <WarningCircle
+                        size={18}
+                        weight="fill"
+                        className="rotate-180 text-zinc-400"
+                      />
+                    </div>
+                    <p className="text-sm font-medium text-black">6.0%</p>
+                  </div>
+                  <Divider className="border-zinc-200 !m-0" />
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-1">
+                      <p className="text-sm text-zinc-500">Rental Status</p>
+                      <WarningCircle
+                        size={18}
+                        weight="fill"
+                        className="rotate-180 text-zinc-400"
+                      />
+                    </div>
+                    <p className="text-sm font-medium text-black">Active</p>
+                  </div>
+                </div>
+                <div className="flex gap-2 w-full">
+                  <Button
+                    colorScheme="teal"
+                    bgColor="teal.600"
                     w="full"
                     rounded="full"
-                  />
-                  <p className="text-xs text-teal-600 font-bold">83%</p>
-                </div>
-                <div className="flex justify-between items-center">
-                  <p className="text-sm text-zinc-500">Token available</p>
-                  <p className="text-sm font-medium text-black">8,210 token</p>
-                </div>
-              </div>
-              <div className="flex flex-col p-3 gap-3 w-full bg-teal-50 rounded-lg">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-1">
-                    <p className="text-sm text-zinc-500">Projected Yield</p>
-                    <WarningCircle
-                      size={18}
-                      weight="fill"
-                      className="rotate-180 text-zinc-400"
-                    />
-                  </div>
-                  <p className="text-sm font-medium text-black">6.0%</p>
+                    fontWeight="normal"
+                    onClick={handleBuyButtonClick}
+                  >
+                    Buy
+                  </Button>
+                  <Button
+                    colorScheme="teal"
+                    w="full"
+                    rounded="full"
+                    fontWeight="normal"
+                    isDisabled={!allowTrade}
+                    bgColor="teal.100"
+                    color="teal.700"
+                    _disabled={{ bgColor: "teal.50", color: "teal.600" }}
+                    _hover={{
+                      bgColor: !allowTrade ? "teal.200" : "teal.50",
+                      color: !allowTrade ? "teal.900" : "teal.600",
+                      cursor: !allowTrade ? "pointer" : "no-drop",
+                    }}
+                    onClick={handleSellButtonClick}
+                  >
+                    Sell
+                  </Button>
                 </div>
                 <Divider className="border-zinc-200 !m-0" />
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-1">
-                    <p className="text-sm text-zinc-500">Rental Status</p>
-                    <WarningCircle
-                      size={18}
-                      weight="fill"
-                      className="rotate-180 text-zinc-400"
-                    />
-                  </div>
-                  <p className="text-sm font-medium text-black">Active</p>
-                </div>
-              </div>
-              <div className="flex gap-2 w-full">
-                <Button
-                  colorScheme="teal"
-                  bgColor="teal.600"
-                  w="full"
-                  rounded="full"
-                  fontWeight="normal"
-                  onClick={handleBuyButtonClick}
-                >
-                  Buy
-                </Button>
-                <Button
-                  colorScheme="teal"
-                  w="full"
-                  rounded="full"
-                  fontWeight="normal"
-                  isDisabled={!allowTrade}
-                  bgColor="teal.100"
-                  color="teal.700"
-                  _disabled={{ bgColor: "teal.50", color: "teal.600" }}
-                  _hover={{
-                    bgColor: !allowTrade ? "teal.200" : "teal.50",
-                    color: !allowTrade ? "teal.900" : "teal.600",
-                    cursor: !allowTrade ? "pointer" : "no-drop",
-                  }}
-                  onClick={handleSellButtonClick}
-                >
-                  Sell
-                </Button>
-              </div>
-              <Divider className="border-zinc-200 !m-0" />
-              <div className="w-full flex items-center justify-stretch gap-2">
-                <Button
-                  colorScheme="white"
-                  color="teal.600"
-                  w="full"
-                  rounded="full"
-                  shadow="md"
-                >
-                  Rent property
-                </Button>
-                {allowTrade && (
+                <div className="w-full flex items-center justify-stretch gap-2">
                   <Button
                     colorScheme="white"
                     color="teal.600"
                     w="full"
                     rounded="full"
                     shadow="md"
-                    onClick={() => setTabIndex(2)}
                   >
-                    View order book
+                    Rent property
                   </Button>
-                )}
+                  {allowTrade && (
+                    <Button
+                      colorScheme="white"
+                      color="teal.600"
+                      w="full"
+                      rounded="full"
+                      shadow="md"
+                      onClick={() => setTabIndex(2)}
+                    >
+                      View order book
+                    </Button>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
+      {/* Modals */}
       <PlaceBuyOrderModal
+        propertyData={propertyData}
         onTxUpdate={handleTxUpdate}
         isOpen={isBuyOrderModalOpen}
         onClose={() => setIsBuyOrderModalOpen(false)}
@@ -707,6 +791,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = (
         onSuccess={handleBuySuccess}
       />
       <PlaceSellOrderModal
+        propertyData={propertyData}
         isOpen={isSellOrderModalOpen}
         onClose={() => setIsSellOrderModalOpen(false)}
         onSuccess={handleSellSuccess}

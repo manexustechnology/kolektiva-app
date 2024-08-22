@@ -8,8 +8,11 @@ import { useEffect, useState } from "react";
 // import { BuyOrderEvent } from "./MarketBuyOrderEvent";
 // import { SellOrderEvent } from "./MarketSellOrderEvent";
 import { readContractFetch } from "@/utils/fetch";
+import { PropertyData } from "@/types/property";
+import { formatUSDTBalance } from "@/utils/formatter";
 
 interface MarketDetailOrderbookPanelProps {
+  propertyData: PropertyData;
   allowTrade?: boolean;
 }
 
@@ -21,10 +24,9 @@ interface Order {
 // Contract address should be dynamic, fetched from backend
 
 const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
+  propertyData,
   allowTrade = false,
 }) => {
-  const marketContractAddress = process.env.NEXT_PUBLIC_MARKET_CONTRACT_ADDRESS;
-
   const [buyOrders, setBuyOrders] = useState<Order[]>([]);
   const [loadingBuy, setLoadingBuy] = useState<boolean>(true);
   const [buyOrdersCount, setBuyOrdersCount] = useState<number | null>(null);
@@ -36,28 +38,28 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
   const { data: InitialOfferingPurchaseEvent } = useContractEventHook({
     contractName: "KolektivaMarket",
     eventName: "InitialOfferingPurchase",
-    contractAddress: marketContractAddress, // market contract address
+    contractAddress: propertyData.marketAddress, // market contract address
     fromBlock: BigInt(8906493),
   });
 
   const { data: OrderFulfilledEvent } = useContractEventHook({
     contractName: "KolektivaMarket",
     eventName: "OrderFulfilled",
-    contractAddress: marketContractAddress, // market contract address
+    contractAddress: propertyData.marketAddress, // market contract address
     fromBlock: BigInt(8906493),
   });
 
   const { data: sellOrdersCountData } = useReadContractHook({
     contractName: "KolektivaMarket",
     functionName: "getSellOrdersCount",
-    contractAddress: marketContractAddress, // market contract address
+    contractAddress: propertyData.marketAddress, // market contract address
     args: [],
   });
 
   const { data: buyOrdersCountData } = useReadContractHook({
     contractName: "KolektivaMarket",
     functionName: "getBuyOrdersCount",
-    contractAddress: marketContractAddress, // market contract address
+    contractAddress: propertyData.marketAddress, // market contract address
     args: [],
   });
 
@@ -76,7 +78,10 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
   // Fetch buy orders based on count and index
   useEffect(() => {
     const fetchBuyOrders = async () => {
-      if (buyOrdersCount === null) return;
+      if (buyOrdersCount === null) {
+        setLoadingBuy(false);
+        return;
+      }
 
       const orders: { amount: number; price: number }[] = [];
 
@@ -84,7 +89,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
         const orderData = await readContractFetch({
           contractName: "KolektivaMarket",
           functionName: "getBuyOrderByIndex",
-          contractAddress: marketContractAddress,
+          contractAddress: propertyData.marketAddress,
           args: [i],
         });
 
@@ -111,7 +116,10 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
 
   useEffect(() => {
     const fetchSellOrders = async () => {
-      if (sellOrdersCount === null) return;
+      if (sellOrdersCount === null) {
+        setLoadingSell(false);
+        return;
+      }
 
       const orders: { amount: number; price: number }[] = [];
 
@@ -119,7 +127,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
         const orderData = await readContractFetch({
           contractName: "KolektivaMarket",
           functionName: "getSellOrderByIndex",
-          contractAddress: marketContractAddress,
+          contractAddress: propertyData.marketAddress,
           args: [i],
         });
 
@@ -145,43 +153,12 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
 
   return (
     <>
-      {/* Mark test */}
-      <>
-        {
-          <div>
-            <h3>Buy Orders</h3>
-            <div>
-              {loadingBuy
-                ? "Loading..."
-                : buyOrders.map((order, index) => (
-                    <div key={index}>
-                      Price: {order.price.toString()}, Amount:{" "}
-                      {order.amount.toString()}
-                    </div>
-                  ))}
-            </div>
-            <h3>Sell Orders</h3>
-            <div>
-              {loadingSell
-                ? "Loading..."
-                : sellOrders.map((order, index) => (
-                    <div key={index}>
-                      Price: {order.price.toString()}, Amount:{" "}
-                      {order.amount.toString()}
-                    </div>
-                  ))}
-            </div>
-          </div>
-        }
-      </>
-      {/* Mark test */}
-
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4">
           <div className="flex gap-4 w-full">
             <div className="flex flex-col gap-2 w-full rounded-2xl shadow-md p-4">
               <p className="text-base font-medium text-zinc-700">Last trade</p>
-              <p className="text-xl font-bold text-teal-600">600,000 USD</p>
+              <p className="text-xl font-bold text-teal-600">600,000 USDT</p>
               <p className="text-sm font-normal text-zinc-500">
                 Last traded value
               </p>
@@ -190,7 +167,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
               <p className="text-base font-medium text-zinc-700">
                 Estimated value
               </p>
-              <p className="text-xl font-bold text-teal-600">600,000 USD</p>
+              <p className="text-xl font-bold text-teal-600">600,000 USDT</p>
               <p className="text-sm font-normal text-zinc-500">
                 Market price analysis
               </p>
@@ -201,12 +178,14 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
               <p className="text-base font-medium text-zinc-700">
                 Trade volume
               </p>
-              <p className="text-xl font-bold text-teal-600">89,772,113 USD</p>
+              <p className="text-xl font-bold text-teal-600">89,772,113 USDT</p>
               <p className="text-sm font-normal text-zinc-500">Last 4 weeks</p>
             </div>
             <div className="flex flex-col gap-2 w-full rounded-2xl shadow-md p-4">
               <p className="text-base font-medium text-zinc-700">Market cap</p>
-              <p className="text-xl font-bold text-teal-600">389,772,113 USD</p>
+              <p className="text-xl font-bold text-teal-600">
+                389,772,113 USDT
+              </p>
               <p className="text-sm font-normal text-zinc-500">49,760 tokens</p>
             </div>
           </div>
@@ -214,7 +193,8 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
         <Divider className="border-zinc-200 !m-0" />
         <div className="flex flex-col gap-2">
           <p className="text-base font-medium text-zinc-700">Open orders</p>
-          {allowTrade ? (
+          {allowTrade &&
+          (buyOrdersCount || 0 > 0 || sellOrdersCount || 0 > 0) ? (
             <div className="flex gap-4">
               <div className="flex flex-col w-full">
                 <div className="-m-1.5 overflow-x-auto">
@@ -237,68 +217,31 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200">
-                          <tr className="relative">
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-normal relative z-10"
-                            >
-                              52.00 USD
-                            </td>
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-medium"
-                            >
-                              <div style={getOrderbookWidthStyle(1, 4)}></div>
-                              <span className="relative z-10">1 Token</span>
-                            </td>
-                          </tr>
-                          <tr className="relative">
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-normal relative z-10"
-                            >
-                              52.00 USD
-                            </td>
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-medium"
-                            >
-                              <div style={getOrderbookWidthStyle(2, 4)}></div>
-                              <span className="relative z-10">2 Token</span>
-                            </td>
-                          </tr>
-                          <tr className="relative">
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-normal relative z-10"
-                            >
-                              52.00 USD
-                            </td>
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-medium"
-                            >
-                              <div style={getOrderbookWidthStyle(3, 4)}></div>
-                              <span className="relative z-10">3 Token</span>
-                            </td>
-                          </tr>
-                          <tr className="relative">
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-normal relative z-10"
-                            >
-                              52.00 USD
-                            </td>
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-medium"
-                            >
-                              <div style={getOrderbookWidthStyle(4, 4)}></div>
-                              <span className="relative z-10">4 Token</span>
-                            </td>
-                          </tr>
-                        </tbody>
+                        {buyOrders.length > 0 && (
+                          <tbody className="divide-y divide-gray-200">
+                            {buyOrders.map((order, index) => (
+                              <tr className="relative" key={index}>
+                                <td
+                                  width="50%"
+                                  className="py-3 px-4 text-sm font-normal relative z-10"
+                                >
+                                  {formatUSDTBalance(order.price)} USDT
+                                </td>
+                                <td
+                                  width="50%"
+                                  className="py-3 px-4 text-sm font-medium"
+                                >
+                                  <div
+                                    style={getOrderbookWidthStyle(1, 4)}
+                                  ></div>
+                                  <span className="relative z-10">
+                                    {order.amount} Token
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        )}
                       </table>
                     </div>
                   </div>
@@ -325,68 +268,31 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200">
-                          <tr className="relative">
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-normal relative z-10"
-                            >
-                              52.00 USD
-                            </td>
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-medium"
-                            >
-                              <div style={getOrderbookWidthStyle(1, 4)}></div>
-                              <span className="relative z-10">1 Token</span>
-                            </td>
-                          </tr>
-                          <tr className="relative">
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-normal relative z-10"
-                            >
-                              52.00 USD
-                            </td>
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-medium"
-                            >
-                              <div style={getOrderbookWidthStyle(2, 4)}></div>
-                              <span className="relative z-10">2 Token</span>
-                            </td>
-                          </tr>
-                          <tr className="relative">
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-normal relative z-10"
-                            >
-                              52.00 USD
-                            </td>
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-medium"
-                            >
-                              <div style={getOrderbookWidthStyle(3, 4)}></div>
-                              <span className="relative z-10">3 Token</span>
-                            </td>
-                          </tr>
-                          <tr className="relative">
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-normal relative z-10"
-                            >
-                              52.00 USD
-                            </td>
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-medium"
-                            >
-                              <div style={getOrderbookWidthStyle(4, 4)}></div>
-                              <span className="relative z-10">4 Token</span>
-                            </td>
-                          </tr>
-                        </tbody>
+                        {sellOrders.length > 0 && (
+                          <tbody className="divide-y divide-gray-200">
+                            {sellOrders.map((order, index) => (
+                              <tr className="relative" key={index}>
+                                <td
+                                  width="50%"
+                                  className="py-3 px-4 text-sm font-normal relative z-10"
+                                >
+                                  {formatUSDTBalance(order.price)} USDT
+                                </td>
+                                <td
+                                  width="50%"
+                                  className="py-3 px-4 text-sm font-medium"
+                                >
+                                  <div
+                                    style={getOrderbookWidthStyle(1, 4)}
+                                  ></div>
+                                  <span className="relative z-10">
+                                    {order.amount} Token
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        )}
                       </table>
                     </div>
                   </div>
@@ -460,7 +366,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                           1 Token
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">
-                          600,000 USD
+                          600,000 USDT
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">Buy</td>
                       </tr>
@@ -472,7 +378,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                           1 Token
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">
-                          600,000 USD
+                          600,000 USDT
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">Buy</td>
                       </tr>
@@ -484,7 +390,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                           2 Token
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">
-                          1,200,000 USD
+                          1,200,000 USDT
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">Buy</td>
                       </tr>
@@ -496,7 +402,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                           1 Token
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">
-                          600,000 USD
+                          600,000 USDT
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">Buy</td>
                       </tr>
@@ -508,7 +414,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                           1 Token
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">
-                          600,000 USD
+                          600,000 USDT
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">Buy</td>
                       </tr>
@@ -520,7 +426,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                           3 Token
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">
-                          1,800,000 USD
+                          1,800,000 USDT
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">Buy</td>
                       </tr>
@@ -532,7 +438,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                           1 Token
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">
-                          600,000 USD
+                          600,000 USDT
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">Buy</td>
                       </tr>
@@ -544,7 +450,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                           4 Token
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">
-                          2,400,000 USD
+                          2,400,000 USDT
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">Buy</td>
                       </tr>
@@ -556,7 +462,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                           1 Token
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">
-                          600,000 USD
+                          600,000 USDT
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">Buy</td>
                       </tr>
@@ -568,7 +474,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                           1 Token
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">
-                          600,000 USD
+                          600,000 USDT
                         </td>
                         <td className="py-3 px-4 text-sm font-medium">Buy</td>
                       </tr>

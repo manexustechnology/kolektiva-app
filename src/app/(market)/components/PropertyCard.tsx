@@ -1,28 +1,50 @@
 "use client";
 
+import { useReadContractHook } from "@/utils/hooks";
 import { Box, Image, Text, Heading, Button, Progress } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 
 interface PropertyCardProps {
+  marketAddress: string;
   name: string;
   location: string;
   img: string;
   price: string;
   isNew: boolean;
   isFeatured: boolean;
-  isTraded: boolean;
+  isUpcoming: boolean;
+  // isTraded: boolean;
   onButtonClick: () => void;
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({
+  marketAddress,
   name,
   location,
   img,
   price,
   isNew,
   isFeatured,
-  isTraded,
+  isUpcoming,
+  // isTraded,
   onButtonClick,
 }) => {
+  const [isTraded, setIsTraded] = useState(false);
+
+  const { data: initialOfferingActive, isLoading: isLoadingInitialOffering } =
+    useReadContractHook({
+      contractName: "KolektivaMarket",
+      functionName: "initialOfferingActive",
+      contractAddress: marketAddress,
+      args: [],
+    });
+
+  useEffect(() => {
+    if (!initialOfferingActive && !isLoadingInitialOffering) {
+      setIsTraded(true);
+    }
+  }, [initialOfferingActive]);
+
   return (
     <Box
       position="relative"
@@ -37,8 +59,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
       cursor="pointer"
       onClick={onButtonClick}
     >
-      {/* Tag Box of Featured*/}
-      {isFeatured && (
+      {isFeatured ? (
         <Box
           position="absolute"
           top={2}
@@ -54,10 +75,23 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
         >
           Featured
         </Box>
-      )}
-
-      {/* Tag Box of trading*/}
-      {isTraded ? (
+      ) : isUpcoming ? (
+        <Box
+          position="absolute"
+          top={2}
+          left={2}
+          backgroundColor="#FFFBEB"
+          color="#D97706"
+          padding="2px 8px"
+          borderWidth="1px"
+          borderRadius="full"
+          borderColor="#D97706"
+          fontSize="xs"
+          zIndex={10}
+        >
+          Upcoming
+        </Box>
+      ) : isTraded ? (
         <Box
           position="absolute"
           top={2}
@@ -111,7 +145,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
         </p>
 
         {/* Progress Bar */}
-        {isTraded ? (
+        {isTraded || isUpcoming ? (
           <>
             {/* Dividing Line */}
             <Box
@@ -170,7 +204,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             </p>
 
             <p className=" font-bold text-[12px] leading-[16px] text-[#0D9488]">
-              {price} USD
+              {price} USDT
             </p>
           </Box>
 
@@ -187,7 +221,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
               Available Tokens
             </p>
             <p className=" font-medium text-[12px] leading-[16px] text-right text-[#042F2E]">
-              1000 Token
+              {isUpcoming ? "-" : "10000"}
             </p>
           </Box>
         </Box>
@@ -226,7 +260,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             </p>
 
             <p className="w-[80px] font-medium text-[10px] leading-[10px] text-right text-[#042F2E]">
-              8.7%
+              {isUpcoming ? "-" : "8.7%"}
             </p>
           </Box>
 
@@ -258,7 +292,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             </p>
 
             <p className="w-[80px] font-medium text-[10px] leading-[10px] text-right text-[#042F2E]">
-              Active
+              {isUpcoming ? "-" : "Active"}
             </p>
           </Box>
         </Box>
