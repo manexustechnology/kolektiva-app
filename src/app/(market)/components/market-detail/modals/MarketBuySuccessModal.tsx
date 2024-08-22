@@ -16,23 +16,30 @@ import {
 import {
   FacebookLogo,
   XLogo,
-  WhatsappLogo,
   Copy,
-  CheckCircle,
+  ArrowSquareOut,
 } from "@phosphor-icons/react/dist/ssr";
+import { getTransactionStatus } from "@/app/api/tx-hash";
 
 interface MarketBuySuccessModalProps {
+  tnx: string;
   isOpen: boolean;
   onClose: () => void;
 }
 
-const MarketBuySuccessModal: React.FC<
-  MarketBuySuccessModalProps
-> = ({ isOpen, onClose }) => {
-  const handleIconClick = (url: string) => {
-    window.open(url, "_blank");
+const MarketBuySuccessModal: React.FC<MarketBuySuccessModalProps> = ({
+  tnx,
+  isOpen,
+  onClose,
+}) => {
+  const handleIconClick = async (url: string) => {
+    try {
+      const txStatus = await getTransactionStatus(tnx!);
+      window.open(txStatus.txUrl, "_blank");
+    } catch (error) {
+      console.error("Failed to get transaction status:", error);
+    }
   };
-
   const [copied, setCopied] = useState(false);
 
   const handleCopy = (text: string) => {
@@ -117,7 +124,7 @@ const MarketBuySuccessModal: React.FC<
                   width="346px"
                 >
                   <p className="w-[346px]  font-bold text-2xl leading-7 text-center text-teal-600">
-                    Market buy order competed
+                    Market buy order proceed
                   </p>
 
                   <p className="w-[300px] font-normal text-base leading-4 text-center text-neutral-700">
@@ -132,7 +139,7 @@ const MarketBuySuccessModal: React.FC<
 
                   {/* Copy Button */}
                   <Button
-                    onClick={() => handleCopy(textToCopy)}
+                    onClick={() => handleIconClick(``)}
                     display="flex"
                     justifyContent="center"
                     alignItems="center"
@@ -143,10 +150,10 @@ const MarketBuySuccessModal: React.FC<
                     _focus={{ boxShadow: "none" }} // Removes default focus box shadow if needed
                   >
                     <Icon
-                      as={copied ? CheckCircle : Copy}
+                      as={ArrowSquareOut}
                       boxSize="16px"
                       weight="fill"
-                      color={copied ? "#4CAF50" : "#0D9488"}
+                      color="#0D9488"
                     />
                   </Button>
                 </div>

@@ -44,6 +44,8 @@ import { PropertyData } from "@/types/property";
 
 import Link from "next/link";
 import { formatUSDTBalance } from "@/utils/formatter";
+import { fetchContractMetadataFromAddress } from "@thirdweb-dev/sdk";
+import BuyFormWizard from "./form-wizard/BuyFormWizard";
 
 interface MarketDetailClientPageProps {
   propertyData: PropertyData;
@@ -491,8 +493,10 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
     return 0;
   }, [initialOfferingSupply, tokenTotalSupply]);
 
-  console.log("salePriceData", salePriceData);
-  console.log("salePriceData", salePriceData);
+  const [txValue, setTxValue] = useState("");
+  const handleTxUpdate = (tx: any) => {
+    setTxValue(tx);
+  };
 
   return (
     <div className="w-full flex justify-center py-4">
@@ -780,6 +784,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
       {/* Modals */}
       <PlaceBuyOrderModal
         propertyData={propertyData}
+        onTxUpdate={handleTxUpdate}
         isOpen={isBuyOrderModalOpen}
         onClose={() => setIsBuyOrderModalOpen(false)}
         isAfterMarketTrading={allowTrade} // change !isInitialOffering after implemented
@@ -804,6 +809,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
         onClose={() => setIsLimitSellSuccessModalOpen(false)}
       />
       <MarketBuySuccessModal
+        tnx={txValue}
         isOpen={isMarketBuySuccessModalOpen}
         onClose={() => setIsMarketBuySuccessModalOpen(false)}
       />

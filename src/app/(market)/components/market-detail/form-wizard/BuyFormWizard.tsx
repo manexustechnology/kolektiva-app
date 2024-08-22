@@ -16,6 +16,7 @@ import { formatUSDTBalance } from "@/utils/formatter";
 
 interface BuyFormWizardProps {
   propertyData: PropertyData;
+  onTxUpdate: (tx: any) => void;
   currentStep: number;
   isAfterMarketTrading: boolean;
   onSubmitButtonClick: (formData: BuyOrderData) => void;
@@ -44,6 +45,7 @@ const variants = {
 
 const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
   propertyData,
+  onTxUpdate,
   currentStep,
   isAfterMarketTrading,
   onSubmitButtonClick,
@@ -141,6 +143,9 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
             if (isAfterMarketTrading) {
               if (formDataType === "market") {
                 const tx = await marketBuy();
+                if (tx) {
+                  onTxUpdate(tx);
+                }
                 console.log("market buy", tx);
               } else if (formDataType === "limit") {
                 const tx = await limitBuy();

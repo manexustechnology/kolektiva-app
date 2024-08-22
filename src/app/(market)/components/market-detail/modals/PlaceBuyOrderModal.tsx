@@ -17,6 +17,7 @@ import { PropertyData } from "@/types/property";
 
 interface PlaceBuyOrderModalProps {
   propertyData: PropertyData;
+  onTxUpdate: (tx: any) => void;
   isOpen: boolean;
   onClose: () => void;
   isAfterMarketTrading: boolean;
@@ -25,6 +26,7 @@ interface PlaceBuyOrderModalProps {
 
 const PlaceBuyOrderModal: React.FC<PlaceBuyOrderModalProps> = ({
   propertyData,
+  onTxUpdate,
   isOpen,
   onClose,
   isAfterMarketTrading,
@@ -111,6 +113,7 @@ const PlaceBuyOrderModal: React.FC<PlaceBuyOrderModalProps> = ({
           </ModalHeader>
           <BuyFormWizard
             propertyData={propertyData}
+            onTxUpdate={onTxUpdate}
             currentStep={step}
             isAfterMarketTrading={isAfterMarketTrading}
             onSubmitButtonClick={handleNext}
