@@ -485,13 +485,14 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
     if (tokenTotalSupply > initialOfferingSupply) {
       const totalSupply = Number(tokenTotalSupply);
       const ioSupply = Number(initialOfferingSupply);
-      return ((totalSupply - ioSupply) / totalSupply) * 100
+      return ((totalSupply - ioSupply) / totalSupply) * 100;
     }
 
     return 0;
-  }, [initialOfferingSupply, tokenTotalSupply])
+  }, [initialOfferingSupply, tokenTotalSupply]);
 
-  console.log('salePriceData', salePriceData);
+  console.log("salePriceData", salePriceData);
+  console.log("salePriceData", salePriceData);
 
   return (
     <div className="w-full flex justify-center py-4">
@@ -519,8 +520,12 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
             >
               <TabList gap="2">
                 <Tab fontSize="sm">Description</Tab>
-                {!propertyData.isUpcoming && (<Tab fontSize="sm">Financials</Tab>)}
-                {!propertyData.isUpcoming && (<Tab fontSize="sm">Order book</Tab>)}
+                {!propertyData.isUpcoming && (
+                  <Tab fontSize="sm">Financials</Tab>
+                )}
+                {!propertyData.isUpcoming && (
+                  <Tab fontSize="sm">Order book</Tab>
+                )}
                 <Tab fontSize="sm">Documents</Tab>
                 <Tab fontSize="sm">Markets</Tab>
               </TabList>
@@ -533,7 +538,10 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                   <MarketDetailFinancialPanel />
                 </TabPanel>
                 <TabPanel px={0} py={4}>
-                  <MarketDetailOrderbookPanel allowTrade={allowTrade} propertyData={propertyData} />
+                  <MarketDetailOrderbookPanel
+                    allowTrade={allowTrade}
+                    propertyData={propertyData}
+                  />
                 </TabPanel>
                 <TabPanel px={0} py={4}>
                   <MarketDetailDocumentPanel />
@@ -596,23 +604,24 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                   Upcoming
                 </Box>
               </Link>
-            ) : 
-            <Link href="/?status=initial-offering">
-              <Box
-                position="relative"
-                backgroundColor="#F7FEE7"
-                color="#65A30D"
-                padding="2px 8px"
-                borderWidth="1px"
-                borderRadius="full"
-                borderColor="#65A30D"
-                fontSize="xs"
-                zIndex={10}
-                width="fit-content"
-              >
-                Initial Offering
-              </Box>
-            </Link>}
+            ) : (
+              <Link href="/?status=initial-offering">
+                <Box
+                  position="relative"
+                  backgroundColor="#F7FEE7"
+                  color="#65A30D"
+                  padding="2px 8px"
+                  borderWidth="1px"
+                  borderRadius="full"
+                  borderColor="#65A30D"
+                  fontSize="xs"
+                  zIndex={10}
+                  width="fit-content"
+                >
+                  Initial Offering
+                </Box>
+              </Link>
+            )}
             <Link href="/?propertyType=house">
               <div className="flex p-4 gap-4 w-full rounded-2xl shadow-md items-center">
                 <House size={32} weight="fill" className="text-teal-600" />
@@ -624,137 +633,147 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                 </div>
               </div>
             </Link>
-            {!propertyData.isUpcoming && (<div className="flex flex-col gap-4 p-4 w-full rounded-2xl shadow-md">
-              <div
-                className="relative flex flex-col justify-center"
-                onMouseEnter={() => setIsInfoAreaHovered(true)}
-                onMouseLeave={() => setIsInfoAreaHovered(false)}
-              >
-                <div className="flex items-center gap-1">
-                  <p className="text-sm text-zinc-500">
-                    {allowTrade ? "Estimated Price" : "Starting at"}
-                  </p>
-                  <WarningCircle
-                    size={18}
-                    weight="fill"
-                    className="rotate-180 text-zinc-400"
-                  />
-                </div>
-                <p className="text-lg font-bold text-teal-600">{formatUSDTBalance(salePriceData || 0)} USDT</p>
-                {isInfoAreaHovered && (
-                  <div className="absolute flex flex-col items-start p-3 gap-1 bg-white shadow-lg rounded-lg w-[240px] h-[78px] left-[140px] z-50">
-                    <p className="w-[216px] h-[54px] font-normal text-sm leading-5 text-zinc-500">
-                      This is the lowest current price per token available for
-                      this property.
-                    </p>
-                  </div>
-                )}
-              </div>
-              <div className="flex flex-col gap-1">
-                {initialOfferingActive && (
-                  <div className="flex w-full gap-2 items-center">
-                    <Progress
-                      colorScheme="green"
-                      size="sm"
-                      value={initialOfferingPercentage}
-                      w="full"
-                      rounded="full"
-                    />
-                    <p className="text-xs text-teal-600 font-bold">{initialOfferingPercentage}%</p>
-                  </div>
-                )}
-                {allowTrade ? (
-                  <div className="flex justify-between items-center">
-                    <p className="text-sm text-zinc-500">Total Supply</p>
-                    <p className="text-sm font-medium text-black">{Number(tokenTotalSupply).toLocaleString()} token</p>
-                  </div>
-                ) : (
-                  <div className="flex justify-between items-center">
-                    <p className="text-sm text-zinc-500">Token available</p>
-                    <p className="text-sm font-medium text-black">{Number(initialOfferingSupply).toLocaleString()} token</p>
-                  </div>
-                )}
-              </div>
-              <div className="flex flex-col p-3 gap-3 w-full bg-teal-50 rounded-lg">
-                <div className="flex justify-between items-center">
+            {!propertyData.isUpcoming && (
+              <div className="flex flex-col gap-4 p-4 w-full rounded-2xl shadow-md">
+                <div
+                  className="relative flex flex-col justify-center"
+                  onMouseEnter={() => setIsInfoAreaHovered(true)}
+                  onMouseLeave={() => setIsInfoAreaHovered(false)}
+                >
                   <div className="flex items-center gap-1">
-                    <p className="text-sm text-zinc-500">Projected Yield</p>
+                    <p className="text-sm text-zinc-500">
+                      {allowTrade ? "Estimated Price" : "Starting at"}
+                    </p>
                     <WarningCircle
                       size={18}
                       weight="fill"
                       className="rotate-180 text-zinc-400"
                     />
                   </div>
-                  <p className="text-sm font-medium text-black">6.0%</p>
+                  <p className="text-lg font-bold text-teal-600">
+                    {formatUSDTBalance(salePriceData || 0)} USDT
+                  </p>
+                  {isInfoAreaHovered && (
+                    <div className="absolute flex flex-col items-start p-3 gap-1 bg-white shadow-lg rounded-lg w-[240px] h-[78px] left-[140px] z-50">
+                      <p className="w-[216px] h-[54px] font-normal text-sm leading-5 text-zinc-500">
+                        This is the lowest current price per token available for
+                        this property.
+                      </p>
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-col gap-1">
+                  {initialOfferingActive && (
+                    <div className="flex w-full gap-2 items-center">
+                      <Progress
+                        colorScheme="green"
+                        size="sm"
+                        value={initialOfferingPercentage}
+                        w="full"
+                        rounded="full"
+                      />
+                      <p className="text-xs text-teal-600 font-bold">
+                        {initialOfferingPercentage}%
+                      </p>
+                    </div>
+                  )}
+                  {allowTrade ? (
+                    <div className="flex justify-between items-center">
+                      <p className="text-sm text-zinc-500">Total Supply</p>
+                      <p className="text-sm font-medium text-black">
+                        {Number(tokenTotalSupply).toLocaleString()} token
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="flex justify-between items-center">
+                      <p className="text-sm text-zinc-500">Token available</p>
+                      <p className="text-sm font-medium text-black">
+                        {Number(initialOfferingSupply).toLocaleString()} token
+                      </p>
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-col p-3 gap-3 w-full bg-teal-50 rounded-lg">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-1">
+                      <p className="text-sm text-zinc-500">Projected Yield</p>
+                      <WarningCircle
+                        size={18}
+                        weight="fill"
+                        className="rotate-180 text-zinc-400"
+                      />
+                    </div>
+                    <p className="text-sm font-medium text-black">6.0%</p>
+                  </div>
+                  <Divider className="border-zinc-200 !m-0" />
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-1">
+                      <p className="text-sm text-zinc-500">Rental Status</p>
+                      <WarningCircle
+                        size={18}
+                        weight="fill"
+                        className="rotate-180 text-zinc-400"
+                      />
+                    </div>
+                    <p className="text-sm font-medium text-black">Active</p>
+                  </div>
+                </div>
+                <div className="flex gap-2 w-full">
+                  <Button
+                    colorScheme="teal"
+                    bgColor="teal.600"
+                    w="full"
+                    rounded="full"
+                    fontWeight="normal"
+                    onClick={handleBuyButtonClick}
+                  >
+                    Buy
+                  </Button>
+                  <Button
+                    colorScheme="teal"
+                    w="full"
+                    rounded="full"
+                    fontWeight="normal"
+                    isDisabled={!allowTrade}
+                    bgColor="teal.100"
+                    color="teal.700"
+                    _disabled={{ bgColor: "teal.50", color: "teal.600" }}
+                    _hover={{
+                      bgColor: !allowTrade ? "teal.200" : "teal.50",
+                      color: !allowTrade ? "teal.900" : "teal.600",
+                      cursor: !allowTrade ? "pointer" : "no-drop",
+                    }}
+                    onClick={handleSellButtonClick}
+                  >
+                    Sell
+                  </Button>
                 </div>
                 <Divider className="border-zinc-200 !m-0" />
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-1">
-                    <p className="text-sm text-zinc-500">Rental Status</p>
-                    <WarningCircle
-                      size={18}
-                      weight="fill"
-                      className="rotate-180 text-zinc-400"
-                    />
-                  </div>
-                  <p className="text-sm font-medium text-black">Active</p>
-                </div>
-              </div>
-              <div className="flex gap-2 w-full">
-                <Button
-                  colorScheme="teal"
-                  bgColor="teal.600"
-                  w="full"
-                  rounded="full"
-                  fontWeight="normal"
-                  onClick={handleBuyButtonClick}
-                >
-                  Buy
-                </Button>
-                <Button
-                  colorScheme="teal"
-                  w="full"
-                  rounded="full"
-                  fontWeight="normal"
-                  isDisabled={!allowTrade}
-                  bgColor="teal.100"
-                  color="teal.700"
-                  _disabled={{ bgColor: "teal.50", color: "teal.600" }}
-                  _hover={{
-                    bgColor: !allowTrade ? "teal.200" : "teal.50",
-                    color: !allowTrade ? "teal.900" : "teal.600",
-                    cursor: !allowTrade ? "pointer" : "no-drop",
-                  }}
-                  onClick={handleSellButtonClick}
-                >
-                  Sell
-                </Button>
-              </div>
-              <Divider className="border-zinc-200 !m-0" />
-              <div className="w-full flex items-center justify-stretch gap-2">
-                <Button
-                  colorScheme="white"
-                  color="teal.600"
-                  w="full"
-                  rounded="full"
-                  shadow="md"
-                >
-                  Rent property
-                </Button>
-                {allowTrade && (
+                <div className="w-full flex items-center justify-stretch gap-2">
                   <Button
                     colorScheme="white"
                     color="teal.600"
                     w="full"
                     rounded="full"
                     shadow="md"
-                    onClick={() => setTabIndex(2)}
                   >
-                    View order book
+                    Rent property
                   </Button>
-                )}
+                  {allowTrade && (
+                    <Button
+                      colorScheme="white"
+                      color="teal.600"
+                      w="full"
+                      rounded="full"
+                      shadow="md"
+                      onClick={() => setTabIndex(2)}
+                    >
+                      View order book
+                    </Button>
+                  )}
+                </div>
               </div>
-            </div>)}
+            )}
           </div>
         </div>
       </div>

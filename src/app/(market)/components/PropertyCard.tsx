@@ -1,30 +1,50 @@
 "use client";
 
+import { useReadContractHook } from "@/utils/hooks";
 import { Box, Image, Text, Heading, Button, Progress } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 
 interface PropertyCardProps {
+  marketAddress: string;
   name: string;
   location: string;
   img: string;
   price: string;
   isNew: boolean;
   isFeatured: boolean;
-  isTraded: boolean;
   isUpcoming: boolean;
+  // isTraded: boolean;
   onButtonClick: () => void;
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({
+  marketAddress,
   name,
   location,
   img,
   price,
   isNew,
   isFeatured,
-  isTraded,
   isUpcoming,
+  // isTraded,
   onButtonClick,
 }) => {
+  const [isTraded, setIsTraded] = useState(false);
+
+  const { data: initialOfferingActive, isLoading: isLoadingInitialOffering } =
+    useReadContractHook({
+      contractName: "KolektivaMarket",
+      functionName: "initialOfferingActive",
+      contractAddress: marketAddress,
+      args: [],
+    });
+
+  useEffect(() => {
+    if (!initialOfferingActive && !isLoadingInitialOffering) {
+      setIsTraded(true);
+    }
+  }, [initialOfferingActive]);
+
   return (
     <Box
       position="relative"
@@ -78,22 +98,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
       )}
 
       {/* Tag Box of trading*/}
-      {isTraded && <Box
-          position="absolute"
-          top={2}
-          left={2}
-          backgroundColor="#F0FDFA"
-          color="#0D9488"
-          padding="2px 8px"
-          borderWidth="1px"
-          borderRadius="full"
-          borderColor="#0D9488"
-          fontSize="xs"
-          zIndex={10}
-        >
-          Aftermarket
-      </Box>}
-      {/* {isTraded ? (
+      {isTraded ? (
         <Box
           position="absolute"
           top={2}
@@ -125,7 +130,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
         >
           Initial Offering
         </Box>
-      )} */}
+      )}
 
       {/*Image*/}
       <div className="relative w-[394px] h-[140px]">
@@ -294,7 +299,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             </p>
 
             <p className="w-[80px] font-medium text-[10px] leading-[10px] text-right text-[#042F2E]">
-            {isUpcoming ? "-" : "Active"}
+              {isUpcoming ? "-" : "Active"}
             </p>
           </Box>
         </Box>

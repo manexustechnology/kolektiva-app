@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 // import { SellOrderEvent } from "./MarketSellOrderEvent";
 import { readContractFetch } from "@/utils/fetch";
 import { PropertyData } from "@/types/property";
+import { formatUSDTBalance } from "@/utils/formatter";
 
 interface MarketDetailOrderbookPanelProps {
   propertyData: PropertyData;
@@ -152,37 +153,6 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
 
   return (
     <>
-      {/* Mark test */}
-      <>
-        {
-          <div>
-            <h3>Buy Orders</h3>
-            <div>
-              {loadingBuy
-                ? "Loading..."
-                : buyOrders.map((order, index) => (
-                  <div key={index}>
-                    Price: {order.price.toString()}, Amount:{" "}
-                    {order.amount.toString()}
-                  </div>
-                ))}
-            </div>
-            <h3>Sell Orders</h3>
-            <div>
-              {loadingSell
-                ? "Loading..."
-                : sellOrders.map((order, index) => (
-                  <div key={index}>
-                    Price: {order.price.toString()}, Amount:{" "}
-                    {order.amount.toString()}
-                  </div>
-                ))}
-            </div>
-          </div>
-        }
-      </>
-      {/* Mark test */}
-
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-4">
           <div className="flex gap-4 w-full">
@@ -223,7 +193,8 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
         <Divider className="border-zinc-200 !m-0" />
         <div className="flex flex-col gap-2">
           <p className="text-base font-medium text-zinc-700">Open orders</p>
-          {allowTrade && (buyOrdersCount || 0 > 0 || sellOrdersCount || 0 > 0) ? (
+          {allowTrade &&
+          (buyOrdersCount || 0 > 0 || sellOrdersCount || 0 > 0) ? (
             <div className="flex gap-4">
               <div className="flex flex-col w-full">
                 <div className="-m-1.5 overflow-x-auto">
@@ -246,68 +217,31 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200">
-                          <tr className="relative">
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-normal relative z-10"
-                            >
-                              52.00 USDT
-                            </td>
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-medium"
-                            >
-                              <div style={getOrderbookWidthStyle(1, 4)}></div>
-                              <span className="relative z-10">1 Token</span>
-                            </td>
-                          </tr>
-                          <tr className="relative">
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-normal relative z-10"
-                            >
-                              52.00 USDT
-                            </td>
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-medium"
-                            >
-                              <div style={getOrderbookWidthStyle(2, 4)}></div>
-                              <span className="relative z-10">2 Token</span>
-                            </td>
-                          </tr>
-                          <tr className="relative">
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-normal relative z-10"
-                            >
-                              52.00 USDT
-                            </td>
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-medium"
-                            >
-                              <div style={getOrderbookWidthStyle(3, 4)}></div>
-                              <span className="relative z-10">3 Token</span>
-                            </td>
-                          </tr>
-                          <tr className="relative">
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-normal relative z-10"
-                            >
-                              52.00 USDT
-                            </td>
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-medium"
-                            >
-                              <div style={getOrderbookWidthStyle(4, 4)}></div>
-                              <span className="relative z-10">4 Token</span>
-                            </td>
-                          </tr>
-                        </tbody>
+                        {buyOrders.length > 0 && (
+                          <tbody className="divide-y divide-gray-200">
+                            {buyOrders.map((order, index) => (
+                              <tr className="relative" key={index}>
+                                <td
+                                  width="50%"
+                                  className="py-3 px-4 text-sm font-normal relative z-10"
+                                >
+                                  {formatUSDTBalance(order.price)} USDT
+                                </td>
+                                <td
+                                  width="50%"
+                                  className="py-3 px-4 text-sm font-medium"
+                                >
+                                  <div
+                                    style={getOrderbookWidthStyle(1, 4)}
+                                  ></div>
+                                  <span className="relative z-10">
+                                    {order.amount} Token
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        )}
                       </table>
                     </div>
                   </div>
@@ -334,68 +268,31 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
                             </th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-200">
-                          <tr className="relative">
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-normal relative z-10"
-                            >
-                              52.00 USDT
-                            </td>
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-medium"
-                            >
-                              <div style={getOrderbookWidthStyle(1, 4)}></div>
-                              <span className="relative z-10">1 Token</span>
-                            </td>
-                          </tr>
-                          <tr className="relative">
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-normal relative z-10"
-                            >
-                              52.00 USDT
-                            </td>
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-medium"
-                            >
-                              <div style={getOrderbookWidthStyle(2, 4)}></div>
-                              <span className="relative z-10">2 Token</span>
-                            </td>
-                          </tr>
-                          <tr className="relative">
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-normal relative z-10"
-                            >
-                              52.00 USDT
-                            </td>
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-medium"
-                            >
-                              <div style={getOrderbookWidthStyle(3, 4)}></div>
-                              <span className="relative z-10">3 Token</span>
-                            </td>
-                          </tr>
-                          <tr className="relative">
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-normal relative z-10"
-                            >
-                              52.00 USDT
-                            </td>
-                            <td
-                              width="50%"
-                              className="py-3 px-4 text-sm font-medium"
-                            >
-                              <div style={getOrderbookWidthStyle(4, 4)}></div>
-                              <span className="relative z-10">4 Token</span>
-                            </td>
-                          </tr>
-                        </tbody>
+                        {sellOrders.length > 0 && (
+                          <tbody className="divide-y divide-gray-200">
+                            {sellOrders.map((order, index) => (
+                              <tr className="relative" key={index}>
+                                <td
+                                  width="50%"
+                                  className="py-3 px-4 text-sm font-normal relative z-10"
+                                >
+                                  {formatUSDTBalance(order.price)} USDT
+                                </td>
+                                <td
+                                  width="50%"
+                                  className="py-3 px-4 text-sm font-medium"
+                                >
+                                  <div
+                                    style={getOrderbookWidthStyle(1, 4)}
+                                  ></div>
+                                  <span className="relative z-10">
+                                    {order.amount} Token
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        )}
                       </table>
                     </div>
                   </div>
