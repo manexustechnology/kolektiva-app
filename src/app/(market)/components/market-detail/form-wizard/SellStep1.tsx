@@ -77,20 +77,27 @@ const SellStep1: React.FC<SellStep1Props> = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await readContractFetch({
-        contractName: "KolektivaMarket",
-        functionName: "calculateSellProceeds",
-        contractAddress: propertyData.marketAddress,
-        args: [formData.qtyToken],
-      });
+      console.log("market", propertyData.marketAddress);
+      console.log("token", propertyData.tokenAddress);
+      try {
+        if (activeTab === "market") {
+          const data = await readContractFetch({
+            contractName: "KolektivaMarket",
+            functionName: "calculateSellProceeds",
+            contractAddress: propertyData.marketAddress,
+            args: [formData.qtyToken],
+          });
 
-      if (data) {
-        setCalculateSellProceeds([Number(data[0]), Number(data[1])]);
+          if (data) {
+            setCalculateSellProceeds([Number(data[0]), Number(data[1])]);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching sell proceeds:", error);
       }
     };
-
     fetchData();
-  }, [formData.qtyToken]);
+  }, [formData.qtyToken, activeTab]);
 
   useEffect(() => {
     if (feePercentageData) {
