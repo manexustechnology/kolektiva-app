@@ -215,7 +215,17 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
               {formData.totalProceeds} USDT
             </p>
           </div>
-          <Button
+          {formData.pricePerToken === 0 ? (<Button
+            colorScheme="teal"
+            bgColor="teal.600"
+            w="full"
+            rounded="full"
+            fontWeight="medium"
+            fontSize="sm"
+            isDisabled={true}
+          >
+            Empty Buy Order book
+          </Button>) : (<Button
             colorScheme="teal"
             bgColor="teal.600"
             w="full"
@@ -225,7 +235,7 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
             fontSize="sm"
           >
             {buttonLabel()}
-          </Button>
+          </Button>)}
         </div>
       </ModalFooter>
     </>
