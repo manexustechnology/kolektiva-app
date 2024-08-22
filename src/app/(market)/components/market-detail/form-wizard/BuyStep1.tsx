@@ -10,7 +10,7 @@ import { motion } from "framer-motion";
 import { useReadContractHook } from "@/utils/hooks";
 import { readContractFetch } from "@/utils/fetch";
 import { PropertyData } from "@/types/property";
-import { formatUSDTBalance } from "@/utils/formatter";
+import { formatUSDTBalance, parseUSDTBalance } from "@/utils/formatter";
 import { useActiveAccount } from "thirdweb/react";
 
 interface BuyStep1Props {
@@ -415,10 +415,10 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
         </p>
       </div>
       {/* Mark test */}
-      <div>
+      {/* <div>
         <>Supply : </>
         <>{initialOfferingSupply && <>{initialOfferingSupply.toString()} </>}</>
-      </div>
+      </div> */}
       {/* Mark test */}
     </div>
   );

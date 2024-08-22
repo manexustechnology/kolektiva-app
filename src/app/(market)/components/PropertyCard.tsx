@@ -1,5 +1,6 @@
 "use client";
 
+import { formatUSDTBalance } from "@/utils/formatter";
 import { useReadContractHook } from "@/utils/hooks";
 import { Box, Image, Text, Heading, Button, Progress } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
@@ -30,6 +31,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   onButtonClick,
 }) => {
   const [isTraded, setIsTraded] = useState(false);
+  const [salePrice, setSalePrice] = useState<number | null>(null);
 
   const { data: initialOfferingActive, isLoading: isLoadingInitialOffering } =
     useReadContractHook({
@@ -39,11 +41,25 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
       args: [],
     });
 
+  const { data: salePriceData } = useReadContractHook({
+    contractName: "KolektivaMarket",
+    functionName: "salePrice",
+    contractAddress: marketAddress,
+
+    args: [],
+  });
+
   useEffect(() => {
     if (!initialOfferingActive && !isLoadingInitialOffering) {
       setIsTraded(true);
     }
   }, [initialOfferingActive]);
+
+  useEffect(() => {
+    if (salePriceData) {
+      setSalePrice(Number(salePriceData));
+    }
+  }, [salePriceData]);
 
   return (
     <Box
@@ -204,7 +220,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             </p>
 
             <p className=" font-bold text-[12px] leading-[16px] text-[#0D9488]">
-              {price} USDT
+              {salePrice && formatUSDTBalance(salePrice)} USDT
             </p>
           </Box>
 

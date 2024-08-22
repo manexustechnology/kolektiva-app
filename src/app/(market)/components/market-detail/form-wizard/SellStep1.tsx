@@ -4,6 +4,7 @@ import { SellOrderData } from "@/types/order";
 import { PropertyData } from "@/types/property";
 import { cn } from "@/utils/cn";
 import { readContractFetch } from "@/utils/fetch";
+import { formatUSDTBalance, parseUSDTBalance } from "@/utils/formatter";
 import { useReadContractHook } from "@/utils/hooks";
 import { Button, Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 import { File, Info } from "@phosphor-icons/react/dist/ssr";
@@ -135,7 +136,7 @@ const SellStep1: React.FC<SellStep1Props> = ({
       return;
 
     const qtyToken = formData.qtyToken;
-    let pricePerToken = formData.pricePerToken;
+    let pricePerToken = formatUSDTBalance(formData.pricePerToken);
     let fee = 0;
     let totalProceeds = 0;
 
@@ -188,7 +189,10 @@ const SellStep1: React.FC<SellStep1Props> = ({
       // Check if there's an actual change
       console.log("in");
 
-      const updatedData = { ...formData, pricePerToken: price };
+      const updatedData = {
+        ...formData,
+        pricePerToken: price,
+      };
       onDataChange(updatedData);
     }
     console.log(formData);
@@ -241,7 +245,7 @@ const SellStep1: React.FC<SellStep1Props> = ({
             <div className="flex flex-col justify-center">
               <p className="text-sm text-zinc-500">You owned</p>
               <p className="text-base font-medium">
-                {balanceToken?.toString()} token{"(s)"}
+                {balanceToken?.toString()} Token{"s"}
               </p>
             </div>
           </div>
@@ -258,7 +262,7 @@ const SellStep1: React.FC<SellStep1Props> = ({
                 onChange={(e) => setTokenPrice(parseInt(e.target.value) || 0)}
               />
               <InputRightElement right={6}>
-                <span className="text-sm text-zinc-500">LSK</span>
+                <span className="text-sm text-zinc-500">USDT</span>
               </InputRightElement>
             </InputGroup>
           </div>
@@ -325,7 +329,7 @@ const SellStep1: React.FC<SellStep1Props> = ({
             <p className="text-sm text-zinc-500">Estimated total price</p>
           </div>
           <p className="text-sm font-medium text-zinc-700">
-            {formData.totalProceeds} USDT
+            {formatUSDTBalance(formData.totalProceeds)} USDT
           </p>
         </div>
       )}
@@ -334,7 +338,9 @@ const SellStep1: React.FC<SellStep1Props> = ({
           <p className="text-sm text-zinc-500">Fees</p>
           <Info weight="fill" size={16} className="text-zinc-400" />
         </div>
-        <p className="text-sm font-medium text-zinc-700">{formData.fee} USDT</p>
+        <p className="text-sm font-medium text-zinc-700">
+          {formatUSDTBalance(formData.fee)} USDT
+        </p>
       </div>
     </div>
   );

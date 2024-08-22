@@ -743,9 +743,9 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                     color="teal.700"
                     _disabled={{ bgColor: "teal.50", color: "teal.600" }}
                     _hover={{
-                      bgColor: !allowTrade ? "teal.200" : "teal.50",
-                      color: !allowTrade ? "teal.900" : "teal.600",
-                      cursor: !allowTrade ? "pointer" : "no-drop",
+                      bgColor: allowTrade ? "teal.200" : "teal.50",
+                      color: allowTrade ? "teal.900" : "teal.600",
+                      cursor: allowTrade ? "pointer" : "no-drop",
                     }}
                     onClick={handleSellButtonClick}
                   >

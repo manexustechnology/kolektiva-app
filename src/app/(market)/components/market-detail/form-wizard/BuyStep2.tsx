@@ -46,7 +46,7 @@ const BuyStep2: React.FC<BuyStep2Props> = ({
   const buttonText = useMemo(() => {
     if (isLoadingAllowance) return "Loading...";
     if (allowance >= formData.totalCost) return "Submit Order";
-    return `Approve ${formData.totalCost} USDT`;
+    return `Approve ${formatUSDTBalance(formData.totalCost)} USDT`;
   }, [isLoadingAllowance, allowance, formData.totalCost]);
 
   const handleButtonClick = async () => {

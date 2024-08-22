@@ -12,7 +12,7 @@ import { Warning, WarningCircle } from "@phosphor-icons/react/dist/ssr";
 import { useReadContractHook, useWriteContractHook } from "@/utils/hooks";
 import { useActiveAccount } from "thirdweb/react";
 import { PropertyData } from "@/types/property";
-import { formatUSDTBalance } from "@/utils/formatter";
+import { formatUSDTBalance, parseUSDTBalance } from "@/utils/formatter";
 
 interface BuyFormWizardProps {
   propertyData: PropertyData;
@@ -58,6 +58,11 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
     totalCost: 1000,
     fee: 0,
   });
+  const [buttonText, setButtonText] = useState("Loading...");
+  const [isLoadingApproval, setIsLoadingApproval] = useState(false);
+
+  const activeAccount = useActiveAccount();
+  const address = activeAccount?.address;
   const prevStep = useRef(currentStep);
   const direction = currentStep > prevStep.current ? 1 : -1;
 
@@ -86,20 +91,18 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
     prevStep.current = currentStep;
   }, [currentStep]);
 
-  const buttonLabel = () => {
-    console.log("price per token ", formData.pricePerToken);
-    console.log("validate ", formData.pricePerToken === 0);
-    switch (currentStep) {
-      case 1:
-        return "Preview order";
-      case 2:
-        return "Submit order";
-      case 3:
-        return "Agree";
-    }
-  };
-  const activeAccount = useActiveAccount();
-  const address = activeAccount?.address;
+  // const buttonLabel = () => {
+  //   console.log("price per token ", formData.pricePerToken);
+  //   console.log("validate ", formData.pricePerToken === 0);
+  //   switch (currentStep) {
+  //     case 1:
+  //       return "Preview order";
+  //     case 2:
+  //       return "Submit order";
+  //     case 3:
+  //       return "Agree";
+  //   }
+  // };
 
   const { data: allowanceData, isLoading: isLoadingAllowance } =
     useReadContractHook({
@@ -121,6 +124,30 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
     [allowanceData]
   );
 
+  useEffect(() => {
+    switch (currentStep) {
+      case 1:
+        setButtonText("Preview order");
+        break;
+      case 2:
+        if (isLoadingAllowance) {
+          setButtonText("Loading...");
+        } else if (allowance >= formData.totalCost) {
+          setButtonText("Submit Order");
+        } else {
+          setButtonText(
+            `Approve ${formatUSDTBalance(formData.totalCost)} USDT`
+          );
+        }
+        break;
+      case 3:
+        setButtonText("Agree");
+        break;
+      default:
+        setButtonText("Unknown step");
+    }
+  }, [currentStep, isLoadingAllowance, allowance, formData.totalCost]);
+
   const handleButtonSubmitClick = async () => {
     console.log(formData.qtyToken);
     console.log(formData.pricePerToken);
@@ -132,11 +159,14 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
           break;
         case 2:
           if (allowance < formData.totalCost) {
+            setIsLoadingApproval(true);
             try {
-              await approveUsdt(); // Call approve function here
+              await approveUsdt();
               console.log("Approve USDT");
             } catch (error) {
               console.error("Approval failed", error);
+            } finally {
+              setIsLoadingApproval(false);
             }
           } else {
             let formDataType = (formData as AfterMarketBuyOrderData).type;
@@ -259,27 +289,32 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
               </div>
             </>
           )}
-          {formData.pricePerToken === 0 ? (<Button
-            colorScheme="teal"
-            bgColor="teal.600"
-            w="full"
-            rounded="full"
-            fontWeight="medium"
-            fontSize="sm"
-            isDisabled={true}
-          >
-            Empty Sale Order book
-          </Button>) : (<Button
-            colorScheme="teal"
-            bgColor="teal.600"
-            w="full"
-            rounded="full"
-            fontWeight="medium"
-            onClick={handleButtonSubmitClick}
-            fontSize="sm"
-          >
-            {buttonLabel()}
-          </Button>)}
+          {formData.pricePerToken === 0 ? (
+            <Button
+              colorScheme="teal"
+              bgColor="teal.600"
+              w="full"
+              rounded="full"
+              fontWeight="medium"
+              fontSize="sm"
+              isDisabled={true}
+            >
+              Empty Sale Order book
+            </Button>
+          ) : (
+            <Button
+              colorScheme="teal"
+              bgColor="teal.600"
+              w="full"
+              rounded="full"
+              fontWeight="medium"
+              onClick={handleButtonSubmitClick}
+              fontSize="sm"
+              isLoading={isLoadingApproval}
+            >
+              {buttonText}
+            </Button>
+          )}
         </div>
       </ModalFooter>
     </>
