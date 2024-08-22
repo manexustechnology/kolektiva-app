@@ -14,6 +14,7 @@ import {
 } from "@phosphor-icons/react/dist/ssr";
 
 interface PropertyCardData {
+  marketAddress: string;
   name: string;
   slug: string;
   location: string;
@@ -53,23 +54,30 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
       setIsLoading(true);
       try {
         const currentFilters = filtersRef.current;
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_HOST}/property?${new URLSearchParams(currentFilters as any).toString()}`);
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_HOST}/property?${new URLSearchParams(
+            currentFilters as any
+          ).toString()}`
+        );
         const data = await response.json();
 
         let mappedData = data.map((property: any) => ({
           name: property.address,
           slug: property.id,
           location: `${property.city}, ${property.state}, ${property.country}`,
-          img: property.images?.[0]?.image || "https://messagetech.com/wp-content/themes/ml_mti/images/no-image.jpg",
+          img:
+            property.images?.[0]?.image ||
+            "https://messagetech.com/wp-content/themes/ml_mti/images/no-image.jpg",
           price: property.price || "-",
+          marketAddress: property.marketAddress,
           isNew: true,
           isFeatured: property.isFeatured,
-          isTraded: property.isTraded,
+          // isTraded: property.isTraded,
           isUpcoming: property.isUpcoming,
         }));
 
-        if (currentFilters.status && currentFilters.status == 'upcoming') {
-          mappedData = mappedData.filter((item: any) => item.isUpcoming)
+        if (currentFilters.status && currentFilters.status == "upcoming") {
+          mappedData = mappedData.filter((item: any) => item.isUpcoming);
         }
 
         setPropertyData(mappedData);
@@ -166,6 +174,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
           >
             {currentCards.map((card, index) => (
               <PropertyCard
+                marketAddress={card.marketAddress}
                 key={index}
                 name={card.name}
                 location={card.location}
@@ -173,8 +182,8 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
                 price={card.price}
                 isNew={card.isNew}
                 isFeatured={card.isFeatured}
-                isTraded={card.isTraded}
                 isUpcoming={card.isUpcoming}
+                // isTraded={card.isTraded}
                 onButtonClick={() => handleButtonClick(card.slug)}
               />
             ))}
