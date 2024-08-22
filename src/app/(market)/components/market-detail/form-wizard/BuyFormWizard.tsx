@@ -85,6 +85,8 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
   }, [currentStep]);
 
   const buttonLabel = () => {
+    console.log("price per token ", formData.pricePerToken);
+    console.log("validate ", formData.pricePerToken === 0);
     switch (currentStep) {
       case 1:
         return "Preview order";
@@ -252,7 +254,17 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
               </div>
             </>
           )}
-          <Button
+          {formData.pricePerToken === 0 ? (<Button
+            colorScheme="teal"
+            bgColor="teal.600"
+            w="full"
+            rounded="full"
+            fontWeight="medium"
+            fontSize="sm"
+            isDisabled={true}
+          >
+            Empty Sale Order book
+          </Button>) : (<Button
             colorScheme="teal"
             bgColor="teal.600"
             w="full"
@@ -262,7 +274,7 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
             fontSize="sm"
           >
             {buttonLabel()}
-          </Button>
+          </Button>)}
         </div>
       </ModalFooter>
     </>
