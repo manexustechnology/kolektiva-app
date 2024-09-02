@@ -22,7 +22,7 @@ import {
   Wallet,
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
   ConnectButton,
@@ -39,6 +39,7 @@ const Navbar: React.FC = () => {
   const { disconnect } = useDisconnect();
   const wallet = useActiveWallet();
   const activeChain = useActiveWalletChain();
+  const pathname = usePathname();
   const router = useRouter();
   const [isConnected, setIsConnected] = useState(false);
   const detailsModal = useWalletDetailsModal();
@@ -92,11 +93,19 @@ const Navbar: React.FC = () => {
                 direction="row"
                 align="center"
                 gap="24px"
-                width="183px"
                 height="24px"
                 margin="0 auto"
                 padding="0"
               >
+                {pathname !== "/list-property" && (
+                  <span
+                    className="text-sm font-medium text-[#14B8A6] cursor-pointer"
+                    onClick={() => router.push("/list-property")}
+                  >
+                    List your property
+                  </span>
+                )}
+
                 <BellSimple weight="fill" size={24} color="#FFFFFF" />
                 <Flex
                   direction="row"
