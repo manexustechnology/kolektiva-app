@@ -3,10 +3,11 @@
 import { formatUSDTBalance } from "@/utils/formatter";
 import { useReadContractHook } from "@/utils/hooks";
 import { Box, Image, Text, Heading, Button, Progress } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 interface PropertyCardProps {
   marketAddress: string;
+  tokenAddress: string;
   name: string;
   location: string;
   img: string;
@@ -19,6 +20,7 @@ interface PropertyCardProps {
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({
+  tokenAddress,
   marketAddress,
   name,
   location,
@@ -30,16 +32,12 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   // isTraded,
   onButtonClick,
 }) => {
-  const [isTraded, setIsTraded] = useState(false);
-  const [salePrice, setSalePrice] = useState<number | null>(null);
-
-  const { data: initialOfferingActive, isLoading: isLoadingInitialOffering } =
-    useReadContractHook({
-      contractName: "KolektivaMarket",
-      functionName: "initialOfferingActive",
-      contractAddress: marketAddress,
-      args: [],
-    });
+  const { data: initialOfferingActive } = useReadContractHook({
+    contractName: "KolektivaMarket",
+    functionName: "initialOfferingActive",
+    contractAddress: marketAddress,
+    args: [],
+  });
 
   const { data: salePriceData } = useReadContractHook({
     contractName: "KolektivaMarket",
@@ -49,17 +47,36 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
     args: [],
   });
 
-  useEffect(() => {
-    if (!initialOfferingActive && !isLoadingInitialOffering) {
-      setIsTraded(true);
-    }
+  const { data: tokenTotalSupply } = useReadContractHook({
+    contractName: "KolektivaToken",
+    functionName: "totalSupply",
+    contractAddress: tokenAddress,
+    args: [],
+  });
+
+  const { data: initialOfferingSupply } = useReadContractHook({
+    contractName: "KolektivaMarket",
+    functionName: "initialOfferingSupply",
+    contractAddress: marketAddress,
+    args: [],
+  });
+
+  const isTraded = useMemo(() => {
+    return initialOfferingActive !== true;
   }, [initialOfferingActive]);
 
-  useEffect(() => {
-    if (salePriceData) {
-      setSalePrice(Number(salePriceData));
+  const initialOfferingPercentage = useMemo(() => {
+    console.log("tokenTotalSupply", tokenTotalSupply);
+    console.log("initialOfferingSupply", initialOfferingSupply);
+
+    if (tokenTotalSupply > initialOfferingSupply) {
+      const totalSupply = Number(tokenTotalSupply);
+      const ioSupply = Number(initialOfferingSupply);
+      return ((totalSupply - ioSupply) / totalSupply) * 100;
     }
-  }, [salePriceData]);
+
+    return 0;
+  }, [initialOfferingSupply, tokenTotalSupply]);
 
   return (
     <Box
@@ -182,7 +199,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             height="10px"
           >
             <Progress
-              value={50}
+              value={initialOfferingPercentage}
               size="sm"
               colorScheme="teal"
               width="340px"
@@ -190,8 +207,8 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
               borderRadius="full"
             />
             {/* Progress Percentage */}
-            <p className="w-[26px]  font-medium text-[10px] leading-[10px] text-right text-[#0D9488]">
-              50%
+            <p className="w-[32px]  font-medium text-[10px] leading-[10px] text-right text-[#0D9488]">
+              {initialOfferingPercentage}%
             </p>
           </Box>
         )}
@@ -220,7 +237,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             </p>
 
             <p className=" font-bold text-[12px] leading-[16px] text-[#0D9488]">
-              {salePrice && formatUSDTBalance(salePrice)} USDT
+              {formatUSDTBalance(salePriceData || 0)} USDT
             </p>
           </Box>
 
@@ -237,7 +254,9 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
               Available Tokens
             </p>
             <p className=" font-medium text-[12px] leading-[16px] text-right text-[#042F2E]">
-              {isUpcoming ? "-" : "10000"}
+              {isUpcoming
+                ? "-"
+                : Number(initialOfferingSupply).toLocaleString()}
             </p>
           </Box>
         </Box>

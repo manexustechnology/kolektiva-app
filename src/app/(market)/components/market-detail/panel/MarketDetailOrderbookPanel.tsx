@@ -38,28 +38,28 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
   const { data: InitialOfferingPurchaseEvent } = useContractEventHook({
     contractName: "KolektivaMarket",
     eventName: "InitialOfferingPurchase",
-    contractAddress: propertyData.marketAddress, // market contract address
+    contractAddress: propertyData.marketAddress,
     fromBlock: BigInt(8906493),
   });
 
   const { data: OrderFulfilledEvent } = useContractEventHook({
     contractName: "KolektivaMarket",
     eventName: "OrderFulfilled",
-    contractAddress: propertyData.marketAddress, // market contract address
+    contractAddress: propertyData.marketAddress,
     fromBlock: BigInt(8906493),
   });
 
   const { data: sellOrdersCountData } = useReadContractHook({
     contractName: "KolektivaMarket",
     functionName: "getSellOrdersCount",
-    contractAddress: propertyData.marketAddress, // market contract address
+    contractAddress: propertyData.marketAddress,
     args: [],
   });
 
   const { data: buyOrdersCountData } = useReadContractHook({
     contractName: "KolektivaMarket",
     functionName: "getBuyOrdersCount",
-    contractAddress: propertyData.marketAddress, // market contract address
+    contractAddress: propertyData.marketAddress,
     args: [],
   });
 

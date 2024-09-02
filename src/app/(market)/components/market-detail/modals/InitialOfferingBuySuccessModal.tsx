@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -17,18 +17,46 @@ import {
   FacebookLogo,
   XLogo,
   WhatsappLogo,
+  ArrowSquareOut,
+  Copy,
+  CheckCircle,
 } from "@phosphor-icons/react/dist/ssr";
+import { TxInfoData } from "@/types/tx-info";
+import { PropertyData } from "@/types/property";
 
 interface InitialOfferingBuySuccessModalProps {
+  propertyData: PropertyData;
+  txInfo: TxInfoData;
   isOpen: boolean;
   onClose: () => void;
 }
 
 const InitialOfferingBuySuccessModal: React.FC<
   InitialOfferingBuySuccessModalProps
-> = ({ isOpen, onClose }) => {
-  const handleIconClick = (url: string) => {
+> = ({ propertyData, txInfo, isOpen, onClose }) => {
+  const [copied, setCopied] = useState(false);
+  const handleShareClick = (url: string) => {
     window.open(url, "_blank");
+  };
+
+  const handleRedirectUrl = async () => {
+    try {
+      window.open(txInfo.txUrl, "_blank");
+    } catch (error) {
+      console.error("Failed to get transaction status:", error);
+    }
+  };
+
+  const handleCopy = (text: string) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch((err) => {
+        alert("Failed to copy text: ");
+      });
   };
 
   return (
@@ -36,7 +64,7 @@ const InitialOfferingBuySuccessModal: React.FC<
       <ModalOverlay bg="rgba(4, 47, 46, 0.5)" />
       <ModalContent
         width="394px"
-        height="506px"
+        height="566px"
         bg="white"
         boxShadow="0px 1px 2px rgba(16, 24, 40, 0.06), 0px 1px 3px rgba(16, 24, 40, 0.1)"
         borderRadius="16px"
@@ -96,18 +124,49 @@ const InitialOfferingBuySuccessModal: React.FC<
                   width="346px"
                 >
                   <p className="w-[346px]  font-bold text-2xl leading-7 text-center text-teal-600">
-                    You just bought some real estate
+                    You just bought <br /> some real estate
                   </p>
 
-                  <p className="w-[300px] font-normal text-base leading-4 text-center text-neutral-700">
-                    You are now officially an owner of Jl Pinangsia Raya Komplek
-                    Glodok Plaza Bl B-22 in DKI Jakarta
+                  <p className="mt-2 w-[300px] font-normal text-base leading-4 text-center text-neutral-700">
+                    You are now officially an owner of {propertyData.address}
                   </p>
+
+                  {/* <p className="w-[300px] font-normal text-base leading-4 text-center text-neutral-700">
+                    View your transaction on the blockchain with the code below
+                  </p> */}
                 </Flex>
 
-                <div className="flex flex-row items-center mt-4 gap-2 w-[249px] h-[64px] bg-[#F0FDFA] rounded-full z-[2] p-[12px_24px_12px_12px]">
+                <div className="flex flex-row items-center mt-4 gap-2 w-[350px] h-[48px] bg-[#F0FDFA] rounded-full z-[2] p-[8px_20px_8px_8px]">
+                  <p
+                    className="ml-4 text-teal-600 text-base font-medium overflow-hidden truncate"
+                    onClick={() => handleRedirectUrl()}
+                  >
+                    {txInfo.txHash}
+                  </p>
+
+                  <Button
+                    onClick={() => handleCopy(txInfo.txHash)}
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    width="40px"
+                    height="40px"
+                    bg="white"
+                    borderRadius="full"
+                    _focus={{ boxShadow: "none" }} // Removes default focus box shadow if needed
+                  >
+                    <Icon
+                      as={copied ? CheckCircle : Copy}
+                      boxSize="16px"
+                      weight="fill"
+                      color={copied ? "#4CAF50" : "#0D9488"}
+                    />
+                  </Button>
+                </div>
+
+                <div className="flex flex-row items-center mt-4 gap-2 w-[259px] h-[64px] bg-[#F0FDFA] rounded-full z-[2] p-[12px_24px_12px_12px]">
                   <div className="flex flex-row items-center gap-2">
-                    <p className="  font-medium text-[14px] leading-[18px] text-[#0F766E]">
+                    <p className="ml-4 font-medium text-[14px] leading-[18px] text-[#0F766E]">
                       Share via
                     </p>
                     <Button
@@ -122,7 +181,7 @@ const InitialOfferingBuySuccessModal: React.FC<
                       bg="#0D9488"
                       borderRadius="100px"
                       _focus={{ boxShadow: "none" }}
-                      onClick={() => handleIconClick("https://facebook.com/")}
+                      onClick={() => handleShareClick("https://facebook.com/")}
                     >
                       <Icon
                         as={FacebookLogo}
@@ -143,7 +202,7 @@ const InitialOfferingBuySuccessModal: React.FC<
                       bg="#0D9488"
                       borderRadius="100px"
                       _focus={{ boxShadow: "none" }}
-                      onClick={() => handleIconClick("https://x.com/")}
+                      onClick={() => handleShareClick("https://x.com/")}
                     >
                       <Icon
                         as={XLogo}
@@ -164,7 +223,7 @@ const InitialOfferingBuySuccessModal: React.FC<
                       bg="#0D9488"
                       borderRadius="100px"
                       _focus={{ boxShadow: "none" }}
-                      onClick={() => handleIconClick("https://wa.me/")}
+                      onClick={() => handleShareClick("https://wa.me/")}
                     >
                       <Icon
                         as={WhatsappLogo}

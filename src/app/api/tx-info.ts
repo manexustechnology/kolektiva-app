@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getTxRoutes } from "../constants/api-routes";
+import { getTxRoutes } from "../constants/tx-routes";
 import { Chain } from "thirdweb";
 
 interface TransactionDetails {
@@ -24,11 +24,11 @@ export const getTransactionInfo = async (
 
   // Wait for the initial delay
   await delay(retryDelay);
-  console.log(retryDelay, "Fetching transaction from:", apiUrl);
+  console.log(retryDelay, "Fetching transaction from:", txApiUrl);
 
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
-      const response = await axios.get(apiUrl, {
+      const response = await axios.get(txApiUrl, {
         headers: {
           Accept: "application/json",
         },

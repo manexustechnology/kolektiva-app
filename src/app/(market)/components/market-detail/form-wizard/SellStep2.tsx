@@ -126,7 +126,7 @@ const SellStep2: React.FC<SellStep2Props> = ({ propertyData, formData }) => {
             <span className="text-base font-bold text-teal-950">
               {formData?.qtyToken}
             </span>{" "}
-            Token{"(s)"}
+            Tokens
           </p>
         </div>
         {formData?.type === "market" && (

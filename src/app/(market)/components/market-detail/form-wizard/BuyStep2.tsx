@@ -81,7 +81,7 @@ const BuyStep2: React.FC<BuyStep2Props> = ({
             <span className="text-base font-bold text-teal-950">
               {formData?.qtyToken}
             </span>{" "}
-            Token{"(s)"}
+            Token
           </p>
         </div>
         <Divider className="border-zinc-200 !m-0" />

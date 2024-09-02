@@ -391,7 +391,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             onChange={(e) => setTokenQty(parseInt(e.target.value) || 0)}
           />
           <InputRightElement right={6}>
-            <span className="text-sm text-zinc-500">Token{"(s)"}</span>
+            <span className="text-sm text-zinc-500">Token</span>
           </InputRightElement>
         </InputGroup>
       </div>

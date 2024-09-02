@@ -13,9 +13,12 @@ import { getTransactionInfo } from "@/app/api/tx-info";
 import { PropertyData } from "@/types/property";
 import { formatUSDTBalance, parseUSDTBalance } from "@/utils/formatter";
 import { Spinner } from "@chakra-ui/react";
+import { TxInfoData } from "@/types/tx-info";
+import TxFailureToast from "../modals/TxFailureToast";
 
 interface SellFormWizardProps {
   propertyData: PropertyData;
+  onTxUpdate: (tx: TxInfoData) => void;
   currentStep: number;
   onSubmitButtonClick: (formData: SellOrderData) => void;
 }
@@ -42,6 +45,7 @@ const variants = {
 
 const SellFormWizard: React.FC<SellFormWizardProps> = ({
   propertyData,
+  onTxUpdate,
   currentStep,
   onSubmitButtonClick,
 }) => {
@@ -52,6 +56,12 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
     orderExpiration: 0,
     totalProceeds: 0,
     fee: 0,
+  });
+  const [txInfo, setTxInfo] = useState<TxInfoData>({
+    txHash: "",
+    status: "",
+    txUrl: "",
+    isSuccess: false,
   });
   const [buttonText, setButtonText] = useState("Loading...");
   const [isLoading, setIsLoading] = useState(false);
@@ -124,53 +134,32 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
     [allowanceTokenData, isLoading]
   );
 
-  // useEffect(() => {
-  //   if (isLoadingAllowanceToken || isLoadingAllowanceUsdt) {
-  //     setButtonText("Loading...");
-  //     setIsLoading(true);
-  //   } else if (allowanceToken < formData.qtyToken) {
-  //     setButtonText(`Approve ${formData.qtyToken} KolektivaToken`);
-  //     setIsLoading(false);
-  //   } else if (allowanceUsdt < formData.fee) {
-  //     setButtonText(`Approve ${formatUSDTBalance(formData.fee)} USDT`);
-  //     setIsLoading(false);
-  //   } else {
-  //     setButtonText("Submit Order");
-  //     setIsLoading(false);
-  //   }
-  // }, [
-  //   currentStep,
-  //   allowanceToken,
-  //   allowanceUsdt,
-  //   isLoadingAllowanceToken,
-  //   isLoadingAllowanceUsdt,
-  //   formData.qtyToken,
-  //   formData.fee,
-  // ]);
-
   useEffect(() => {
-    switch (currentStep) {
-      case 1:
-        setButtonText("Preview order");
-        break;
-      case 2:
-        if (isLoadingAllowanceToken || isLoadingAllowanceUsdt) {
-          setButtonText("Loading...");
-          setIsLoading(true);
-        } else if (allowanceToken < formData.qtyToken) {
-          setButtonText(`Approve ${formData.qtyToken} KolektivaToken`);
-          setIsLoading(false);
-        } else if (allowanceUsdt < formData.fee) {
-          setButtonText(`Approve ${formatUSDTBalance(formData.fee)} USDT`);
-          setIsLoading(false);
-        } else {
-          setButtonText("Submit Order");
-          setIsLoading(false);
-        }
-        break;
-      default:
-        setButtonText("Unknown step");
-    }
+    const updateButtonText = () => {
+      switch (currentStep) {
+        case 1:
+          setButtonText("Preview order");
+          break;
+        case 2:
+          if (isLoadingAllowanceToken || isLoadingAllowanceUsdt) {
+            setButtonText("Loading...");
+            setIsLoading(true);
+          } else if (allowanceToken < formData.qtyToken) {
+            setButtonText(`Approve ${formData.qtyToken} KolektivaToken`);
+            setIsLoading(false);
+          } else if (allowanceUsdt < formData.fee) {
+            setButtonText(`Approve ${formatUSDTBalance(formData.fee)} USDT`);
+            setIsLoading(false);
+          } else {
+            setButtonText("Submit Order");
+            setIsLoading(false);
+          }
+          break;
+        default:
+          setButtonText("Unknown step");
+      }
+    };
+    updateButtonText();
   }, [
     currentStep,
     allowanceToken,
@@ -181,31 +170,22 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
     formData.fee,
   ]);
 
-  const handleApproval = async (
-    approveFunction: () => Promise<`0x${string}` | undefined>,
-    refetchFunction: () => Promise<any>
-    // tokenType: string
+  const handleTransaction = async (
+    txHashPromise: Promise<any>,
+    successCallback: () => void
   ) => {
-    const txHash = await approveFunction();
-    // console.log(`Approve ${tokenType}`, txHash);
-    const status = await getTransactionInfo(chain, txHash!);
-    // console.log("status", status);
-    const ref = await refetchFunction();
-    // console.log("refetch res", ref);
-  };
-
-  const handleOrderSubmission = async () => {
-    let formDataType = (formData as SellOrderData).type;
-    let txHash;
-    if (formDataType === "market") {
-      txHash = await marketSell();
-    } else {
-      txHash = await limitSell();
+    try {
+      const txHash = await txHashPromise;
+      if (txHash) {
+        const txInfo = await getTransactionInfo(chain, txHash);
+        console.log("tx sell", txInfo);
+        setTxInfo(txInfo);
+        onTxUpdate(txInfo);
+        successCallback();
+      }
+    } catch (error) {
+      console.error("Transaction failed", error);
     }
-    console.log("txHash", txHash);
-    const status = await getTransactionInfo(chain, txHash!);
-    console.log("status", status);
-    onSubmitButtonClick(formData);
   };
 
   const handleButtonSubmitClick = async () => {
@@ -219,19 +199,24 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
         case 2:
           setIsLoading(true);
           if (allowanceToken < formData.qtyToken) {
-            await handleApproval(
-              approveToken,
-              refetchAllowanceToken
-              // "KolektivaToken"
-            );
+            await handleTransaction(approveToken(), async () => {
+              await refetchAllowanceToken();
+            });
           } else if (allowanceUsdt < formData.fee) {
-            await handleApproval(
-              approveUsdt,
-              refetchAllowanceUsdt
-              // , "USDT"
-            );
+            await handleTransaction(approveUsdt(), async () => {
+              await refetchAllowanceUsdt();
+            });
           } else {
-            await handleOrderSubmission();
+            const formDataType = (formData as SellOrderData).type;
+            if (formDataType === "market") {
+              await handleTransaction(marketSell(), () =>
+                onSubmitButtonClick(formData)
+              );
+            } else {
+              await handleTransaction(limitSell(), () =>
+                onSubmitButtonClick(formData)
+              );
+            }
           }
           break;
         default:
@@ -242,33 +227,9 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
     }
   };
 
-  // const handleButtonSubmitClick = async () => {
-  //   try {
-  //     if (allowanceToken < formData.qtyToken) {
-  //       await approveToken();
-  //       console.log("Approved KolektivaToken");
-  //     } else if (allowanceUsdt < formData.fee) {
-  //       await approveUsdt();
-  //       console.log("Approved USDT");
-  //     } else {
-  //       if (formData.type === "market") {
-  //         const tx = await marketSell();
-  //         console.log("Market Sell tx", tx);
-  //       } else {
-  //         const txHash = await limitSell();
-  //         const TxInfoData = await getTransactionInfo(chain, txHash!);
-  //         console.log("Limit Sell tx", txHash);
-  //       }
-  //       // Call the submit button click handler if needed
-  //       onSubmitButtonClick(formData);
-  //     }
-  //   } catch (error) {
-  //     console.error("Transaction failed", error);
-  //   }
-  // };
-
   return (
     <>
+      <TxFailureToast txInfo={txInfo} />
       <ModalBody>
         <div className="wizard-container relative">
           <AnimatePresence initial={false} custom={direction}>

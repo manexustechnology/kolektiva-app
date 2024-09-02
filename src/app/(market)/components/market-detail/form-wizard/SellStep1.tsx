@@ -238,7 +238,7 @@ const SellStep1: React.FC<SellStep1Props> = ({
             <div className="flex flex-col justify-center">
               <p className="text-sm text-zinc-500">You owned</p>
               <p className="text-base font-medium">
-                {balanceToken?.toString()} Token{"s"}
+                {balanceToken?.toString()} Token
               </p>
             </div>
           </div>

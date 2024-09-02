@@ -20,7 +20,7 @@ export const BuyOrderEvent: React.FC<BuyOrderEventProps> = ({
   const { data: buyOrderByIndex } = useReadContractHook({
     contractName: "KolektivaMarket",
     functionName: "getBuyOrderByIndex",
-    contractAddress, // market contract address
+    contractAddress,
     args: [index], // pass the index as an argument
   });
 

@@ -18,7 +18,7 @@ const TxFailureToast: React.FC<TxFailureToastProps> = ({
 
   useEffect(() => {
     if (
-      txInfo &&
+      txInfo.txHash &&
       txInfo.isSuccess === false &&
       txInfo.txHash !== lastTxHashRef.current
     ) {

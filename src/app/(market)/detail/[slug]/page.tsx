@@ -5,6 +5,7 @@ import MarketDetailClientPage from "../../components/market-detail/MarketDetailC
 import { useParams } from "next/navigation"; // Use this for App Router
 import { useEffect, useState } from "react";
 import { PropertyData } from "@/types/property";
+import { Spinner, Stack } from "@chakra-ui/react";
 
 interface MarketDetailProps {
   searchParams: {
@@ -21,11 +22,13 @@ const MarketDetailPage: React.FC<MarketDetailProps> = ({ searchParams }) => {
     if (slug) {
       const fetchPropertyData = async () => {
         try {
-          const response = await fetch(`https://kolektiva-be.vercel.app/property/${slug}`);
+          const response = await fetch(
+            `https://kolektiva-be.vercel.app/property/${slug}`
+          );
           const data: PropertyData = await response.json();
           setPropertyData(data);
         } catch (error) {
-          console.error('Error fetching property data:', error);
+          console.error("Error fetching property data:", error);
         } finally {
           setLoading(false);
         }
@@ -35,11 +38,18 @@ const MarketDetailPage: React.FC<MarketDetailProps> = ({ searchParams }) => {
     }
   }, [slug]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-dvh">
+        <Stack direction="row" spacing={5}>
+          <Spinner size="xl" color="teal.500" thickness="4px" speed="0.65s" />
+        </Stack>
+      </div>
+    );
 
   return (
     <>
-    {propertyData && <MarketDetailClientPage propertyData={propertyData} />}
+      {propertyData && <MarketDetailClientPage propertyData={propertyData} />}
     </>
   );
 };

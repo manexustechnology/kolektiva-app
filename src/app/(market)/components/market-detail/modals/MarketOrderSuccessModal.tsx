@@ -13,24 +13,28 @@ import {
   Image,
   Icon,
 } from "@chakra-ui/react";
-import {
-  FacebookLogo,
-  XLogo,
-  WhatsappLogo,
-  Copy,
-  CheckCircle,
-} from "@phosphor-icons/react/dist/ssr";
+import { Copy, CheckCircle } from "@phosphor-icons/react/dist/ssr";
+import { TxInfoData } from "@/types/tx-info";
 
-interface MarketSellSuccessModalProps {
+interface MarketOrderSuccessModalProps {
+  txInfo: TxInfoData;
   isOpen: boolean;
   onClose: () => void;
+  orderType: "buy" | "sell";
 }
 
-const MarketSellSuccessModal: React.FC<
-  MarketSellSuccessModalProps
-> = ({ isOpen, onClose }) => {
-  const handleIconClick = (url: string) => {
-    window.open(url, "_blank");
+const MarketOrderSuccessModal: React.FC<MarketOrderSuccessModalProps> = ({
+  txInfo,
+  isOpen,
+  onClose,
+  orderType,
+}) => {
+  const handleRedirectUrl = async () => {
+    try {
+      window.open(txInfo.txUrl, "_blank");
+    } catch (error) {
+      console.error("Failed to get transaction status:", error);
+    }
   };
 
   const [copied, setCopied] = useState(false);
@@ -46,9 +50,6 @@ const MarketSellSuccessModal: React.FC<
         alert("Failed to copy text: ");
       });
   };
-
-  const textToCopy =
-    "b6f6991d6d825d278009c8e129d3b662ae8c59c2d6e01e8a6c6a0b8e0ba0d820";
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
@@ -116,7 +117,7 @@ const MarketSellSuccessModal: React.FC<
                   width="346px"
                 >
                   <p className="w-[346px]  font-bold text-2xl leading-7 text-center text-teal-600">
-                    Market sell order competed
+                    Market {orderType} order competed
                   </p>
 
                   <p className="w-[300px] font-normal text-base leading-4 text-center text-neutral-700">
@@ -124,15 +125,16 @@ const MarketSellSuccessModal: React.FC<
                   </p>
                 </Flex>
 
-                <div className="flex flex-row items-center mt-4 gap-2 w-[350px] h-[64px] bg-[#F0FDFA] rounded-full z-[2] p-[12px_24px_12px_12px]">
-                  {/* Text */}
-                  <p className="text-teal-600 text-base font-medium overflow-hidden truncate">
-                    {textToCopy}
+                <div className="flex flex-row items-center mt-4 gap-2 w-[350px] h-[48px] bg-[#F0FDFA] rounded-full z-[2] p-[8px_20px_8px_8px]">
+                  <p
+                    className="ml-4 text-teal-600 text-base font-medium overflow-hidden truncate"
+                    onClick={() => handleRedirectUrl()}
+                  >
+                    {txInfo.txHash}
                   </p>
 
-                  {/* Copy Button */}
                   <Button
-                    onClick={() => handleCopy(textToCopy)}
+                    onClick={() => handleCopy(txInfo.txHash)}
                     display="flex"
                     justifyContent="center"
                     alignItems="center"
@@ -182,4 +184,4 @@ const MarketSellSuccessModal: React.FC<
   );
 };
 
-export default MarketSellSuccessModal;
+export default MarketOrderSuccessModal;
