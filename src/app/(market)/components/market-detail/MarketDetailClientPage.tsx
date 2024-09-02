@@ -26,7 +26,9 @@ import {
   AfterMarketBuyOrderData,
   SellOrderData,
   BuyOrderData,
+  MarketDetailOrderData,
 } from "@/types/order";
+import { TxInfoData } from "@/types/tx-info";
 import InitialOfferingBuySuccessModal from "./modals/InitialOfferingBuySuccessModal";
 import LimitBuySuccessModal from "./modals/LimitBuySuccessModal";
 import LimitSellSuccessModal from "./modals/LimitSellSuccessModal";
@@ -39,13 +41,14 @@ import {
   useWriteContractHook,
   useContractEventHook,
 } from "@/utils/hooks";
-import { getTransactionStatus } from "@/app/api/tx-hash";
+import { getTransactionInfo } from "@/app/api/tx-info";
 import { PropertyData } from "@/types/property";
 
 import Link from "next/link";
 import { formatUSDTBalance } from "@/utils/formatter";
 import { fetchContractMetadataFromAddress } from "@thirdweb-dev/sdk";
 import BuyFormWizard from "./form-wizard/BuyFormWizard";
+import AlertTxFailure from "./modals/TxFailureToast";
 
 interface MarketDetailClientPageProps {
   propertyData: PropertyData;
@@ -404,6 +407,22 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
     useState<boolean>(false);
 
   const [allowTrade, setAllowTrade] = useState<boolean>(false);
+  const [detailFormData, setDetailFormData] = useState<MarketDetailOrderData>({
+    qtyToken: 1,
+    pricePerToken: 0,
+    orderExpiration: 0,
+    total: 0,
+    fee: 0,
+  });
+  const [txInfo, setTxInfo] = useState<TxInfoData>({
+    txHash: "",
+    status: "",
+    txUrl: "",
+    isSuccess: false,
+  });
+  const handleTxUpdate = (tx: any) => {
+    setTxInfo(tx);
+  };
 
   const { data: initialOfferingActive, isLoading: isLoadingInitialOffering } =
     useReadContractHook({
@@ -453,6 +472,23 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
     }
   };
 
+  const handleDetailFormData = (
+    order: BuyOrderData | SellOrderData,
+    isBuy: boolean
+  ) => {
+    const total = isBuy
+      ? (order as BuyOrderData).totalCost
+      : (order as SellOrderData).totalProceeds;
+
+    setDetailFormData({
+      qtyToken: order.qtyToken,
+      pricePerToken: order.pricePerToken,
+      orderExpiration: order.orderExpiration,
+      fee: order.fee,
+      total: total,
+    });
+  };
+
   const handleBuySuccess = (formData: BuyOrderData) => {
     if (!allowTrade) {
       setIsInitialOfferingBuySuccessModalOpen(true);
@@ -467,6 +503,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
         setIsLimitBuySuccessModalOpen(true);
         break;
     }
+    handleDetailFormData(formData, true);
 
     return;
   };
@@ -480,6 +517,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
         setIsLimitSellSuccessModalOpen(true);
         break;
     }
+    handleDetailFormData(formData, false);
     return;
   };
 
@@ -492,11 +530,6 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
 
     return 0;
   }, [initialOfferingSupply, tokenTotalSupply]);
-
-  const [txValue, setTxValue] = useState("");
-  const handleTxUpdate = (tx: any) => {
-    setTxValue(tx);
-  };
 
   return (
     <div className="w-full flex justify-center py-4">
@@ -802,6 +835,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
       />
       <LimitBuySuccessModal
         isOpen={isLimitBuySuccessModalOpen}
+        formData={detailFormData}
         onClose={() => setIsLimitBuySuccessModalOpen(false)}
       />
       <LimitSellSuccessModal
@@ -809,7 +843,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
         onClose={() => setIsLimitSellSuccessModalOpen(false)}
       />
       <MarketBuySuccessModal
-        tnx={txValue}
+        tnx={"txValue"}
         isOpen={isMarketBuySuccessModalOpen}
         onClose={() => setIsMarketBuySuccessModalOpen(false)}
       />

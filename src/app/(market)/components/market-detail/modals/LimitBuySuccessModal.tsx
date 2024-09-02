@@ -19,13 +19,17 @@ import {
   WhatsappLogo,
   WarningCircle,
 } from "@phosphor-icons/react/dist/ssr";
+import { MarketDetailOrderData } from "@/types/order";
+import { formatUSDTBalance } from "@/utils/formatter";
 
 interface LimitBuySuccessModalProps {
+  formData: MarketDetailOrderData;
   isOpen: boolean;
   onClose: () => void;
 }
 
 const LimitBuySuccessModal: React.FC<LimitBuySuccessModalProps> = ({
+  formData,
   isOpen,
   onClose,
 }) => {
@@ -132,7 +136,7 @@ const LimitBuySuccessModal: React.FC<LimitBuySuccessModalProps> = ({
                       Limit price per token
                     </p>
                     <p className=" text-teal-950 font-bold text-base leading-[18px]">
-                      4,50 USDT
+                      {formatUSDTBalance(formData.pricePerToken)} USDT
                     </p>
                   </Box>
                   {/* Dividing Line */}
@@ -155,7 +159,7 @@ const LimitBuySuccessModal: React.FC<LimitBuySuccessModalProps> = ({
                       Property token quantity
                     </p>
                     <p className=" text-teal-950 font-bold text-base leading-[18px]">
-                      5{" "}
+                      {formData.qtyToken}{" "}
                       <span className="text-neutral-500 font-normal text-base leading-[18px]">
                         Token(s)
                       </span>
@@ -187,7 +191,7 @@ const LimitBuySuccessModal: React.FC<LimitBuySuccessModalProps> = ({
                     </p>
 
                     <p className="text-teal-600 font-bold text-base leading-[18px]">
-                      22,61 USDT
+                      {formatUSDTBalance(formData.total)} USDT
                     </p>
                   </Box>
                 </Box>

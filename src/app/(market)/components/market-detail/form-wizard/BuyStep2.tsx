@@ -2,7 +2,7 @@
 
 import { BuyOrderData } from "@/types/order";
 import { useReadContractHook, useWriteContractHook } from "@/utils/hooks";
-import { getTransactionStatus } from "@/app/api/tx-hash";
+import { getTransactionInfo } from "@/app/api/tx-info";
 import { Divider } from "antd";
 import { useMemo } from "react";
 import { useActiveAccount } from "thirdweb/react";

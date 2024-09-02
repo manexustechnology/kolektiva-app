@@ -27,3 +27,13 @@ export type SellOrderData = {
   fee: number;
   totalProceeds: number;
 };
+
+export type MarketDetailOrderData = {
+  qtyToken: number;
+  pricePerToken: number;
+  orderExpiration: number;
+  fee: number;
+  total: number;
+};
+
+

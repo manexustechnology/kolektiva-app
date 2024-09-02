@@ -44,7 +44,6 @@ const SellStep1: React.FC<SellStep1Props> = ({
   const { data: salePriceData } = useReadContractHook({
     contractName: "KolektivaMarket",
     functionName: "salePrice",
-    // contractAddress: "", // market contract address
     contractAddress: propertyData.marketAddress,
 
     args: [],
@@ -53,7 +52,6 @@ const SellStep1: React.FC<SellStep1Props> = ({
   const { data: feePercentageData } = useReadContractHook({
     contractName: "KolektivaMarket",
     functionName: "feePercentage",
-    // contractAddress: "", // market contract address
     contractAddress: propertyData.marketAddress,
 
     args: [],
@@ -62,7 +60,6 @@ const SellStep1: React.FC<SellStep1Props> = ({
   const { data: feePrecisionData } = useReadContractHook({
     contractName: "KolektivaMarket",
     functionName: "FEE_PRECISION",
-    // contractAddress: "", // market contract address
     contractAddress: propertyData.marketAddress,
 
     args: [],
@@ -72,7 +69,6 @@ const SellStep1: React.FC<SellStep1Props> = ({
     contractName: "KolektivaToken",
     functionName: "balanceOf",
     contractAddress: propertyData.tokenAddress,
-    // args: [address, "_spender market address"],
     args: [address],
   });
 
@@ -81,7 +77,7 @@ const SellStep1: React.FC<SellStep1Props> = ({
       console.log("market", propertyData.marketAddress);
       console.log("token", propertyData.tokenAddress);
       try {
-        if (activeTab === "market") {
+        if (activeTab === "market" && formData.qtyToken > 0) {
           const data = await readContractFetch({
             contractName: "KolektivaMarket",
             functionName: "calculateSellProceeds",
@@ -120,6 +116,8 @@ const SellStep1: React.FC<SellStep1Props> = ({
 
   useEffect(() => {
     if (balanceTokenData) {
+      console.log(balanceTokenData, "token data");
+
       setBalanceToken(Number(balanceTokenData));
     }
   }, [balanceTokenData]);
@@ -136,7 +134,7 @@ const SellStep1: React.FC<SellStep1Props> = ({
       return;
 
     const qtyToken = formData.qtyToken;
-    let pricePerToken = formatUSDTBalance(formData.pricePerToken);
+    let pricePerToken = formData.pricePerToken;
     let fee = 0;
     let totalProceeds = 0;
 
@@ -183,19 +181,14 @@ const SellStep1: React.FC<SellStep1Props> = ({
   };
 
   const setTokenPrice = (price: number) => {
-    console.log("price", price);
-
     if (formData.pricePerToken !== price) {
       // Check if there's an actual change
-      console.log("in");
-
       const updatedData = {
         ...formData,
-        pricePerToken: price,
+        pricePerToken: parseUSDTBalance(price),
       };
       onDataChange(updatedData);
     }
-    console.log(formData);
   };
 
   const setActiveTab = (tab: (typeof tabs)[number]["id"]) => {
@@ -258,8 +251,7 @@ const SellStep1: React.FC<SellStep1Props> = ({
                 type="number"
                 placeholder="Enter amount"
                 className="!bg-zinc-100 !rounded-full"
-                value={formData?.pricePerToken}
-                onChange={(e) => setTokenPrice(parseInt(e.target.value) || 0)}
+                onChange={(e) => setTokenPrice(parseFloat(e.target.value) || 0)}
               />
               <InputRightElement right={6}>
                 <span className="text-sm text-zinc-500">USDT</span>

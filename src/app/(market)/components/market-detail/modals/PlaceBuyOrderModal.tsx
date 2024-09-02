@@ -14,10 +14,11 @@ import { Divider } from "antd";
 import BuyFormWizard from "../form-wizard/BuyFormWizard";
 import { BuyOrderData } from "@/types/order";
 import { PropertyData } from "@/types/property";
+import { TxInfoData } from "@/types/tx-info";
 
 interface PlaceBuyOrderModalProps {
   propertyData: PropertyData;
-  onTxUpdate: (tx: any) => void;
+  onTxUpdate: (tx: TxInfoData) => void;
   isOpen: boolean;
   onClose: () => void;
   isAfterMarketTrading: boolean;
@@ -49,9 +50,9 @@ const PlaceBuyOrderModal: React.FC<PlaceBuyOrderModalProps> = ({
     if (step < maxStep) {
       setStep((prev) => prev + 1);
     } else {
-      const result = formData;
+      // const result = formData;
       onClose();
-      onSuccess(result);
+      onSuccess(formData);
       setStep(1);
     }
   };

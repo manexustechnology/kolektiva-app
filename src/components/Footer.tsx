@@ -18,9 +18,7 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer
-      className="relative bottom-0 left-0 right-0 bg-[#042F2E] text-white flex flex-col items-center p-0 gap-2.5 w-screen"
-    >
+    <footer className="relative bottom-0 left-0 right-0 bg-[#042F2E] text-white flex flex-col items-center p-0 gap-2.5 w-screen">
       <div className="flex flex-col md:flex-row md:justify-between items-center p-6 gap-6 w-full max-w-[1238px] bg-[#042F2E] h-full">
         <div className="flex flex-col items-center md:items-start p-0 gap-6 w-full">
           <Link href="/" passHref>
@@ -62,33 +60,35 @@ const Footer: React.FC = () => {
               boxSize="24px"
               color="white"
               weight="fill"
-              onClick={() => handleIconClick("https://t.me/")}
+              onClick={() =>
+                handleIconClick("https://t.me/KolektivaProperties")
+              }
               className="cursor-pointer"
             />
-            <Icon
+            {/* <Icon
               as={DiscordLogo}
               boxSize="24px"
               color="white"
               weight="fill"
               onClick={() => handleIconClick("https://discord.gg/")}
               className="cursor-pointer"
-            />
+            /> */}
             <Icon
               as={XLogo}
               boxSize="24px"
               color="white"
               weight="fill"
-              onClick={() => handleIconClick("https://x.com/")}
+              onClick={() => handleIconClick("https://x.com/kolektiva_prop")}
               className="cursor-pointer"
             />
-            <Icon
+            {/* <Icon
               as={LinkedinLogo}
               boxSize="24px"
               color="white"
               weight="fill"
               onClick={() => handleIconClick("https://linkedin.com/in/")}
               className="cursor-pointer"
-            />
+            /> */}
           </div>
         </div>
         <div className="flex justify-center md:justify-end items-end self-end d w-full">

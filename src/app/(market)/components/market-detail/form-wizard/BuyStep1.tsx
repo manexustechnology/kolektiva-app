@@ -136,6 +136,8 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
   useEffect(() => {
     if (balanceUsdtData) {
       setBalanceUsdt(Number(balanceUsdtData));
+    } else {
+      setBalanceUsdt(0);
     }
   }, [balanceUsdtData]);
 
@@ -209,7 +211,10 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
   const setTokenPrice = (price: number) => {
     if (formData.pricePerToken !== price) {
       // Check if there's an actual change
-      const updatedData = { ...formData, pricePerToken: price };
+      const updatedData = {
+        ...formData,
+        pricePerToken: parseUSDTBalance(price),
+      };
       onDataChange(updatedData);
     }
   };
@@ -274,7 +279,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
                 type="number"
                 placeholder="Enter amount"
                 className="!bg-zinc-100 !rounded-full"
-                onChange={(e) => setTokenPrice(parseInt(e.target.value) || 0)}
+                onChange={(e) => setTokenPrice(parseFloat(e.target.value) || 0)}
               />
               <InputRightElement right={6}>
                 <span className="text-sm text-zinc-500">USDT</span>

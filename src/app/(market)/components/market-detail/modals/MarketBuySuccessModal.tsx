@@ -19,7 +19,7 @@ import {
   Copy,
   ArrowSquareOut,
 } from "@phosphor-icons/react/dist/ssr";
-import { getTransactionStatus } from "@/app/api/tx-hash";
+import { getTransactionInfo } from "@/app/api/tx-info";
 
 interface MarketBuySuccessModalProps {
   tnx: string;
@@ -34,8 +34,8 @@ const MarketBuySuccessModal: React.FC<MarketBuySuccessModalProps> = ({
 }) => {
   const handleIconClick = async (url: string) => {
     try {
-      const txStatus = await getTransactionStatus(tnx!);
-      window.open(txStatus.txUrl, "_blank");
+      const TxInfoData = await getTransactionInfo(tnx!);
+      window.open(TxInfoData.txUrl, "_blank");
     } catch (error) {
       console.error("Failed to get transaction status:", error);
     }
