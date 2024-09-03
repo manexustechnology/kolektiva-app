@@ -2,7 +2,7 @@
 
 import { BuyOrderData } from "@/types/order";
 import { useReadContractHook, useWriteContractHook } from "@/utils/hooks";
-import { getTransactionStatus } from "@/app/api/tx-hash";
+import { getTransactionInfo } from "@/app/api/tx-info";
 import { Divider } from "antd";
 import { useMemo } from "react";
 import { useActiveAccount } from "thirdweb/react";
@@ -46,7 +46,7 @@ const BuyStep2: React.FC<BuyStep2Props> = ({
   const buttonText = useMemo(() => {
     if (isLoadingAllowance) return "Loading...";
     if (allowance >= formData.totalCost) return "Submit Order";
-    return `Approve ${formData.totalCost} USDT`;
+    return `Approve ${formatUSDTBalance(formData.totalCost)} USDT`;
   }, [isLoadingAllowance, allowance, formData.totalCost]);
 
   const handleButtonClick = async () => {
@@ -81,7 +81,7 @@ const BuyStep2: React.FC<BuyStep2Props> = ({
             <span className="text-base font-bold text-teal-950">
               {formData?.qtyToken}
             </span>{" "}
-            Token{"(s)"}
+            Token
           </p>
         </div>
         <Divider className="border-zinc-200 !m-0" />

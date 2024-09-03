@@ -14,9 +14,11 @@ import { Divider } from "antd";
 import SellFormWizard from "../form-wizard/SellFormWizard";
 import { SellOrderData } from "@/types/order";
 import { PropertyData } from "@/types/property";
+import { TxInfoData } from "@/types/tx-info";
 
 interface PlaceSellOrderModalProps {
   propertyData: PropertyData;
+  onTxUpdate: (tx: TxInfoData) => void;
   isOpen: boolean;
   onClose: () => void;
   onSuccess: (formData: SellOrderData) => void;
@@ -24,6 +26,7 @@ interface PlaceSellOrderModalProps {
 
 const PlaceSellOrderModal: React.FC<PlaceSellOrderModalProps> = ({
   propertyData,
+  onTxUpdate,
   isOpen,
   onClose,
   onSuccess,
@@ -107,7 +110,12 @@ const PlaceSellOrderModal: React.FC<PlaceSellOrderModalProps> = ({
               </div>
             </div>
           </ModalHeader>
-          <SellFormWizard propertyData={propertyData} currentStep={step} onSubmitButtonClick={handleNext} />
+          <SellFormWizard
+            propertyData={propertyData}
+            onTxUpdate={onTxUpdate}
+            currentStep={step}
+            onSubmitButtonClick={handleNext}
+          />
         </ModalContent>
       </Modal>
     </>

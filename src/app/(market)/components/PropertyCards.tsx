@@ -15,6 +15,7 @@ import {
 
 interface PropertyCardData {
   marketAddress: string;
+  tokenAddress: string;
   name: string;
   slug: string;
   location: string;
@@ -70,6 +71,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
             "https://messagetech.com/wp-content/themes/ml_mti/images/no-image.jpg",
           price: property.price || "-",
           marketAddress: property.marketAddress,
+          tokenAddress: property.tokenAddress,
           isNew: true,
           isFeatured: property.isFeatured,
           // isTraded: property.isTraded,
@@ -175,6 +177,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
             {currentCards.map((card, index) => (
               <PropertyCard
                 marketAddress={card.marketAddress}
+                tokenAddress={card.tokenAddress}
                 key={index}
                 name={card.name}
                 location={card.location}

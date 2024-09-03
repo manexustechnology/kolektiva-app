@@ -8,12 +8,17 @@ import { Button, Checkbox, ModalBody, ModalFooter } from "@chakra-ui/react";
 import { Divider } from "antd";
 import { SellOrderData } from "@/types/order";
 import { useReadContractHook, useWriteContractHook } from "@/utils/hooks";
-import { useActiveAccount } from "thirdweb/react";
-import { getTransactionStatus } from "@/app/api/tx-hash";
+import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
+import { getTransactionInfo } from "@/app/api/tx-info";
 import { PropertyData } from "@/types/property";
+import { formatUSDTBalance, parseUSDTBalance } from "@/utils/formatter";
+import { Spinner } from "@chakra-ui/react";
+import { TxInfoData } from "@/types/tx-info";
+import TxFailureToast from "../modals/TxFailureToast";
 
 interface SellFormWizardProps {
   propertyData: PropertyData;
+  onTxUpdate: (tx: TxInfoData) => void;
   currentStep: number;
   onSubmitButtonClick: (formData: SellOrderData) => void;
 }
@@ -40,6 +45,7 @@ const variants = {
 
 const SellFormWizard: React.FC<SellFormWizardProps> = ({
   propertyData,
+  onTxUpdate,
   currentStep,
   onSubmitButtonClick,
 }) => {
@@ -51,10 +57,20 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
     totalProceeds: 0,
     fee: 0,
   });
+  const [txInfo, setTxInfo] = useState<TxInfoData>({
+    txHash: "",
+    status: "",
+    txUrl: "",
+    isSuccess: false,
+  });
+  const [buttonText, setButtonText] = useState("Loading...");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const activeAccount = useActiveAccount();
+  const chain = useActiveWalletChain()!;
+  const address = activeAccount?.address;
   const prevStep = useRef(currentStep);
   const direction = currentStep > prevStep.current ? 1 : -1;
-  const activeAccount = useActiveAccount();
-  const address = activeAccount?.address;
 
   const { writeAsync: marketSell } = useWriteContractHook({
     contractName: "KolektivaMarket",
@@ -74,55 +90,103 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
     prevStep.current = currentStep;
   }, [currentStep]);
 
-  const buttonLabel = () => {
-    switch (currentStep) {
-      case 1:
-        return "Preview order";
-      case 2:
-        return "Submit order";
-    }
-  };
-  const { data: allowanceUsdtData, isLoading: isLoadingAllowanceUsdt } =
-    useReadContractHook({
-      contractName: "MockUSDT",
-      functionName: "allowance",
-      // args: [address, "_spender market address"],
-      args: [address, propertyData.marketAddress],
-    });
+  const {
+    data: allowanceUsdtData,
+    isLoading: isLoadingAllowanceUsdt,
+    refetch: refetchAllowanceUsdt,
+  } = useReadContractHook({
+    contractName: "MockUSDT",
+    functionName: "allowance",
+    args: [address, propertyData.marketAddress],
+  });
 
   const { writeAsync: approveUsdt } = useWriteContractHook({
     contractName: "MockUSDT",
     functionName: "approve",
-    // args: ["_spender market address", formData.totalCost],
-    args: [propertyData.marketAddress, , formData.fee],
+    args: [propertyData.marketAddress, formData.fee],
   });
 
-  const { data: allowanceTokenData, isLoading: isLoadingAllowanceToken } =
-    useReadContractHook({
-      contractName: "KolektivaToken",
-      functionName: "allowance",
-      contractAddress: propertyData.tokenAddress,
-      // args: [address, "_spender market address"],
-      args: [address, propertyData.marketAddress],
-    });
+  const {
+    data: allowanceTokenData,
+    isLoading: isLoadingAllowanceToken,
+    refetch: refetchAllowanceToken,
+  } = useReadContractHook({
+    contractName: "KolektivaToken",
+    functionName: "allowance",
+    contractAddress: propertyData.tokenAddress,
+    args: [address, propertyData.marketAddress],
+  });
 
   const { writeAsync: approveToken } = useWriteContractHook({
     contractName: "KolektivaToken",
     functionName: "approve",
     contractAddress: propertyData.tokenAddress,
-    // args: ["_spender market address", formData.totalCost],
-    args: [propertyData.marketAddress, , formData.qtyToken],
+    args: [propertyData.marketAddress, formData.qtyToken],
   });
 
   const allowanceUsdt = useMemo(
     () => (allowanceUsdtData ? Number(allowanceUsdtData) : 0),
-    [allowanceUsdtData]
+    [allowanceUsdtData, isLoading]
   );
 
   const allowanceToken = useMemo(
     () => (allowanceTokenData ? Number(allowanceTokenData) : 0),
-    [allowanceTokenData]
+    [allowanceTokenData, isLoading]
   );
+
+  useEffect(() => {
+    const updateButtonText = () => {
+      switch (currentStep) {
+        case 1:
+          setButtonText("Preview order");
+          break;
+        case 2:
+          if (isLoadingAllowanceToken || isLoadingAllowanceUsdt) {
+            setButtonText("Loading...");
+            setIsLoading(true);
+          } else if (allowanceToken < formData.qtyToken) {
+            setButtonText(`Approve ${formData.qtyToken} KolektivaToken`);
+            setIsLoading(false);
+          } else if (allowanceUsdt < formData.fee) {
+            setButtonText(`Approve ${formatUSDTBalance(formData.fee)} USDT`);
+            setIsLoading(false);
+          } else {
+            setButtonText("Submit Order");
+            setIsLoading(false);
+          }
+          break;
+        default:
+          setButtonText("Unknown step");
+      }
+    };
+    updateButtonText();
+  }, [
+    currentStep,
+    allowanceToken,
+    allowanceUsdt,
+    isLoadingAllowanceToken,
+    isLoadingAllowanceUsdt,
+    formData.qtyToken,
+    formData.fee,
+  ]);
+
+  const handleTransaction = async (
+    txHashPromise: Promise<any>,
+    successCallback: () => void
+  ) => {
+    try {
+      const txHash = await txHashPromise;
+      if (txHash) {
+        const txInfo = await getTransactionInfo(chain, txHash);
+        console.log("tx sell", txInfo);
+        setTxInfo(txInfo);
+        onTxUpdate(txInfo);
+        successCallback();
+      }
+    } catch (error) {
+      console.error("Transaction failed", error);
+    }
+  };
 
   const handleButtonSubmitClick = async () => {
     console.log("formData", formData);
@@ -130,44 +194,34 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
     try {
       switch (currentStep) {
         case 1:
-          // Handle preview logic if necessary
+          onSubmitButtonClick(formData);
           break;
         case 2:
-          try {
-            if (allowanceToken < formData.qtyToken) {
-              // If KolektivaToken allowance is insufficient, approve it first
-              await approveToken();
-              console.log("Approve KolektivaToken");
-            } else if (allowanceUsdt < formData.fee) {
-              // If USDT allowance is insufficient, approve it next
-              await approveUsdt();
-              console.log("Approve USDT");
+          setIsLoading(true);
+          if (allowanceToken < formData.qtyToken) {
+            await handleTransaction(approveToken(), async () => {
+              await refetchAllowanceToken();
+            });
+          } else if (allowanceUsdt < formData.fee) {
+            await handleTransaction(approveUsdt(), async () => {
+              await refetchAllowanceUsdt();
+            });
+          } else {
+            const formDataType = (formData as SellOrderData).type;
+            if (formDataType === "market") {
+              await handleTransaction(marketSell(), () =>
+                onSubmitButtonClick(formData)
+              );
             } else {
-              // Both allowances are sufficient, proceed with order submission
-              console.log("Submit Order");
-              // Add your order submission logic here
-              // Handle submit order logic
-              let formDataType = (formData as SellOrderData).type;
-              if (formDataType === "market") {
-                const tx = await marketSell();
-                console.log("tx", tx);
-              } else {
-                // if (formDataType === "limit") {
-                const txHash = await limitSell();
-                const txStatus = await getTransactionStatus(txHash!);
-                console.log("tx", txHash);
-              }
+              await handleTransaction(limitSell(), () =>
+                onSubmitButtonClick(formData)
+              );
             }
-          } catch (error) {
-            console.error("Action failed", error);
           }
-
           break;
         default:
           console.warn("Unknown step");
       }
-      // Call the submit button click handler if needed
-      onSubmitButtonClick(formData);
     } catch (error) {
       console.error("Transaction failed", error);
     }
@@ -175,6 +229,7 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
 
   return (
     <>
+      <TxFailureToast txInfo={txInfo} />
       <ModalBody>
         <div className="wizard-container relative">
           <AnimatePresence initial={false} custom={direction}>
@@ -212,30 +267,21 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
                 : "Total sell price"}
             </p>
             <p className="text-xl font-bold text-teal-600">
-              {formData.totalProceeds} USDT
+              {formatUSDTBalance(formData.totalProceeds)} USDT
             </p>
           </div>
-          {formData.pricePerToken === 0 ? (<Button
-            colorScheme="teal"
-            bgColor="teal.600"
-            w="full"
-            rounded="full"
-            fontWeight="medium"
-            fontSize="sm"
-            isDisabled={true}
-          >
-            Empty Buy Order book
-          </Button>) : (<Button
+          <Button
             colorScheme="teal"
             bgColor="teal.600"
             w="full"
             rounded="full"
             fontWeight="medium"
             onClick={handleButtonSubmitClick}
+            disabled={isLoading}
             fontSize="sm"
           >
-            {buttonLabel()}
-          </Button>)}
+            <>{isLoading ? <Spinner /> : <>{buttonText}</>}</>
+          </Button>
         </div>
       </ModalFooter>
     </>

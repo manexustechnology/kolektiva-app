@@ -5,18 +5,27 @@ import BuyStep1 from "./BuyStep1";
 import BuyStep2 from "./BuyStep2";
 import BuyStep3 from "./BuyStep3";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Button, Checkbox, ModalBody, ModalFooter } from "@chakra-ui/react";
+import {
+  Button,
+  Checkbox,
+  ModalBody,
+  ModalFooter,
+  Spinner,
+} from "@chakra-ui/react";
 import { Divider } from "antd";
 import { AfterMarketBuyOrderData, BuyOrderData } from "@/types/order";
 import { Warning, WarningCircle } from "@phosphor-icons/react/dist/ssr";
 import { useReadContractHook, useWriteContractHook } from "@/utils/hooks";
-import { useActiveAccount } from "thirdweb/react";
+import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
 import { PropertyData } from "@/types/property";
-import { formatUSDTBalance } from "@/utils/formatter";
+import { formatUSDTBalance, parseUSDTBalance } from "@/utils/formatter";
+import { getTransactionInfo } from "@/app/api/tx-info";
+import { TxInfoData } from "@/types/tx-info";
+import TxFailureToast from "../modals/TxFailureToast";
 
 interface BuyFormWizardProps {
   propertyData: PropertyData;
-  onTxUpdate: (tx: any) => void;
+  onTxUpdate: (tx: TxInfoData) => void;
   currentStep: number;
   isAfterMarketTrading: boolean;
   onSubmitButtonClick: (formData: BuyOrderData) => void;
@@ -58,6 +67,19 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
     totalCost: 1000,
     fee: 0,
   });
+  const [txInfo, setTxInfo] = useState<TxInfoData>({
+    txHash: "",
+    status: "",
+    txUrl: "",
+    isSuccess: false,
+  });
+  const [buttonText, setButtonText] = useState("Loading...");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const activeAccount = useActiveAccount();
+  const chain = useActiveWalletChain()!;
+
+  const address = activeAccount?.address;
   const prevStep = useRef(currentStep);
   const direction = currentStep > prevStep.current ? 1 : -1;
 
@@ -82,88 +104,115 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
     args: [formData.qtyToken, formData.pricePerToken],
   });
 
-  useEffect(() => {
-    prevStep.current = currentStep;
-  }, [currentStep]);
-
-  const buttonLabel = () => {
-    console.log("price per token ", formData.pricePerToken);
-    console.log("validate ", formData.pricePerToken === 0);
-    switch (currentStep) {
-      case 1:
-        return "Preview order";
-      case 2:
-        return "Submit order";
-      case 3:
-        return "Agree";
-    }
-  };
-  const activeAccount = useActiveAccount();
-  const address = activeAccount?.address;
-
-  const { data: allowanceData, isLoading: isLoadingAllowance } =
-    useReadContractHook({
-      contractName: "MockUSDT",
-      functionName: "allowance",
-      // args: [address, "_spender market address"],
-      args: [address, propertyData.marketAddress],
-    });
+  const {
+    data: allowanceData,
+    isLoading: isLoadingAllowance,
+    refetch: refetchAllowance,
+  } = useReadContractHook({
+    contractName: "MockUSDT",
+    functionName: "allowance",
+    args: [address, propertyData.marketAddress],
+  });
 
   const { writeAsync: approveUsdt } = useWriteContractHook({
     contractName: "MockUSDT",
     functionName: "approve",
-    // args: ["_spender market address", formData.totalCost],
     args: [propertyData.marketAddress, formData.totalCost],
   });
 
-  const allowance = useMemo(
-    () => (allowanceData ? Number(allowanceData) : 0),
-    [allowanceData]
-  );
+  const allowance = useMemo(() => {
+    console.log(allowanceData, "check allowance");
+    return allowanceData ? Number(allowanceData) : 0;
+  }, [allowanceData]);
+
+  useEffect(() => {
+    const updateButtonText = () => {
+      switch (currentStep) {
+        case 1:
+          setButtonText("Preview order");
+          break;
+        case 2:
+          if (isLoadingAllowance) {
+            setButtonText("Loading...");
+            setIsLoading(true);
+          } else if (allowance < formData.totalCost) {
+            setButtonText(
+              `Approve ${formatUSDTBalance(formData.totalCost)} USDT`
+            );
+            setIsLoading(false);
+          } else {
+            setButtonText("Submit Order");
+            setIsLoading(false);
+          }
+          break;
+        case 3:
+          setButtonText("Agree");
+          setIsLoading(false);
+          break;
+        default:
+          setButtonText("Unknown step");
+      }
+    };
+    updateButtonText();
+  }, [currentStep, isLoadingAllowance, allowance, formData.totalCost]);
+
+  const handleTransaction = async (
+    txHashPromise: Promise<any>,
+    successCallback: () => void
+  ) => {
+    try {
+      const txHash = await txHashPromise;
+      if (txHash) {
+        const txInfo = await getTransactionInfo(chain, txHash);
+        console.log("tx buy", txInfo);
+        setTxInfo(txInfo);
+        onTxUpdate(txInfo);
+        successCallback();
+      }
+    } catch (error) {
+      console.error("Transaction failed", error);
+    }
+  };
 
   const handleButtonSubmitClick = async () => {
-    console.log(formData.qtyToken);
-    console.log(formData.pricePerToken);
+    console.log("formData", formData);
 
     try {
       switch (currentStep) {
         case 1:
-          // Handle preview logic if necessary
+          onSubmitButtonClick(formData);
           break;
         case 2:
           if (allowance < formData.totalCost) {
-            try {
-              await approveUsdt(); // Call approve function here
-              console.log("Approve USDT");
-            } catch (error) {
-              console.error("Approval failed", error);
-            }
-          } else {
-            let formDataType = (formData as AfterMarketBuyOrderData).type;
-            if (isAfterMarketTrading) {
-              if (formDataType === "market") {
-                const tx = await marketBuy();
-                if (tx) {
-                  onTxUpdate(tx);
-                }
-                console.log("market buy", tx);
-              } else if (formDataType === "limit") {
-                const tx = await limitBuy();
-                console.log("limit buy", tx);
-              }
-            } else {
-              console.warn(
-                "Initial offering buy should not be processed in this step."
+            setIsLoading(true);
+            await handleTransaction(approveUsdt(), async () => {
+              await refetchAllowance();
+            });
+          }
+          if (!isAfterMarketTrading) {
+            onSubmitButtonClick(formData);
+          } else if (isAfterMarketTrading) {
+            const formDataType = (formData as AfterMarketBuyOrderData).type;
+            if (formDataType === "market") {
+              await handleTransaction(marketBuy(), () =>
+                onSubmitButtonClick(formData)
+              );
+            } else if (formDataType === "limit") {
+              await handleTransaction(limitBuy(), () =>
+                onSubmitButtonClick(formData)
               );
             }
-            console.log("Submit Order");
+          } else {
+            console.warn(
+              "Initial offering buy should not be processed in this step."
+            );
           }
           break;
-
         case 3:
-          // Handle agree logic
           if (!isAfterMarketTrading) {
-            await initialOfferingBuy();
+            await handleTransaction(initialOfferingBuy(), () =>
+              onSubmitButtonClick(formData)
+            );
           } else {
             console.warn(
               "Market trading operations should not be processed in this step."
@@ -173,8 +222,6 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
         default:
           console.warn("Unknown step");
       }
-      // Call the submit button click handler if needed
-      onSubmitButtonClick(formData);
     } catch (error) {
       console.error("Transaction failed", error);
     }
@@ -182,6 +229,7 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
 
   return (
     <>
+      <TxFailureToast txInfo={txInfo} />
       <ModalBody>
         <div className="wizard-container relative">
           <AnimatePresence initial={false} custom={direction}>
@@ -259,27 +307,33 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
               </div>
             </>
           )}
-          {formData.pricePerToken === 0 ? (<Button
-            colorScheme="teal"
-            bgColor="teal.600"
-            w="full"
-            rounded="full"
-            fontWeight="medium"
-            fontSize="sm"
-            isDisabled={true}
-          >
-            Empty Sale Order book
-          </Button>) : (<Button
-            colorScheme="teal"
-            bgColor="teal.600"
-            w="full"
-            rounded="full"
-            fontWeight="medium"
-            onClick={handleButtonSubmitClick}
-            fontSize="sm"
-          >
-            {buttonLabel()}
-          </Button>)}
+          {formData.pricePerToken === 0 ? (
+            <Button
+              colorScheme="teal"
+              bgColor="teal.600"
+              w="full"
+              rounded="full"
+              fontWeight="medium"
+              fontSize="sm"
+              isDisabled={true}
+            >
+              Empty Sale Order book
+            </Button>
+          ) : (
+            <Button
+              colorScheme="teal"
+              bgColor="teal.600"
+              w="full"
+              rounded="full"
+              fontWeight="medium"
+              onClick={handleButtonSubmitClick}
+              fontSize="sm"
+              isLoading={isLoading}
+              disabled={isLoading}
+            >
+              <>{isLoading ? <Spinner /> : <>{buttonText}</>}</>
+            </Button>
+          )}
         </div>
       </ModalFooter>
     </>

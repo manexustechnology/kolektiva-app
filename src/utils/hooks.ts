@@ -7,10 +7,15 @@ import {
   ThirdwebContract,
   sendTransaction,
   prepareEvent,
+  Chain,
 } from "thirdweb";
-import { LiskSepoliaTestnet as chain } from "@/commons/networks";
+// import { LiskSepoliaTestnet as chain } from "@/commons/networks";
 import { thirdwebClient as client } from "@/commons/thirdweb";
-import { useReadContract, useActiveWallet } from "thirdweb/react";
+import {
+  useReadContract,
+  useActiveWallet,
+  useActiveWalletChain,
+} from "thirdweb/react";
 import { useEffect, useState } from "react";
 
 interface UseContractParams {
@@ -28,6 +33,7 @@ interface UseContractEventsParams {
 }
 
 function getContractInstance(
+  chain: Chain,
   contractName: string,
   contractAddress?: string
 ): ThirdwebContract<any[]> {
@@ -48,7 +54,11 @@ function getContractInstance(
   });
 }
 
-function getPreparedEventInstance(contractName: string, eventName: string) {
+function getPreparedEventInstance(
+  chain: Chain,
+  contractName: string,
+  eventName: string
+) {
   const eventSignature =
     deployedSignatures[chain.id]?.[contractName][eventName];
 
@@ -67,14 +77,15 @@ export function useReadContractHook({
   args = [],
   contractAddress,
 }: UseContractParams) {
-  const contract = getContractInstance(contractName, contractAddress);
-  const { data, isLoading, error } = useReadContract({
+  const chain = useActiveWalletChain()!;
+  const contract = getContractInstance(chain, contractName, contractAddress);
+  const { data, isLoading, error, refetch } = useReadContract({
     contract,
     method: functionName,
     params: args,
   });
 
-  return { data, isLoading, error };
+  return { data, isLoading, error, refetch };
 }
 
 export function useWriteContractHook({
@@ -86,8 +97,9 @@ export function useWriteContractHook({
   // Retrieve contract instance
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const chain = useActiveWalletChain()!;
 
-  const contract = getContractInstance(contractName, contractAddress);
+  const contract = getContractInstance(chain, contractName, contractAddress);
   const wallet = useActiveWallet()!;
 
   const writeAsync = async () => {
@@ -100,6 +112,7 @@ export function useWriteContractHook({
         method: functionName,
         params: args,
         gas: BigInt(500_000),
+        // gas: BigInt(100_000),
       });
 
       const account = await wallet.connect({ client });
@@ -124,6 +137,7 @@ export function useContractEventHook({
   fromBlock,
   contractAddress,
 }: UseContractEventsParams) {
+  const chain = useActiveWalletChain()!;
   const [data, setData] = useState<any[]>([]); // Adjust type based on your event data
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
@@ -134,8 +148,12 @@ export function useContractEventHook({
       if (hasFetched) return; // Stop fetching if already fetched
 
       try {
-        const contract = getContractInstance(contractName, contractAddress);
-        const event = getPreparedEventInstance(contractName, eventName);
+        const contract = getContractInstance(
+          chain,
+          contractName,
+          contractAddress
+        );
+        const event = getPreparedEventInstance(chain, contractName, eventName);
 
         const eventsData = await getContractEvents({
           contract,
@@ -161,5 +179,6 @@ export function useContractEventHook({
 }
 
 export function useDeployedContractInfo(contractName: string) {
-  return deployedSignatures[chain.id]?.[contractName];
+  const chain = useActiveWalletChain()!;
+  return deployedContracts[chain.id]?.[contractName];
 }

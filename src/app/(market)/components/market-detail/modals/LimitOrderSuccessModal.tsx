@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -14,23 +14,49 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import {
-  FacebookLogo,
-  XLogo,
-  WhatsappLogo,
   WarningCircle,
+  CheckCircle,
+  Copy,
 } from "@phosphor-icons/react/dist/ssr";
+import { TxInfoData } from "@/types/tx-info";
+import { MarketDetailOrderData } from "@/types/order";
+import { formatUSDTBalance } from "@/utils/formatter";
 
-interface LimitBuySuccessModalProps {
+interface LimitOrderSuccessModalProps {
+  formData: MarketDetailOrderData;
+  txInfo: TxInfoData;
   isOpen: boolean;
   onClose: () => void;
+  orderType: "buy" | "sell";
 }
 
-const LimitBuySuccessModal: React.FC<LimitBuySuccessModalProps> = ({
+const LimitOrderSuccessModal: React.FC<LimitOrderSuccessModalProps> = ({
+  formData,
+  txInfo,
   isOpen,
   onClose,
+  orderType,
 }) => {
-  const handleIconClick = (url: string) => {
-    window.open(url, "_blank");
+  const [copied, setCopied] = useState(false);
+
+  const handleRedirectUrl = async () => {
+    try {
+      window.open(txInfo.txUrl, "_blank");
+    } catch (error) {
+      console.error("Failed to get transaction status:", error);
+    }
+  };
+
+  const handleCopy = (text: string) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch((err) => {
+        alert("Failed to copy text: ");
+      });
   };
 
   return (
@@ -38,7 +64,7 @@ const LimitBuySuccessModal: React.FC<LimitBuySuccessModalProps> = ({
       <ModalOverlay bg="rgba(4, 47, 46, 0.5)" />
       <ModalContent
         width="394px"
-        height="596px"
+        height="664px"
         bg="white"
         boxShadow="0px 1px 2px rgba(16, 24, 40, 0.06), 0px 1px 3px rgba(16, 24, 40, 0.1)"
         borderRadius="16px"
@@ -99,14 +125,45 @@ const LimitBuySuccessModal: React.FC<LimitBuySuccessModalProps> = ({
                   width="346px"
                 >
                   <p className="w-[346px] font-bold text-2xl leading-7 text-center text-teal-600">
-                    Limit buy order placed
+                    Limit {orderType} order placed
                   </p>
 
                   <p className="w-[300px] font-normal text-base leading-4 text-center text-neutral-700">
                     Your order will be executed when the market reaches your
                     limit price.
                   </p>
+
+                  {/* <p className="w-[300px] font-normal text-base leading-4 text-center text-neutral-700">
+                    View your transaction on the blockchain with the code below
+                  </p> */}
                 </Flex>
+                <div className="flex flex-row items-center mt-4 gap-2 w-[350px] h-[48px] bg-[#F0FDFA] rounded-full z-[2] p-[8px_20px_8px_8px]">
+                  <p
+                    className="ml-4 text-teal-600 text-base font-medium overflow-hidden truncate"
+                    onClick={() => handleRedirectUrl()}
+                  >
+                    {txInfo.txHash}
+                  </p>
+
+                  <Button
+                    onClick={() => handleCopy(txInfo.txHash)}
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    width="40px"
+                    height="40px"
+                    bg="white"
+                    borderRadius="full"
+                    _focus={{ boxShadow: "none" }} // Removes default focus box shadow if needed
+                  >
+                    <Icon
+                      as={copied ? CheckCircle : Copy}
+                      boxSize="16px"
+                      weight="fill"
+                      color={copied ? "#4CAF50" : "#0D9488"}
+                    />
+                  </Button>
+                </div>
 
                 <Box
                   marginTop={4}
@@ -132,7 +189,8 @@ const LimitBuySuccessModal: React.FC<LimitBuySuccessModalProps> = ({
                       Limit price per token
                     </p>
                     <p className=" text-teal-950 font-bold text-base leading-[18px]">
-                      4,50 USDT
+                      {" "}
+                      {formatUSDTBalance(formData.pricePerToken)} USDT
                     </p>
                   </Box>
                   {/* Dividing Line */}
@@ -155,9 +213,9 @@ const LimitBuySuccessModal: React.FC<LimitBuySuccessModalProps> = ({
                       Property token quantity
                     </p>
                     <p className=" text-teal-950 font-bold text-base leading-[18px]">
-                      5{" "}
+                      {" "}
                       <span className="text-neutral-500 font-normal text-base leading-[18px]">
-                        Token(s)
+                        {formData.qtyToken} Token
                       </span>
                     </p>
                   </Box>
@@ -187,7 +245,7 @@ const LimitBuySuccessModal: React.FC<LimitBuySuccessModalProps> = ({
                     </p>
 
                     <p className="text-teal-600 font-bold text-base leading-[18px]">
-                      22,61 USDT
+                      {formatUSDTBalance(formData.total)} USDT
                     </p>
                   </Box>
                 </Box>
@@ -223,4 +281,4 @@ const LimitBuySuccessModal: React.FC<LimitBuySuccessModalProps> = ({
   );
 };
 
-export default LimitBuySuccessModal;
+export default LimitOrderSuccessModal;

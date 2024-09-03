@@ -65,7 +65,6 @@ const Footer: React.FC = () => {
               }
               className="cursor-pointer"
             />
-
             <Icon
               as={XLogo}
               boxSize="24px"
@@ -73,7 +72,7 @@ const Footer: React.FC = () => {
               weight="fill"
               onClick={() => handleIconClick("https://x.com/kolektiva_prop")}
               className="cursor-pointer"
-            />
+            /> */}
           </div>
         </div>
         <div className="flex justify-center md:justify-end items-end self-end d w-full">
