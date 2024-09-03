@@ -65,12 +65,28 @@ const Footer: React.FC = () => {
               }
               className="cursor-pointer"
             />
+            {/* <Icon
+              as={DiscordLogo}
+              boxSize="24px"
+              color="white"
+              weight="fill"
+              onClick={() => handleIconClick("https://discord.gg/")}
+              className="cursor-pointer"
+            /> */}
             <Icon
               as={XLogo}
               boxSize="24px"
               color="white"
               weight="fill"
               onClick={() => handleIconClick("https://x.com/kolektiva_prop")}
+              className="cursor-pointer"
+            />
+            {/* <Icon
+              as={LinkedinLogo}
+              boxSize="24px"
+              color="white"
+              weight="fill"
+              onClick={() => handleIconClick("https://linkedin.com/in/")}
               className="cursor-pointer"
             /> */}
           </div>
