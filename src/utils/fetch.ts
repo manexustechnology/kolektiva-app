@@ -1,21 +1,22 @@
 import { createPublicClient, http } from "viem";
 import { deployedContracts } from "../../foundry/deployed-contracts/deployedContracts"; // ABI and address file
-import { liskSepolia } from "viem/chains";
-
-export const publicClient = createPublicClient({
-  chain: liskSepolia,
-  transport: http(),
-});
+import { Chain } from "thirdweb";
+import { viemChains } from "@/commons/networks";
 
 interface UseContractParams {
+  chain: Chain;
   contractAddress?: string;
   contractName: string;
   functionName: string;
   args?: any[];
 }
 
-function getContractInstance(contractName: string, contractAddress?: string) {
-  const contractDetails = deployedContracts[liskSepolia.id]?.[contractName];
+function getContractInstance(
+  chain: Chain,
+  contractName: string,
+  contractAddress?: string
+) {
+  const contractDetails = deployedContracts[chain.id]?.[contractName];
   if (!contractDetails) {
     throw new Error(`Contract details for ${contractName} not found.`);
   }
@@ -27,16 +28,22 @@ function getContractInstance(contractName: string, contractAddress?: string) {
 }
 
 export const readContractFetch = async ({
+  chain,
   contractName,
   functionName,
   contractAddress,
   args = [],
 }: UseContractParams) => {
   try {
-    console.log(args);
-
-    const { address, abi } = getContractInstance(contractName, contractAddress);
-    // Create a contract instance
+    const { address, abi } = getContractInstance(
+      chain,
+      contractName,
+      contractAddress
+    );
+    const publicClient = createPublicClient({
+      chain: viemChains[chain.id.toString()],
+      transport: http(),
+    });
     const data = await publicClient.readContract({
       address,
       abi,

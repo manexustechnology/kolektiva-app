@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { readContractFetch } from "@/utils/fetch";
 import { PropertyData } from "@/types/property";
 import { formatUSDTBalance } from "@/utils/formatter";
+import { useActiveWalletChain } from "thirdweb/react";
 
 interface MarketDetailOrderbookPanelProps {
   propertyData: PropertyData;
@@ -27,6 +28,8 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
   propertyData,
   allowTrade = false,
 }) => {
+  const chain = useActiveWalletChain()!;
+
   const [buyOrders, setBuyOrders] = useState<Order[]>([]);
   const [loadingBuy, setLoadingBuy] = useState<boolean>(true);
   const [buyOrdersCount, setBuyOrdersCount] = useState<number | null>(null);
@@ -87,6 +90,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
 
       for (let i = 0; i < buyOrdersCount; i++) {
         const orderData = await readContractFetch({
+          chain,
           contractName: "KolektivaMarket",
           functionName: "getBuyOrderByIndex",
           contractAddress: propertyData.marketAddress,
@@ -125,6 +129,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
 
       for (let i = 0; i < sellOrdersCount; i++) {
         const orderData = await readContractFetch({
+          chain,
           contractName: "KolektivaMarket",
           functionName: "getSellOrderByIndex",
           contractAddress: propertyData.marketAddress,
