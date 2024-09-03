@@ -86,8 +86,8 @@ const PropertyListings: React.FC = () => {
       {isCorrectNetwork === true ? (
         <PropertyCards filters={filters} />
       ) : (
-        <div className="flex justify-center items-center h-[50vh]">
-          <p className="mx-auto font-bold text-2xl leading-7 text-center text-teal-600">
+        <div className="flex justify-center items-center h-[60vh]">
+          <p className="font-bold text-2xl leading-7 text-center text-teal-600">
             No data found!
           </p>
         </div>

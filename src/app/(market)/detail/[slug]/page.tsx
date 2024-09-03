@@ -42,9 +42,9 @@ const MarketDetailPage: React.FC<MarketDetailProps> = ({ searchParams }) => {
 
   if (loading)
     return (
-      <div className="flex justify-center items-center h-[50vh]">
+      <div className="flex justify-center items-center h-[60vh]">
         <Stack direction="row" spacing={5}>
-          <Spinner size="xl" color="teal.500" thickness="4px" speed="0.65s" />
+          <Spinner size="xl" color="teal.500" thickness="4px" speed="0.7s" />
         </Stack>
       </div>
     );
