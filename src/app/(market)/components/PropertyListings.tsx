@@ -6,6 +6,8 @@ import FilterBar from "./FilterBar";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { IMarketFilter } from "@/types/filter";
+import { useActiveWalletChain } from "thirdweb/react";
+import { validChainIds } from "@/commons/networks";
 
 interface FilterBarProps {
   locations: string[];
@@ -17,6 +19,9 @@ interface FilterBarProps {
 }
 
 const PropertyListings: React.FC = () => {
+  const [isCorrectNetwork, setIsCorrectNetwork] = useState<boolean>(false);
+  const activeChain = useActiveWalletChain()!;
+
   const [filters, setFilters] = useState<IMarketFilter>({
     location: "",
     propertyType: "",
@@ -28,16 +33,16 @@ const PropertyListings: React.FC = () => {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const filterLocation = searchParams.get('location') || '';
-    const filterPropertyType = searchParams.get('propertyType') || '';
-    const filterStatus = searchParams.get('status') || '';
+    const filterLocation = searchParams.get("location") || "";
+    const filterPropertyType = searchParams.get("propertyType") || "";
+    const filterStatus = searchParams.get("status") || "";
 
     setFilters((prev) => ({
       ...prev,
       location: filterLocation,
       propertyType: filterPropertyType,
       status: filterStatus,
-    }))
+    }));
   }, []);
 
   const handleFilterApply = (newFilters: any) => {
@@ -53,6 +58,12 @@ const PropertyListings: React.FC = () => {
       priceRange: [0, 1000],
     });
   };
+
+  useEffect(() => {
+    if (activeChain && validChainIds.includes(activeChain.id)) {
+      setIsCorrectNetwork(true);
+    }
+  }, [activeChain]);
 
   const filterBarProps: FilterBarProps = {
     locations: ["DKI Jakarta", "Surabaya", "Denpasar", "Bandung"],
@@ -72,7 +83,15 @@ const PropertyListings: React.FC = () => {
       alignItems="center"
     >
       <FilterBar {...filterBarProps} />
-      <PropertyCards filters={filters} />
+      {isCorrectNetwork === true ? (
+        <PropertyCards filters={filters} />
+      ) : (
+        <div className="flex justify-center items-center h-[50vh]">
+          <p className="mx-auto font-bold text-2xl leading-7 text-center text-teal-600">
+            No data found!
+          </p>
+        </div>
+      )}
     </Box>
   );
 };
