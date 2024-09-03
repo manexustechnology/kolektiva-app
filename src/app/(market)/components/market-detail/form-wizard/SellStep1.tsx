@@ -74,8 +74,6 @@ const SellStep1: React.FC<SellStep1Props> = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("market", propertyData.marketAddress);
-      console.log("token", propertyData.tokenAddress);
       try {
         if (activeTab === "market" && formData.qtyToken > 0) {
           const data = await readContractFetch({
@@ -94,7 +92,7 @@ const SellStep1: React.FC<SellStep1Props> = ({
       }
     };
     fetchData();
-  }, [formData.qtyToken, activeTab]);
+  }, [formData.qtyToken, propertyData.marketAddress, activeTab]);
 
   useEffect(() => {
     if (feePercentageData) {

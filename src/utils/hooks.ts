@@ -173,7 +173,7 @@ export function useContractEventHook({
     };
 
     fetchEvents();
-  }, [chain, contractName, fromBlock, eventName, hasFetched]);
+  }, [chain, contractName, contractAddress, fromBlock, eventName, hasFetched]);
 
   return { data, isLoading, error };
 }

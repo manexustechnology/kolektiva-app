@@ -112,7 +112,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
     };
 
     fetchBuyOrders();
-  }, [buyOrdersCount]);
+  }, [buyOrdersCount, propertyData.marketAddress]);
 
   useEffect(() => {
     const fetchSellOrders = async () => {
@@ -149,7 +149,7 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
     };
 
     fetchSellOrders();
-  }, [sellOrdersCount]);
+  }, [sellOrdersCount, propertyData.marketAddress]);
 
   return (
     <>

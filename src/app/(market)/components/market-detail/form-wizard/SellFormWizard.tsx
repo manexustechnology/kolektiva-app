@@ -126,12 +126,12 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
 
   const allowanceUsdt = useMemo(
     () => (allowanceUsdtData ? Number(allowanceUsdtData) : 0),
-    [allowanceUsdtData, isLoading]
+    [allowanceUsdtData]
   );
 
   const allowanceToken = useMemo(
     () => (allowanceTokenData ? Number(allowanceTokenData) : 0),
-    [allowanceTokenData, isLoading]
+    [allowanceTokenData]
   );
 
   useEffect(() => {

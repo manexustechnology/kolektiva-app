@@ -410,13 +410,12 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
     setTxInfo(txInfo);
   };
 
-  const { data: initialOfferingActive, isLoading: isLoadingInitialOffering } =
-    useReadContractHook({
-      contractName: "KolektivaMarket",
-      functionName: "initialOfferingActive",
-      contractAddress: propertyData.marketAddress,
-      args: [],
-    });
+  const { data: initialOfferingActive } = useReadContractHook({
+    contractName: "KolektivaMarket",
+    functionName: "initialOfferingActive",
+    contractAddress: propertyData.marketAddress,
+    args: [],
+  });
 
   const { data: salePriceData } = useReadContractHook({
     contractName: "KolektivaMarket",
@@ -440,10 +439,10 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
   });
 
   useEffect(() => {
-    if (!isLoadingInitialOffering) {
-      setAllowTrade(!initialOfferingActive);
+    if (!initialOfferingActive) {
+      setAllowTrade(true);
     }
-  }, [isLoadingInitialOffering]);
+  }, [initialOfferingActive]);
 
   const handleBuyButtonClick = () => {
     setIsBuyOrderModalOpen(true);
