@@ -11,7 +11,7 @@ import { useReadContractHook } from "@/utils/hooks";
 import { readContractFetch } from "@/utils/fetch";
 import { PropertyData } from "@/types/property";
 import { formatUSDTBalance, parseUSDTBalance } from "@/utils/formatter";
-import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
+import { useActiveAccount } from "thirdweb/react";
 
 interface BuyStep1Props {
   propertyData: PropertyData;
@@ -33,7 +33,6 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
 }) => {
   const activeAccount = useActiveAccount();
   const address = activeAccount?.address;
-  const chain = useActiveWalletChain()!;
 
   const activeTab = (formData as AfterMarketBuyOrderData).type || "market";
   // e.g. 5% => feePercentage = 500, feePrecision = 10_000
@@ -91,7 +90,6 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
       try {
         if (isAfterMarketTrading && activeTab == "market") {
           const data = await readContractFetch({
-            chain,
             contractName: "KolektivaMarket",
             functionName: "calculateBuyCost",
             contractAddress: propertyData.marketAddress,

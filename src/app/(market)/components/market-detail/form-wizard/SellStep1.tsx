@@ -11,7 +11,7 @@ import { File, Info } from "@phosphor-icons/react/dist/ssr";
 import { Divider } from "antd";
 import { motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
-import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
+import { useActiveAccount } from "thirdweb/react";
 
 interface SellStep1Props {
   propertyData: PropertyData;
@@ -31,7 +31,6 @@ const SellStep1: React.FC<SellStep1Props> = ({
 }) => {
   const activeAccount = useActiveAccount();
   const address = activeAccount?.address;
-  const chain = useActiveWalletChain()!;
 
   const activeTab = (formData as SellOrderData).type || "market";
   const [salePrice, setSalePrice] = useState<number | null>(null);
@@ -78,7 +77,6 @@ const SellStep1: React.FC<SellStep1Props> = ({
       try {
         if (activeTab === "market" && formData.qtyToken > 0) {
           const data = await readContractFetch({
-            chain,
             contractName: "KolektivaMarket",
             functionName: "calculateSellProceeds",
             contractAddress: propertyData.marketAddress,

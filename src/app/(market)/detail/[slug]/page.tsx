@@ -6,7 +6,6 @@ import { useParams } from "next/navigation"; // Use this for App Router
 import { useEffect, useState } from "react";
 import { PropertyData } from "@/types/property";
 import { Spinner, Stack } from "@chakra-ui/react";
-import { useActiveWalletChain } from "thirdweb/react";
 
 interface MarketDetailProps {
   searchParams: {
@@ -18,7 +17,6 @@ const MarketDetailPage: React.FC<MarketDetailProps> = ({ searchParams }) => {
   const { slug } = useParams(); // Use useParams to get route parameters
   const [propertyData, setPropertyData] = useState<PropertyData | null>(null);
   const [loading, setLoading] = useState(true);
-  const chain = useActiveWalletChain()!;
 
   useEffect(() => {
     if (slug) {
@@ -42,7 +40,7 @@ const MarketDetailPage: React.FC<MarketDetailProps> = ({ searchParams }) => {
 
   if (loading)
     return (
-      <div className="flex justify-center items-center h-[50vh]">
+      <div className="flex justify-center items-center h-dvh">
         <Stack direction="row" spacing={5}>
           <Spinner size="xl" color="teal.500" thickness="4px" speed="0.65s" />
         </Stack>
