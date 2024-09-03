@@ -87,8 +87,6 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log("market", propertyData.marketAddress);
-      console.log("token", propertyData.tokenAddress);
       try {
         if (isAfterMarketTrading && activeTab == "market") {
           const data = await readContractFetch({
@@ -107,7 +105,12 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
       }
     };
     fetchData();
-  }, [formData.qtyToken, activeTab, isAfterMarketTrading]);
+  }, [
+    formData.qtyToken,
+    activeTab,
+    isAfterMarketTrading,
+    propertyData.marketAddress,
+  ]);
 
   useEffect(() => {
     if (feePercentageData) {
@@ -178,6 +181,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
     formData.qtyToken,
     formData.pricePerToken,
     calculateBuyCost,
+    calculateCostAndFee,
     feePercentage,
     feePrecision,
     salePrice,
@@ -199,10 +203,9 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
       token > initialOfferingSupply
     ) {
       console.warn("Quantity exceeds initial offering supply.");
-      return; // Prevent proceeding if the quantity exceeds the supply
+      return;
     }
     if (formData.qtyToken !== token) {
-      // Check if there's an actual change
       const updatedData = { ...formData, qtyToken: token };
       onDataChange(updatedData);
     }
@@ -210,7 +213,6 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
 
   const setTokenPrice = (price: number) => {
     if (formData.pricePerToken !== price) {
-      // Check if there's an actual change
       const updatedData = {
         ...formData,
         pricePerToken: parseUSDTBalance(price),
@@ -221,7 +223,6 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
 
   const setActiveTab = (tab: (typeof tabs)[number]["id"]) => {
     if ((formData as any).type !== tab) {
-      // Check if there's an actual change
       const updatedData = { ...formData, type: tab };
       onDataChange(updatedData);
     }

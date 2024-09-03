@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Modal,
   ModalOverlay,
@@ -11,10 +11,7 @@ import {
   CloseButton,
   Box,
   Image,
-  Icon,
 } from "@chakra-ui/react";
-import { ArrowSquareOut } from "@phosphor-icons/react/dist/ssr";
-import { getTransactionStatus } from "@/app/api/tx-hash";
 
 interface RequestSentModalProps {
   isOpen: boolean;
