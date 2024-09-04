@@ -36,7 +36,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
   return (
     <>
       {/* Heading */}
-      <div className="flex flex-col items-start p-0 gap-1.5 w-[756px] h-[54px]">
+      <div className="flex flex-col items-start p-0 gap-1.5 w-full md:w-[756px]">
         <div className="text-xl font-medium text-[#042F2E]">
           Personal Detail & Property Summary
         </div>
@@ -46,17 +46,17 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
       </div>
 
       {/* Progress Bar */}
-      <div className="flex flex-row items-start p-0 gap-1.5 w-[756px] h-[6px]">
-        <div className="w-[375px] h-[6px] bg-[#0D9488] rounded-full flex-none order-0 flex-grow">
+      <div className="flex flex-row items-start p-0 gap-1.5 w-full h-[6px]">
+        <div className="w-1/2  h-[6px] bg-[#0D9488] rounded-full flex-none order-0 flex-grow">
           {/* Rectangle 1 */}
         </div>
-        <div className="w-[375px] h-[6px] bg-[#D4D4D8] rounded-full flex-none order-1 flex-grow">
+        <div className="w-1/2 h-[6px] bg-[#D4D4D8] rounded-full flex-none order-1 flex-grow">
           {/* Rectangle 2 */}
         </div>
       </div>
 
       {/* Name */}
-      <div className="flex flex-col items-start p-0 gap-1.5 w-[756px] h-[66px]">
+      <div className="flex flex-col items-start p-0 gap-1.5 h-[66px]">
         <div className="flex flex-row items-center p-0 gap-0.75">
           <p className="text-sm font-normal text-zinc-700">
             Name <span className="text-zinc-400">*</span>
@@ -75,9 +75,9 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
       </div>
 
       {/* Phone/ E-Mail */}
-      <div className="flex flex-row items-start p-0 gap-1.5 w-[756px] h-[66px]">
+      <div className="flex flex-col md:flex-row items-start p-0 gap-1.5  md:h-[66px]">
         {/* Phone */}
-        <div className="flex flex-col items-start p-0 gap-1.5 w-1/2 h-[66px]">
+        <div className="flex flex-col items-start p-0 gap-1.5 w-full md:w-1/2 h-[66px]">
           <div className="flex flex-row items-center p-0 gap-0.75">
             <p className="text-sm font-normal text-zinc-700">
               Phone <span className="text-zinc-400">*</span>
@@ -96,7 +96,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
         </div>
 
         {/* Email */}
-        <div className="flex flex-col items-start p-0 gap-1.5 w-1/2 h-[66px]">
+        <div className="flex flex-col items-start p-0 gap-1.5 w-full md:w-1/2 h-[66px]">
           <div className="flex flex-row items-center p-0 gap-0.75">
             <p className="text-sm font-normal text-zinc-700">
               Email <span className="text-zinc-400">*</span>
@@ -116,7 +116,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
       </div>
 
       {/* Address */}
-      <div className="flex flex-col items-start p-0 gap-1.5 w-[756px] h-[66px]">
+      <div className="flex flex-col items-start p-0 gap-1.5  h-[66px]">
         <div className="flex flex-row items-center p-0 gap-0.75">
           <p className="text-sm font-normal text-zinc-700">
             Property address <span className="text-zinc-400">*</span>
@@ -135,7 +135,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
       </div>
 
       {/* Google Map Url */}
-      <div className="flex flex-col items-start p-0 gap-1.5 w-[756px] h-[66px]">
+      <div className="flex flex-col items-start p-0 gap-1.5  h-[66px]">
         <div className="flex flex-row items-center p-0 gap-0.75">
           <p className="text-sm font-normal text-zinc-700">
             Google Maps URL <span className="text-zinc-400">*</span>
@@ -154,9 +154,9 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
       </div>
 
       {/* Land / Building Area */}
-      <div className="flex flex-row items-start p-0 gap-1.5 w-[756px] h-[66px]">
+      <div className="flex flex-col md:flex-row items-start p-0 gap-1.5  md:h-[66px]">
         {/* Land */}
-        <div className="flex flex-col items-start p-0 gap-1.5 w-1/2 h-[66px]">
+        <div className="flex flex-col items-start p-0 gap-1.5 w-full md:w-1/2 h-[66px]">
           <div className="flex flex-row items-center p-0 gap-0.75">
             <p className="text-sm font-normal text-zinc-700">
               Land area <span className="text-zinc-400">*</span>
@@ -169,7 +169,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
                 name="landArea"
                 value={formData.landArea}
                 onChange={handleChange}
-                className="flex-grow h-full bg-transparent border-none rounded-full pl-3 pr-10 focus:outline-none focus:ring-0 focus:border-none"
+                className="flex-grow h-full bg-transparent border-none rounded-full pl-3 md:pr-10 focus:outline-none focus:ring-0 focus:border-none"
               />
               <span className="text-sm text-[#3F3F46] pr-3">m³</span>
             </div>
@@ -177,7 +177,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
         </div>
 
         {/* Building */}
-        <div className="flex flex-col items-start p-0 gap-1.5 w-1/2 h-[66px]">
+        <div className="flex flex-col items-start p-0 gap-1.5 w-full md:w-1/2 h-[66px]">
           <div className="flex flex-row items-center p-0 gap-0.75">
             <p className="text-sm font-normal text-zinc-700">
               Building area <span className="text-zinc-400">*</span>
@@ -190,7 +190,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
                 name="buildingArea"
                 value={formData.buildingArea}
                 onChange={handleChange}
-                className="flex-grow h-full bg-transparent border-none rounded-full pl-3 pr-10 focus:outline-none focus:ring-0 focus:border-none"
+                className="flex-grow h-full bg-transparent border-none rounded-full pl-3 md:pr-10 focus:outline-none focus:ring-0 focus:border-none"
               />
               <span className="text-sm text-[#3F3F46] pr-3">m³</span>
             </div>
@@ -199,7 +199,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
       </div>
 
       {/* Price Estim */}
-      <div className="flex flex-row items-start p-0 gap-1.5 w-[756px] h-[66px]">
+      <div className="flex flex-row items-start p-0 gap-1.5  h-[66px]">
         {/* Land */}
         <div className="flex flex-col items-start p-0 gap-1.5 w-full h-[66px]">
           <div className="flex flex-row items-center p-0 gap-0.75">
@@ -214,7 +214,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
                 name="priceEstimation"
                 value={formData.priceEstimation}
                 onChange={handleChange}
-                className="flex-grow h-full bg-transparent border-none rounded-full pl-3 pr-10 focus:outline-none focus:ring-0 focus:border-none"
+                className="flex-grow h-full bg-transparent border-none rounded-full pl-3 md:pr-10 focus:outline-none focus:ring-0 focus:border-none"
               />
               <span className="text-sm text-[#3F3F46] pr-3">USD</span>
             </div>

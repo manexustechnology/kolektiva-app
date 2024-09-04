@@ -73,11 +73,11 @@ const ListProperty: React.FC = () => {
 
   return (
     <div className="flex justify-center">
-      <div className="flex flex-col items-start p-6 pb-16 gap-6 w-[828px] h-[1167px]">
+      <div className="flex flex-col items-start p-6 pb-16 gap-6 w-full md:w-[828px] md:h-[1167px]">
         <h2 className="text-2xl font-bold text-[#042F2E] leading-[28px]">
           Property Listing Request
         </h2>
-        <div className="flex flex-col p-6 gap-6 bg-white shadow-md rounded-lg">
+        <div className="flex flex-col p-6 gap-6 bg-white shadow-md rounded-lg w-full pr-6">
           {step === 1 && (
             <FormPart1 formData={formData} setFormData={setFormData} />
           )}
