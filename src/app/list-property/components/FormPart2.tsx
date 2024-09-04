@@ -62,7 +62,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
   return (
     <>
       {/* Heading */}
-      <div className="flex flex-col items-start p-0 gap-1.5 w-[756px] h-[54px]">
+      <div className="flex flex-col items-start p-0 gap-1.5 w-full md:w-[756px]">
         <div className="text-xl font-medium text-[#042F2E]">
           Property Details
         </div>
@@ -72,19 +72,19 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
       </div>
 
       {/* Progress Bar */}
-      <div className="flex flex-row items-start p-0 gap-1.5 w-[756px] h-[6px]">
-        <div className="w-[375px] h-[6px] bg-[#0D9488] rounded-full flex-none order-0 flex-grow">
+      <div className="flex flex-row items-start p-0 gap-1.5 w-full h-[6px]">
+        <div className="w-1/2  h-[6px] bg-[#0D9488] rounded-full flex-none order-0 flex-grow">
           {/* Rectangle 1 */}
         </div>
-        <div className="w-[375px] h-[6px] bg-[#0D9488] rounded-full flex-none order-0 flex-grow">
+        <div className="w-1/2 h-[6px] bg-[#0D9488] rounded-full flex-none order-1 flex-grow">
           {/* Rectangle 2 */}
         </div>
       </div>
 
       {/* Sell Plan / Property Type */}
-      <div className="flex flex-row items-start p-0 gap-1.5 w-[756px] h-[66px]">
+      <div className="flex flex-col md:flex-row items-start p-0 gap-1.5 ">
         {/* Sell Plan */}
-        <div className="flex flex-col items-start p-0 gap-1.5 w-1/2">
+        <div className="flex flex-col items-start p-0 gap-1.5 w-full md:w-1/2">
           <div className="flex flex-row items-center p-0 gap-0.75">
             <p className="text-sm font-normal text-zinc-700">
               When do you plan to sell the property?{" "}
@@ -111,7 +111,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
         </div>
 
         {/* Property Type */}
-        <div className="flex flex-col items-start p-0 gap-1.5 w-1/2">
+        <div className="flex flex-col items-start p-0 gap-1.5 w-full md:w-1/2">
           <div className="flex flex-row items-center p-0 gap-0.75">
             <p className="text-sm font-normal text-zinc-700">
               Property Type
@@ -140,7 +140,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
       </div>
 
       {/*Ownership*/}
-      <div className="flex flex-col items-start p-0 gap-1.5 w-[756px] h-[128px]">
+      <div className="flex flex-col items-start p-0 gap-1.5  md:h-[128px]">
         <div className="flex flex-row items-center p-0 gap-0.75">
           <p className="text-sm font-normal text-zinc-700">
             Does the property still have a loan, or is it fully owned?
@@ -148,7 +148,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
           </p>
         </div>
 
-        <div className="flex flex-col items-start p-0 gap-3 w-[756px] h-[66px]">
+        <div className="flex flex-col items-start p-0 gap-3 w-[756px] md:h-[66px]">
           <div className="flex flex-row items-center p-0 gap-3 w-[351px] h-[20px]">
             <input
               type="radio"
@@ -166,7 +166,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
               I own 100% of the property
             </label>
           </div>
-          <div className="flex flex-row items-center p-0 gap-3 w-[351px] h-[20px]">
+          <div className="flex flex-row items-center p-0 gap-3 w-[351px] md:h-[20px]">
             <input
               type="radio"
               id="partialOwnership"
@@ -183,7 +183,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
               I own partial ownership of the property
             </label>
           </div>
-          <div className="flex flex-row items-center p-0 gap-3 w-[351px] h-[20px]">
+          <div className="flex flex-row items-center p-0 gap-3 w-[351px] md:h-[20px]">
             <input
               type="radio"
               id="onCredit"
@@ -204,7 +204,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
       </div>
 
       {/* Property Condition */}
-      <div className="flex flex-col items-start p-0 gap-1.5 w-[756px] h-[66px]">
+      <div className="flex flex-col items-start p-0 gap-1.5  h-[66px]">
         <div className="flex flex-row items-center p-0 gap-0.75">
           <p className="text-sm font-normal text-zinc-700">
             Property condition <span className="text-zinc-400">*</span>
@@ -230,7 +230,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
       </div>
 
       {/* Occupancy Status */}
-      <div className="flex flex-col items-start p-0 gap-1.5 w-[756px] h-[66px]">
+      <div className="flex flex-col items-start p-0 gap-1.5 h-[66px]">
         <div className="flex flex-row items-center p-0 gap-0.75">
           <p className="text-sm font-normal text-zinc-700">
             Occupancy status <span className="text-zinc-400">*</span>
@@ -256,9 +256,9 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
       </div>
 
       {/* Manager / Furniture */}
-      <div className="flex flex-row items-start p-0 gap-1.5 w-[756px] h-[66px]">
+      <div className="flex flex-col md:flex-row items-start p-0 gap-1.5 md:h-[66px]">
         {/* Manager */}
-        <div className="flex flex-col items-start p-0 gap-1.5 w-1/2">
+        <div className="flex flex-col items-start p-0 gap-1.5 w-full md:w-1/2">
           <div className="flex flex-row items-center p-0 gap-0.75">
             <p className="text-sm font-normal text-zinc-700">
               Is there’s a Property Manager for your property?{" "}
@@ -284,7 +284,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
         </div>
 
         {/* Furniture */}
-        <div className="flex flex-col items-start p-0 gap-1.5 w-1/2">
+        <div className="flex flex-col items-start p-0 gap-1.5 w-full md:w-1/2">
           <div className="flex flex-row items-center p-0 gap-0.75">
             <p className="text-sm font-normal text-zinc-700">
               Furniture <span className="text-zinc-400">*</span>
@@ -311,7 +311,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
       </div>
 
       {/* Property Issues */}
-      <div className="flex flex-col items-start p-0 gap-3 w-[756px] h-[236px]">
+      <div className="flex flex-col items-start p-0 gap-3  h-[236px]">
         <div className="flex flex-row items-center p-0 gap-0.75 w-full">
           <p className="text-sm font-normal text-zinc-700">
             Does the property have any issues?
@@ -426,7 +426,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
       </div>
 
       {/* Furniture sale */}
-      <div className="flex flex-col items-start p-0 gap-1.5 w-[756px] h-[66px]">
+      <div className="flex flex-col items-start p-0 gap-1.5 h-[66px]">
         <div className="flex flex-row items-center p-0 gap-0.75">
           <p className="text-sm font-normal text-zinc-700">
             Any furniture will be included on sale?{" "}

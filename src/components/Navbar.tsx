@@ -89,24 +89,22 @@ const Navbar: React.FC = () => {
                 onConnect={() => setIsConnected(true)}
               />
             ) : (
-              <Flex
-                direction="row"
-                align="center"
-                gap="24px"
-                height="24px"
-                margin="0 auto"
-                padding="0"
-              >
+              <div className="flex flex-row items-center gap-2 md:gap-6 h-6 mx-auto p-0">
                 {pathname !== "/list-property" && (
                   <span
-                    className="text-sm font-medium text-[#14B8A6] cursor-pointer"
+                    className=" text-xs font-normal md:text-sm md:font-medium text-[#14B8A6] cursor-pointer"
                     onClick={() => router.push("/list-property")}
                   >
                     List your property
                   </span>
                 )}
 
-                <BellSimple weight="fill" size={24} color="#FFFFFF" />
+                <BellSimple
+                  weight="fill"
+                  size={24}
+                  color="#FFFFFF"
+                  className="hidden md:flex"
+                />
                 <Flex
                   direction="row"
                   align="center"
@@ -236,7 +234,7 @@ const Navbar: React.FC = () => {
                     </MenuList>
                   </Menu>
                 </Flex>
-              </Flex>
+              </div>
             )}
           </div>
         </div>
