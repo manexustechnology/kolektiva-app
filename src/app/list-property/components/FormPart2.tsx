@@ -15,12 +15,14 @@ interface FormData {
   propertyType: string;
   ownershipStatus: string;
   propertyCondition: string;
-  planToSellPercentage: string;
   occupancyStatus: string;
   propertyManager: string;
   furniture: string;
   propertyIssues: string[];
   includedFurniture: string;
+  errmsg: boolean;
+  validEmail: boolean;
+  validMap: boolean;
 }
 
 interface FormPart2Props {
@@ -90,6 +92,9 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
               When do you plan to sell the property?{" "}
               <span className="text-zinc-400">*</span>
             </p>
+            {formData.errmsg && formData.planToSell === "" && (
+              <span className="text-red-500 text-xs">Select an option</span>
+            )}
           </div>
           <div className="flex flex-col items-start p-0 gap-1 w-full">
             <div className="relative w-full">
@@ -102,9 +107,10 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
                 <option value="" disabled>
                   Select Sell Plan
                 </option>
-                <option value="option1">ASAP</option>
-                <option value="option2">Slightly Looking Price</option>
-                <option value="option3">Option 3</option>
+                <option value="ASAP">ASAP</option>
+                <option value="Slightly Looking Price">
+                  Slightly Looking Price
+                </option>
               </select>
             </div>
           </div>
@@ -117,6 +123,9 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
               Property Type
               <span className="text-zinc-400">*</span>
             </p>
+            {formData.errmsg && formData.propertyType === "" && (
+              <span className="text-red-500 text-xs">Select an option</span>
+            )}
           </div>
           <div className="flex flex-col items-start p-0 gap-1 w-full">
             <div className="relative w-full">
@@ -129,10 +138,12 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
                 <option value="" disabled>
                   Select Property Type
                 </option>
-                <option value="option1">Apartments</option>
-                <option value="option2">Villa</option>
-                <option value="option3">House</option>
-                <option value="option4">Commercial Buildings</option>
+                <option value="Apartments">Apartments</option>
+                <option value="Villa">Villa</option>
+                <option value="House">House</option>
+                <option value="Commercial Buildings">
+                  Commercial Buildings
+                </option>
               </select>
             </div>
           </div>
@@ -143,9 +154,12 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
       <div className="flex flex-col items-start p-0 gap-1.5  md:h-[128px]">
         <div className="flex flex-row items-center p-0 gap-0.75">
           <p className="text-sm font-normal text-zinc-700">
-            Does the property still have a loan, or is it fully owned?
-            {/* <span className="text-zinc-400">*</span> */}
+            Does the property still have a loan, or is it fully owned?{" "}
+            <span className="text-zinc-400">*</span>
           </p>
+          {formData.errmsg && formData.ownershipStatus === "" && (
+            <span className="text-red-500 text-xs">Select an option</span>
+          )}
         </div>
 
         <div className="flex flex-col items-start p-0 gap-3 w-[756px] md:h-[66px]">
@@ -209,6 +223,9 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
           <p className="text-sm font-normal text-zinc-700">
             Property condition <span className="text-zinc-400">*</span>
           </p>
+          {formData.errmsg && formData.propertyCondition === "" && (
+            <span className="text-red-500 text-xs">Select an option</span>
+          )}
         </div>
         <div className="flex flex-col items-start p-0 gap-1 w-full">
           <div className="relative w-full">
@@ -221,9 +238,9 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
               <option value="" disabled>
                 Select Property Condition
               </option>
-              <option value="option1">New</option>
-              <option value="option2">Well Maintained</option>
-              <option value="option3">Inhabitable</option>
+              <option value="New">New</option>
+              <option value="Well Maintained">Well Maintained</option>
+              <option value="Inhabitable">Inhabitable</option>
             </select>
           </div>
         </div>
@@ -235,6 +252,9 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
           <p className="text-sm font-normal text-zinc-700">
             Occupancy status <span className="text-zinc-400">*</span>
           </p>
+          {formData.errmsg && formData.occupancyStatus === "" && (
+            <span className="text-red-500 text-xs">Select an option</span>
+          )}
         </div>
         <div className="flex flex-col items-start p-0 gap-1 w-full">
           <div className="relative w-full">
@@ -247,9 +267,9 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
               <option value="" disabled>
                 Select Occupancy Status
               </option>
-              <option value="option1">Vacant</option>
-              <option value="option2">Rented</option>
-              <option value="option3">Owner occupied</option>
+              <option value="Vacant">Vacant</option>
+              <option value="Rented">Rented</option>
+              <option value="Owner occupied">Owner occupied</option>
             </select>
           </div>
         </div>
@@ -264,6 +284,9 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
               Is there’s a Property Manager for your property?{" "}
               <span className="text-zinc-400">*</span>
             </p>
+            {formData.errmsg && formData.propertyManager === "" && (
+              <span className="text-red-500 text-xs">Select an option</span>
+            )}
           </div>
           <div className="flex flex-col items-start p-0 gap-1 w-full">
             <div className="relative w-full">
@@ -274,10 +297,10 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
                 className="w-full h-[40px] bg-[#F4F4F5] border-none rounded-full pl-4 pr-4"
               >
                 <option value="" disabled>
-                  Manager?
+                  Select Option
                 </option>
-                <option value="option1">Yes</option>
-                <option value="option2">No</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
               </select>
             </div>
           </div>
@@ -289,6 +312,9 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
             <p className="text-sm font-normal text-zinc-700">
               Furniture <span className="text-zinc-400">*</span>
             </p>
+            {formData.errmsg && formData.furniture === "" && (
+              <span className="text-red-500 text-xs">Select an option</span>
+            )}
           </div>
           <div className="flex flex-col items-start p-0 gap-1 w-full">
             <div className="relative w-full">
@@ -299,11 +325,11 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
                 className="w-full h-[40px] bg-[#F4F4F5] border-none rounded-full pl-4 pr-4"
               >
                 <option value="" disabled>
-                  Furniture?
+                  Select Option
                 </option>
-                <option value="option1">Full furnish</option>
-                <option value="option2">Half furnish</option>
-                <option value="option3">Empty</option>
+                <option value="Full furnish">Full furnish</option>
+                <option value="Half furnish">Half furnish</option>
+                <option value="Empty">Empty</option>
               </select>
             </div>
           </div>
@@ -314,9 +340,12 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
       <div className="flex flex-col items-start p-0 gap-3  h-[236px]">
         <div className="flex flex-row items-center p-0 gap-0.75 w-full">
           <p className="text-sm font-normal text-zinc-700">
-            Does the property have any issues?
-            {/* <span className="text-zinc-400">*</span> */}
+            Does the property have any issues?{" "}
+            <span className="text-zinc-400">*</span>
           </p>
+          {formData.errmsg && formData.propertyIssues.length === 0 && (
+            <span className="text-red-500 text-xs">Select atleast one</span>
+          )}
         </div>
 
         {/* Checkboxes */}
@@ -430,7 +459,6 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
         <div className="flex flex-row items-center p-0 gap-0.75">
           <p className="text-sm font-normal text-zinc-700">
             Any furniture will be included on sale?{" "}
-            <span className="text-zinc-400">*</span>
           </p>
         </div>
         <div className="flex flex-col items-start p-0 gap-1 w-full">

@@ -20,16 +20,20 @@ interface FormData {
   propertyType: string;
   ownershipStatus: string;
   propertyCondition: string;
-  planToSellPercentage: string;
   occupancyStatus: string;
   propertyManager: string;
   furniture: string;
   propertyIssues: string[];
   includedFurniture: string;
+  errmsg: boolean;
+  validEmail: boolean;
+  validMap: boolean;
 }
 
 const ListProperty: React.FC = () => {
   const router = useRouter();
+  const [isRequestSentModalOpen, setIsRequestSentModal] =
+    useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
     name: "",
     contactPh: "",
@@ -43,12 +47,14 @@ const ListProperty: React.FC = () => {
     propertyType: "",
     ownershipStatus: "",
     propertyCondition: "",
-    planToSellPercentage: "",
     occupancyStatus: "",
     propertyManager: "",
     furniture: "",
     propertyIssues: [],
     includedFurniture: "",
+    errmsg: false,
+    validEmail: false,
+    validMap: false,
   });
 
   const [step, setStep] = useState(1);
@@ -59,8 +65,34 @@ const ListProperty: React.FC = () => {
   };
 
   const nextStep = () => {
-    setStep(step + 1);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    console.log(formData);
+    const allFieldsFilled =
+      formData.name &&
+      formData.contactPh &&
+      formData.contactEm &&
+      formData.address &&
+      formData.mapLink &&
+      formData.landArea > 0 &&
+      formData.buildingArea > 0 &&
+      formData.priceEstimation > 0;
+
+    const isValidEmail = formData.validEmail;
+    const isValidMap = formData.validMap;
+
+    if (allFieldsFilled && isValidEmail && isValidMap) {
+      setFormData((prevData) => ({
+        ...prevData,
+        errmsg: false,
+      }));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      setStep(step + 1);
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        errmsg: true,
+      }));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   const prevStep = () => {
@@ -68,8 +100,43 @@ const ListProperty: React.FC = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const [isRequestSentModalOpen, setIsRequestSentModal] =
-    useState<boolean>(false);
+  const handleSubmit = () => {
+    const allFieldsFilled =
+      formData.name &&
+      formData.contactPh &&
+      formData.contactEm &&
+      formData.address &&
+      formData.mapLink &&
+      formData.landArea > 0 &&
+      formData.buildingArea > 0 &&
+      formData.priceEstimation > 0 &&
+      formData.planToSell &&
+      formData.propertyType &&
+      formData.ownershipStatus &&
+      formData.propertyCondition &&
+      formData.occupancyStatus &&
+      formData.propertyManager &&
+      formData.furniture &&
+      formData.propertyIssues.length > 0;
+
+    const isValidEmail = formData.validEmail;
+    const isValidMap = formData.validMap;
+
+    if (allFieldsFilled && isValidEmail && isValidMap) {
+      setFormData((prevData) => ({
+        ...prevData,
+        errmsg: false,
+      }));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      setIsRequestSentModal(true);
+    } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        errmsg: true,
+      }));
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
 
   return (
     <div className="flex justify-center">
@@ -144,7 +211,7 @@ const ListProperty: React.FC = () => {
                 flexGrow={0}
                 textColor="white"
                 ml="12px"
-                onClick={() => setIsRequestSentModal(true)}
+                onClick={handleSubmit}
               >
                 Submit
               </Button>
