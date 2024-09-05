@@ -26,6 +26,9 @@ interface FormData {
   furniture: string;
   propertyIssues: string[];
   includedFurniture: string;
+  errmsg: boolean;
+  validEmail: boolean;
+  validMap: boolean;
 }
 
 const ListProperty: React.FC = () => {
@@ -49,6 +52,9 @@ const ListProperty: React.FC = () => {
     furniture: "",
     propertyIssues: [],
     includedFurniture: "",
+    errmsg: false,
+    validEmail: false,
+    validMap: false,
   });
 
   const [step, setStep] = useState(1);
@@ -59,8 +65,24 @@ const ListProperty: React.FC = () => {
   };
 
   const nextStep = () => {
-    setStep(step + 1);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    const allFieldsFilled =
+      formData.name &&
+      formData.contactPh &&
+      formData.contactEm &&
+      formData.address &&
+      formData.mapLink &&
+      formData.landArea > 0 &&
+      formData.buildingArea > 0 &&
+      formData.priceEstimation > 0;
+
+    if (allFieldsFilled && formData.validEmail && formData.validMap) {
+      formData.errmsg = false;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      setStep(step + 1);
+    } else {
+      formData.errmsg = true;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   const prevStep = () => {

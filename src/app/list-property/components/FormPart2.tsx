@@ -21,6 +21,9 @@ interface FormData {
   furniture: string;
   propertyIssues: string[];
   includedFurniture: string;
+  errmsg: boolean;
+  validEmail: boolean;
+  validMap: boolean;
 }
 
 interface FormPart2Props {
@@ -430,7 +433,6 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
         <div className="flex flex-row items-center p-0 gap-0.75">
           <p className="text-sm font-normal text-zinc-700">
             Any furniture will be included on sale?{" "}
-            <span className="text-zinc-400">*</span>
           </p>
         </div>
         <div className="flex flex-col items-start p-0 gap-1 w-full">

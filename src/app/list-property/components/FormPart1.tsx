@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 interface FormData {
   name: string;
@@ -21,6 +21,9 @@ interface FormData {
   furniture: string;
   propertyIssues: string[];
   includedFurniture: string;
+  errmsg: boolean;
+  validEmail: boolean;
+  validMap: boolean;
 }
 interface FormPart1Props {
   formData: FormData;
@@ -31,6 +34,44 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const [errorEmail, setErrorEmail] = useState("");
+  const [errorMap, setErrorMap] = useState("");
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setErrorEmail("Please enter a valid email address.");
+      formData.validEmail = false;
+    } else {
+      setErrorEmail("");
+      formData.validEmail = true;
+    }
+  };
+
+  const validateMapLink = (link: string) => {
+    const urlRegex =
+      /^(https?:\/\/)?(www\.)?(google\.com\/maps\/|maps\.app\.goo\.gl\/).+/;
+    if (!urlRegex.test(link)) {
+      formData.validMap = false;
+      setErrorMap("Please enter a valid Google Maps URL.");
+    } else {
+      formData.validMap = true;
+      setErrorMap("");
+    }
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFormData((prevData) => ({ ...prevData, contactEm: value }));
+    validateEmail(value);
+  };
+
+  const handleMapLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setFormData((prevData) => ({ ...prevData, mapLink: value }));
+    validateMapLink(value);
   };
 
   return (
@@ -56,10 +97,13 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
       </div>
 
       {/* Name */}
-      <div className="flex flex-col items-start p-0 gap-1.5 h-[66px]">
+      <div className="flex flex-col items-start p-0 gap-1.5">
         <div className="flex flex-row items-center p-0 gap-0.75">
           <p className="text-sm font-normal text-zinc-700">
             Name <span className="text-zinc-400">*</span>
+            {formData.errmsg && formData.name === "" && (
+              <span className="text-red-500 text-xs">Required Field</span>
+            )}
           </p>
         </div>
         <div className="flex flex-col items-start p-0 gap-1 w-full">
@@ -75,9 +119,9 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
       </div>
 
       {/* Phone/ E-Mail */}
-      <div className="flex flex-col md:flex-row items-start p-0 gap-1.5  md:h-[66px]">
+      <div className="flex flex-col md:flex-row items-start p-0 gap-1.5  ">
         {/* Phone */}
-        <div className="flex flex-col items-start p-0 gap-1.5 w-full md:w-1/2 h-[66px]">
+        <div className="flex flex-col items-start p-0 gap-1.5 w-full md:w-1/2">
           <div className="flex flex-row items-center p-0 gap-0.75">
             <p className="text-sm font-normal text-zinc-700">
               Phone <span className="text-zinc-400">*</span>
@@ -96,7 +140,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
         </div>
 
         {/* Email */}
-        <div className="flex flex-col items-start p-0 gap-1.5 w-full md:w-1/2 h-[66px]">
+        <div className="flex flex-col items-start p-0 gap-1.5 w-full md:w-1/2">
           <div className="flex flex-row items-center p-0 gap-0.75">
             <p className="text-sm font-normal text-zinc-700">
               Email <span className="text-zinc-400">*</span>
@@ -107,16 +151,17 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
               type="text"
               name="contactEm"
               value={formData.contactEm}
-              onChange={handleChange}
+              onChange={handleEmailChange}
               className="w-full h-[40px] bg-[#F4F4F5] border-none rounded-full p-2"
               placeholder="Enter your Email"
             />
+            {errorEmail && <p className="text-red-500">{errorEmail}</p>}
           </div>
         </div>
       </div>
 
       {/* Address */}
-      <div className="flex flex-col items-start p-0 gap-1.5  h-[66px]">
+      <div className="flex flex-col items-start p-0 gap-1.5 ">
         <div className="flex flex-row items-center p-0 gap-0.75">
           <p className="text-sm font-normal text-zinc-700">
             Property address <span className="text-zinc-400">*</span>
@@ -135,7 +180,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
       </div>
 
       {/* Google Map Url */}
-      <div className="flex flex-col items-start p-0 gap-1.5  h-[66px]">
+      <div className="flex flex-col items-start p-0 gap-1.5 ">
         <div className="flex flex-row items-center p-0 gap-0.75">
           <p className="text-sm font-normal text-zinc-700">
             Google Maps URL <span className="text-zinc-400">*</span>
@@ -146,10 +191,11 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
             type="text"
             name="mapLink"
             value={formData.mapLink}
-            onChange={handleChange}
+            onChange={handleMapLinkChange}
             className="w-full h-[40px] bg-[#F4F4F5] border-none rounded-full p-2"
             placeholder="Enter Google Maps URL"
           />
+          {errorMap && <p className="text-red-500">{errorMap}</p>}
         </div>
       </div>
 
