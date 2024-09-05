@@ -15,7 +15,6 @@ interface FormData {
   propertyType: string;
   ownershipStatus: string;
   propertyCondition: string;
-  planToSellPercentage: string;
   occupancyStatus: string;
   propertyManager: string;
   furniture: string;
@@ -36,17 +35,33 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const numericValue = value === "" ? 0 : Number(value);
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: numericValue,
+    }));
+  };
+
   const [errorEmail, setErrorEmail] = useState("");
   const [errorMap, setErrorMap] = useState("");
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
+      setFormData((prevData) => ({
+        ...prevData,
+        validEmail: false,
+      }));
       setErrorEmail("Please enter a valid email address.");
-      formData.validEmail = false;
     } else {
+      setFormData((prevData) => ({
+        ...prevData,
+        validEmail: true,
+      }));
       setErrorEmail("");
-      formData.validEmail = true;
     }
   };
 
@@ -54,10 +69,16 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
     const urlRegex =
       /^(https?:\/\/)?(www\.)?(google\.com\/maps\/|maps\.app\.goo\.gl\/).+/;
     if (!urlRegex.test(link)) {
-      formData.validMap = false;
+      setFormData((prevData) => ({
+        ...prevData,
+        validMap: false,
+      }));
       setErrorMap("Please enter a valid Google Maps URL.");
     } else {
-      formData.validMap = true;
+      setFormData((prevData) => ({
+        ...prevData,
+        validMap: true,
+      }));
       setErrorMap("");
     }
   };
@@ -101,10 +122,10 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
         <div className="flex flex-row items-center p-0 gap-0.75">
           <p className="text-sm font-normal text-zinc-700">
             Name <span className="text-zinc-400">*</span>
-            {formData.errmsg && formData.name === "" && (
-              <span className="text-red-500 text-xs">Required Field</span>
-            )}
           </p>
+          {formData.errmsg && formData.name === "" && (
+            <span className="text-red-500 text-xs">Required Field</span>
+          )}
         </div>
         <div className="flex flex-col items-start p-0 gap-1 w-full">
           <input
@@ -126,6 +147,9 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
             <p className="text-sm font-normal text-zinc-700">
               Phone <span className="text-zinc-400">*</span>
             </p>
+            {formData.errmsg && formData.contactPh === "" && (
+              <span className="text-red-500 text-xs">Required Field</span>
+            )}
           </div>
           <div className="flex flex-col items-start p-0 gap-1 w-full">
             <input
@@ -145,6 +169,9 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
             <p className="text-sm font-normal text-zinc-700">
               Email <span className="text-zinc-400">*</span>
             </p>
+            {formData.errmsg && formData.contactEm === "" && (
+              <span className="text-red-500 text-xs">Required Field</span>
+            )}
           </div>
           <div className="flex flex-col items-start p-0 gap-1 w-full">
             <input
@@ -166,6 +193,9 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
           <p className="text-sm font-normal text-zinc-700">
             Property address <span className="text-zinc-400">*</span>
           </p>
+          {formData.errmsg && formData.address === "" && (
+            <span className="text-red-500 text-xs">Required Field</span>
+          )}
         </div>
         <div className="flex flex-col items-start p-0 gap-1 w-full">
           <input
@@ -185,6 +215,9 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
           <p className="text-sm font-normal text-zinc-700">
             Google Maps URL <span className="text-zinc-400">*</span>
           </p>
+          {formData.errmsg && formData.mapLink === "" && (
+            <span className="text-red-500 text-xs">Required Field</span>
+          )}
         </div>
         <div className="flex flex-col items-start p-0 gap-1 w-full">
           <input
@@ -207,6 +240,14 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
             <p className="text-sm font-normal text-zinc-700">
               Land area <span className="text-zinc-400">*</span>
             </p>
+            {formData.errmsg && formData.landArea === 0 && (
+              <span className="text-red-500 text-xs">Required Field</span>
+            )}
+            {formData.landArea < 0 && (
+              <span className="text-red-500 text-xs">
+                Enter a number Greater than 0
+              </span>
+            )}
           </div>
           <div className="flex flex-col items-start p-0 gap-1 w-full">
             <div className="flex items-center bg-[#F4F4F5] border-none rounded-full h-[40px] w-full relative">
@@ -214,7 +255,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
                 type="number"
                 name="landArea"
                 value={formData.landArea}
-                onChange={handleChange}
+                onChange={handleNumberChange}
                 className="flex-grow h-full bg-transparent border-none rounded-full pl-3 md:pr-10 focus:outline-none focus:ring-0 focus:border-none"
               />
               <span className="text-sm text-[#3F3F46] pr-3">m³</span>
@@ -228,6 +269,14 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
             <p className="text-sm font-normal text-zinc-700">
               Building area <span className="text-zinc-400">*</span>
             </p>
+            {formData.errmsg && formData.buildingArea === 0 && (
+              <span className="text-red-500 text-xs">Required Field</span>
+            )}
+            {formData.buildingArea < 0 && (
+              <span className="text-red-500 text-xs">
+                Enter a number Greater than 0
+              </span>
+            )}
           </div>
           <div className="flex flex-col items-start p-0 gap-1 w-full">
             <div className="flex items-center bg-[#F4F4F5] border-none rounded-full h-[40px] w-full relative">
@@ -235,7 +284,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
                 type="number"
                 name="buildingArea"
                 value={formData.buildingArea}
-                onChange={handleChange}
+                onChange={handleNumberChange}
                 className="flex-grow h-full bg-transparent border-none rounded-full pl-3 md:pr-10 focus:outline-none focus:ring-0 focus:border-none"
               />
               <span className="text-sm text-[#3F3F46] pr-3">m³</span>
@@ -252,6 +301,16 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
             <p className="text-sm font-normal text-zinc-700">
               Property price estimation <span className="text-zinc-400">*</span>
             </p>
+            {formData.errmsg &&
+              (formData.priceEstimation === 0 ||
+                isNaN(formData.priceEstimation)) && (
+                <span className="text-red-500 text-xs">Required Field</span>
+              )}
+            {formData.priceEstimation < 0 && (
+              <span className="text-red-500 text-xs">
+                Enter a number Greater than 0
+              </span>
+            )}
           </div>
           <div className="flex flex-col items-start p-0 gap-1 w-full">
             <div className="flex items-center bg-[#F4F4F5] border-none rounded-full h-[40px] w-full relative">
@@ -259,7 +318,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
                 type="number"
                 name="priceEstimation"
                 value={formData.priceEstimation}
-                onChange={handleChange}
+                onChange={handleNumberChange}
                 className="flex-grow h-full bg-transparent border-none rounded-full pl-3 md:pr-10 focus:outline-none focus:ring-0 focus:border-none"
               />
               <span className="text-sm text-[#3F3F46] pr-3">USD</span>
