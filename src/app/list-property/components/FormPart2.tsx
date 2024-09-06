@@ -28,9 +28,10 @@ interface FormData {
 interface FormPart2Props {
   formData: FormData;
   setFormData: React.Dispatch<React.SetStateAction<FormData>>;
+  isLoading?: boolean;
 }
 
-const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
+const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData, isLoading = false }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -103,6 +104,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
                 value={formData.planToSell}
                 onChange={handleDropdownChange}
                 className="w-full h-[40px] bg-[#F4F4F5] border-none rounded-full pl-4 pr-4"
+                disabled={isLoading}
               >
                 <option value="" disabled>
                   Select Sell Plan
@@ -134,6 +136,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
                 value={formData.propertyType}
                 onChange={handleDropdownChange}
                 className="w-full h-[40px] bg-[#F4F4F5] border-none rounded-full pl-4 pr-4"
+                disabled={isLoading}
               >
                 <option value="" disabled>
                   Select Property Type
@@ -172,6 +175,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
               className="w-[24px] h-[24px] bg-red"
               checked={formData.ownershipStatus === "full"}
               onChange={handleOptionChange}
+              disabled={isLoading}
             />
             <label
               htmlFor="fullOwnership"
@@ -189,6 +193,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
               className="w-[24px] h-[24px]"
               checked={formData.ownershipStatus === "partial"}
               onChange={handleOptionChange}
+              disabled={isLoading}
             />
             <label
               htmlFor="partialOwnership"
@@ -206,6 +211,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
               className="w-[24px] h-[24px]"
               checked={formData.ownershipStatus === "credit"}
               onChange={handleOptionChange}
+              disabled={isLoading}
             />
             <label
               htmlFor="onCredit"
@@ -234,6 +240,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
               value={formData.propertyCondition}
               onChange={handleDropdownChange}
               className="w-full h-[40px] bg-[#F4F4F5] border-none rounded-full pl-4 pr-4"
+              disabled={isLoading}
             >
               <option value="" disabled>
                 Select Property Condition
@@ -263,6 +270,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
               value={formData.occupancyStatus}
               onChange={handleDropdownChange}
               className="w-full h-[40px] bg-[#F4F4F5] border-none rounded-full pl-4 pr-4"
+              disabled={isLoading}
             >
               <option value="" disabled>
                 Select Occupancy Status
@@ -295,6 +303,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
                 value={formData.propertyManager}
                 onChange={handleDropdownChange}
                 className="w-full h-[40px] bg-[#F4F4F5] border-none rounded-full pl-4 pr-4"
+                disabled={isLoading}
               >
                 <option value="" disabled>
                   Select Option
@@ -323,6 +332,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
                 value={formData.furniture}
                 onChange={handleDropdownChange}
                 className="w-full h-[40px] bg-[#F4F4F5] border-none rounded-full pl-4 pr-4"
+                disabled={isLoading}
               >
                 <option value="" disabled>
                   Select Option
@@ -358,6 +368,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
               checked={formData.propertyIssues.includes("Foundation")}
               onChange={handleCheckboxChange}
               className="w-6 h-6"
+              disabled={isLoading}
             />
             <label
               htmlFor="foundation"
@@ -375,6 +386,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
               checked={formData.propertyIssues.includes("Roof")}
               onChange={handleCheckboxChange}
               className="w-6 h-6"
+              disabled={isLoading}
             />
             <label
               htmlFor="roof"
@@ -392,6 +404,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
               checked={formData.propertyIssues.includes("Plumbing")}
               onChange={handleCheckboxChange}
               className="w-6 h-6"
+              disabled={isLoading}
             />
             <label
               htmlFor="plumbing"
@@ -409,6 +422,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
               checked={formData.propertyIssues.includes("Fire Damage")}
               onChange={handleCheckboxChange}
               className="w-6 h-6"
+              disabled={isLoading}
             />
             <label
               htmlFor="fireDamage"
@@ -426,6 +440,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
               checked={formData.propertyIssues.includes("Paint")}
               onChange={handleCheckboxChange}
               className="w-6 h-6"
+              disabled={isLoading}
             />
             <label
               htmlFor="paint"
@@ -443,6 +458,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
               checked={formData.propertyIssues.includes("None of the above")}
               onChange={handleCheckboxChange}
               className="w-6 h-6"
+              disabled={isLoading}
             />
             <label
               htmlFor="noneOfTheAbove"
@@ -469,6 +485,7 @@ const FormPart2: React.FC<FormPart2Props> = ({ formData, setFormData }) => {
             onChange={handleChange}
             className="w-full h-[40px] bg-[#F4F4F5] border-none rounded-full p-2"
             placeholder="Stove, dishwasher, furnace, etc."
+            disabled={isLoading}
           />
         </div>
       </div>
