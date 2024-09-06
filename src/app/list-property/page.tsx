@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import FormPart1 from "./components/FormPart1";
 import FormPart2 from "./components/FormPart2";
 import RequestSentModal from "./modals/RequestSentModal";
+import axios from "axios";
 
 interface FormData {
   name: string;
@@ -56,6 +57,8 @@ const ListProperty: React.FC = () => {
     validEmail: false,
     validMap: false,
   });
+  const [loadingSubmit, setLoadingSubmit] = useState<boolean>(false);
+  const [submitErrorMsg, setSubmitErrorMsg] = useState<string>('');
 
   const [step, setStep] = useState(1);
 
@@ -100,6 +103,42 @@ const ListProperty: React.FC = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const sendFormData = async () => {
+    setLoadingSubmit(true);
+    try {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_HOST}/property-listing-request/submit`, {
+        name: formData.name,
+        phone: formData.contactPh,
+        email: formData.contactEm,
+        address: formData.address,
+        priceEstimation: formData.priceEstimation,
+        googleMapsLink: formData.mapLink,
+        landArea: formData.landArea,
+        buildingArea: formData.buildingArea,
+        planToSell: formData.planToSell,
+        propertyType: formData.propertyType,
+        ownershipStatus: formData.ownershipStatus,
+        propertyCondition: formData.propertyCondition,
+        occupancyStatus: formData.occupancyStatus,
+        propertyManager: formData.propertyManager,
+        furniture: formData.furniture,
+        propertyIssues: formData.propertyIssues,
+        includedFurniture: formData.includedFurniture,
+      });
+
+      // Not success
+      if (response.status !== 200) {
+        throw new Error(response.data?.message || 'Something went wrong!');
+      }
+
+      setIsRequestSentModal(true);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoadingSubmit(false);
+    }
+  }
+
   const handleSubmit = () => {
     const allFieldsFilled =
       formData.name &&
@@ -128,7 +167,7 @@ const ListProperty: React.FC = () => {
         errmsg: false,
       }));
       window.scrollTo({ top: 0, behavior: "smooth" });
-      setIsRequestSentModal(true);
+      sendFormData();
     } else {
       setFormData((prevData) => ({
         ...prevData,
@@ -149,77 +188,83 @@ const ListProperty: React.FC = () => {
             <FormPart1 formData={formData} setFormData={setFormData} />
           )}
           {step === 2 && (
-            <FormPart2 formData={formData} setFormData={setFormData} />
+            <FormPart2 formData={formData} setFormData={setFormData} isLoading={loadingSubmit} />
           )}
-          <div className="flex flex-row mt-4">
-            {step > 1 && (
-              <Button
-                display="flex"
-                flexDirection="row"
-                justifyContent="center"
-                alignItems="center"
-                padding="12px 16px"
-                gap="6px"
-                width="165px"
-                height="40px"
-                background="#FFFFFF"
-                boxShadow="0px 1px 2px rgba(16, 24, 40, 0.06), 0px 1px 3px rgba(16, 24, 40, 0.1)"
-                borderRadius="100px"
-                _hover={{
-                  boxShadow:
-                    "0px 2px 4px rgba(16, 24, 40, 0.12), 0px 2px 6px rgba(16, 24, 40, 0.15)",
-                }}
-                onClick={prevStep}
-              >
-                Back
-              </Button>
+          <div className="flex flex-col mt-4 gap-2">
+            {submitErrorMsg && (
+              <p className="text-sm text-rose-500 w-full text-center">{submitErrorMsg}</p>
             )}
-            {step < 2 ? (
-              <Button
-                display="flex"
-                flexDirection="row"
-                justifyContent="center"
-                alignItems="center"
-                padding="12px 16px"
-                gap="6px"
-                width="756px"
-                height="40px"
-                backgroundColor="#0D9488"
-                borderRadius="100px"
-                order={8}
-                alignSelf="stretch"
-                flexGrow={0}
-                textColor="white"
-                onClick={nextStep}
-              >
-                Continue
-              </Button>
-            ) : (
-              <Button
-                display="flex"
-                flexDirection="row"
-                justifyContent="center"
-                alignItems="center"
-                padding="12px 16px"
-                gap="6px"
-                width="575px"
-                height="40px"
-                backgroundColor="#0D9488"
-                borderRadius="100px"
-                order={8}
-                alignSelf="stretch"
-                flexGrow={0}
-                textColor="white"
-                ml="12px"
-                onClick={handleSubmit}
-              >
-                Submit
-              </Button>
-            )}
-            <RequestSentModal
-              isOpen={isRequestSentModalOpen}
-              onClose={onClose}
-            />
+            <div className="flex flex-row">
+              {step > 1 && (
+                <Button
+                  display="flex"
+                  flexDirection="row"
+                  justifyContent="center"
+                  alignItems="center"
+                  padding="12px 16px"
+                  gap="6px"
+                  width="165px"
+                  height="40px"
+                  background="#FFFFFF"
+                  boxShadow="0px 1px 2px rgba(16, 24, 40, 0.06), 0px 1px 3px rgba(16, 24, 40, 0.1)"
+                  borderRadius="100px"
+                  _hover={{
+                    boxShadow:
+                      "0px 2px 4px rgba(16, 24, 40, 0.12), 0px 2px 6px rgba(16, 24, 40, 0.15)",
+                  }}
+                  onClick={prevStep}
+                >
+                  Back
+                </Button>
+              )}
+              {step < 2 ? (
+                <Button
+                  display="flex"
+                  flexDirection="row"
+                  justifyContent="center"
+                  alignItems="center"
+                  padding="12px 16px"
+                  gap="6px"
+                  width="756px"
+                  height="40px"
+                  backgroundColor="#0D9488"
+                  borderRadius="100px"
+                  order={8}
+                  alignSelf="stretch"
+                  flexGrow={0}
+                  textColor="white"
+                  onClick={nextStep}
+                >
+                  Continue
+                </Button>
+              ) : (
+                <Button
+                  display="flex"
+                  flexDirection="row"
+                  justifyContent="center"
+                  alignItems="center"
+                  padding="12px 16px"
+                  gap="6px"
+                  width="575px"
+                  height="40px"
+                  backgroundColor="#0D9488"
+                  borderRadius="100px"
+                  order={8}
+                  alignSelf="stretch"
+                  flexGrow={0}
+                  textColor="white"
+                  ml="12px"
+                  onClick={handleSubmit}
+                  isLoading={loadingSubmit}
+                >
+                  Submit
+                </Button>
+              )}
+              <RequestSentModal
+                isOpen={isRequestSentModalOpen}
+                onClose={onClose}
+              />
+            </div>
           </div>
         </div>
       </div>
