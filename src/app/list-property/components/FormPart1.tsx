@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
 interface FormData {
   name: string;
@@ -94,7 +96,12 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
     setFormData((prevData) => ({ ...prevData, mapLink: value }));
     validateMapLink(value);
   };
-
+  const handlePhoneChange = (phone: string) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      contactPh: phone,
+    }));
+  };
   return (
     <>
       {/* Heading */}
@@ -151,14 +158,31 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
               <span className="text-red-500 text-xs">Required Field</span>
             )}
           </div>
-          <div className="flex flex-col items-start p-0 gap-1 w-full">
-            <input
+          <div className="flex flex-col items-start p-0 gap-1 w-full h-64px">
+            {/* <input
               type="text"
               name="contactPh"
               value={formData.contactPh}
-              onChange={handleChange}
+              onChange={handleNumberChange}
               className="w-full h-[40px] bg-[#F4F4F5] border-none rounded-full p-2"
               placeholder="Enter your Phone number"
+            /> */}
+            <PhoneInput
+              country={"us"}
+              value={formData.contactPh}
+              onChange={handlePhoneChange}
+              containerStyle={{
+                backgroundColor: "#F4F4F5",
+                borderRadius: "9999px",
+              }}
+              inputStyle={{
+                backgroundColor: "transparent",
+                border: "none",
+                borderRadius: "9999px",
+              }}
+              buttonStyle={{
+                border: "none",
+              }}
             />
           </div>
         </div>
@@ -182,7 +206,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
               className="w-full h-[40px] bg-[#F4F4F5] border-none rounded-full p-2"
               placeholder="Enter your Email"
             />
-            {errorEmail && <p className="text-red-500">{errorEmail}</p>}
+            {errorEmail && <p className="text-red-500 text-xs">{errorEmail}</p>}
           </div>
         </div>
       </div>
@@ -228,7 +252,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
             className="w-full h-[40px] bg-[#F4F4F5] border-none rounded-full p-2"
             placeholder="Enter Google Maps URL"
           />
-          {errorMap && <p className="text-red-500">{errorMap}</p>}
+          {errorMap && <p className="text-xs text-red-500">{errorMap}</p>}
         </div>
       </div>
 
