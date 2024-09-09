@@ -1,8 +1,8 @@
 "use client";
 
-import { Box, Grid, Button, Flex } from "@chakra-ui/react";
+import { Box, Grid, Button, Flex, Skeleton } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   CaretDoubleLeft,
   CaretLeft,
@@ -12,8 +12,12 @@ import {
   FileMagnifyingGlass,
 } from "@phosphor-icons/react/dist/ssr";
 import AssetCard from "./AssetCard";
+import { useActiveAccount } from "thirdweb/react";
 
 interface PropertyCardData {
+  walletAddress: string;
+  marketAddress: string;
+  tokenAddress: string;
   name: string;
   slug: string;
   location: string;
@@ -27,148 +31,86 @@ interface PropertyCardData {
 }
 
 interface AssetCardsProps {
-  cards?: PropertyCardData[];
+  filters: {
+    location: string;
+    propertyType: string;
+    sort: string;
+    status: string;
+    priceRange: number[];
+  };
 }
 
-const AssetCards: React.FC<AssetCardsProps> = ({ cards }) => {
+const AssetCards: React.FC<AssetCardsProps> = ({ filters }) => {
   const router = useRouter();
+  const activeAccount = useActiveAccount();
+  const address = activeAccount?.address;
 
+  const [propertyData, setPropertyData] = useState<PropertyCardData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+
+  const filtersRef = useRef(filters);
+
+  useEffect(() => {
+    filtersRef.current = filters;
+  }, [filters]);
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      setIsLoading(true);
+      try {
+        if (!address) return;
+        console.log("filters", filters);
+
+        const currentFilters = filtersRef.current;
+        const url = `${
+          process.env.NEXT_PUBLIC_API_HOST
+        }/user-property/${address}?${new URLSearchParams(
+          currentFilters as any
+        ).toString()}`;
+        console.log(url);
+
+        const response = await fetch(url);
+
+        const data = await response.json();
+
+        const mappedData = data.map((data: any) => {
+          const property = data.property;
+          return {
+            slug: property.id,
+            name: property.address,
+            location: `${property.city}, ${property.state}, ${property.country}`,
+            img:
+              property.images?.[0]?.image ||
+              "https://messagetech.com/wp-content/themes/ml_mti/images/no-image.jpg",
+            price: property.price || "-",
+            marketAddress: property.marketAddress,
+            tokenAddress: property.tokenAddress,
+            isAftermarket: property.isAftermarket,
+            walletAddress: data.walletAddress,
+          };
+        });
+
+        setPropertyData(mappedData);
+      } catch (error) {
+        console.error("Error fetching properties:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProperties();
+  }, [filters]);
 
   const handleButtonClick = (slug: string) => {
     router.push("/detail/" + slug);
   };
 
-  const cardData: PropertyCardData[] = [
-    {
-      name: "Luxury Villa",
-      slug: "luxury-villa",
-      location: "Beverly Hills, CA",
-      img: "/images/Property_Image.jpg",
-      price: "82,500",
-      isNew: true,
-      isFeatured: true,
-      isTraded: false,
-      profitPercentage: 10,
-      lossPercentage: 0,
-    },
-    {
-      name: "Modern Apartment",
-      slug: "modern-apartment",
-      location: "New York, NY",
-      img: "/images/Property_Image.jpg",
-      price: "26,000",
-      isNew: false,
-      isFeatured: true,
-      isTraded: false,
-      profitPercentage: 0,
-      lossPercentage: 32.5,
-    },
-    {
-      name: "The Den",
-      slug: "the-den",
-      location: "Los Angeles, LA",
-      img: "/images/Property_Image.jpg",
-      price: "9500",
-      isNew: true,
-      isFeatured: false,
-      isTraded: true,
-      profitPercentage: 6.9,
-      lossPercentage: 0,
-    },
-    {
-      name: "Modern Apartment3",
-      slug: "modern-apartment3",
-      location: "New York, NY",
-      img: "/images/Property_Image.jpg",
-      price: "15,000",
-      isNew: false,
-      isFeatured: false,
-      isTraded: false,
-      profitPercentage: 0,
-      lossPercentage: 0,
-    },
-    {
-      name: "Cozy Cottage",
-      slug: "cozy-cottage",
-      location: "Aspen, CO",
-      img: "/images/Property_Image.jpg",
-      price: "69,200",
-      isNew: true,
-      isFeatured: true,
-      isTraded: true,
-      profitPercentage: 7.9,
-      lossPercentage: 0,
-    },
-    {
-      name: "Luxury Villa",
-      slug: "luxury-villa",
-      location: "Beverly Hills, CA",
-      img: "/images/Property_Image.jpg",
-      price: "82,500",
-      isNew: true,
-      isFeatured: true,
-      isTraded: false,
-      profitPercentage: 0,
-      lossPercentage: 10.01,
-    },
-    {
-      name: "Modern Apartment",
-      slug: "modern-apartment",
-      location: "New York, NY",
-      img: "/images/Property_Image.jpg",
-      price: "26,000",
-      isNew: false,
-      isFeatured: true,
-      isTraded: true,
-      profitPercentage: 0,
-      lossPercentage: 1.1,
-    },
-    {
-      name: "The Den",
-      slug: "the-den",
-      location: "Los Angeles, LA",
-      img: "/images/Property_Image.jpg",
-      price: "9500",
-      isNew: true,
-      isFeatured: false,
-      isTraded: true,
-      profitPercentage: 0,
-      lossPercentage: 0,
-    },
-    {
-      name: "Modern Apartment3",
-      slug: "modern-apartment3",
-      location: "New York, NY",
-      img: "/images/Property_Image.jpg",
-      price: "15,000",
-      isNew: false,
-      isFeatured: false,
-      isTraded: true,
-      profitPercentage: 27.14,
-      lossPercentage: 0,
-    },
-    {
-      name: "Cozy Cottage",
-      slug: "cozy-cottage",
-      location: "Aspen, CO",
-      img: "/images/Property_Image.jpg",
-      price: "69,200",
-      isNew: true,
-      isFeatured: true,
-      isTraded: true,
-      profitPercentage: 0,
-      lossPercentage: 0,
-    },
-  ];
-
-  const cardsToDisplay = cards || cardData;
-
-  const totalPages = Math.ceil(cardsToDisplay.length / itemsPerPage);
+  const totalPages = Math.ceil(propertyData.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentCards = cardsToDisplay.slice(startIndex, endIndex);
+  const currentCards = propertyData.slice(startIndex, endIndex);
 
   const handlePageChange = (newPage: number) => {
     if (newPage > 0 && newPage <= totalPages) {
@@ -205,7 +147,24 @@ const AssetCards: React.FC<AssetCardsProps> = ({ cards }) => {
 
   return (
     <Box width={1238} pl={0} py={4}>
-      {cardsToDisplay.length === 0 ? (
+      {isLoading ? (
+        <Grid
+          templateColumns={{
+            base: "repeat(1, 1fr)",
+            md: "repeat(2, 1fr)",
+            lg: "repeat(3, 1fr)",
+          }}
+          gap={4}
+        >
+          {Array(itemsPerPage)
+            .fill(0)
+            .map((_, index) => (
+              <Box key={index}>
+                <Skeleton width="1224px" height="157px" borderRadius="lg" />
+              </Box>
+            ))}
+        </Grid>
+      ) : propertyData.length === 0 ? (
         <div className="flex flex-col justify-center items-center p-12 gap-1 w-[1214px] h-[404px] ">
           <div className="flex flex-row items-center p-3 gap-2 w-14 h-14 bg-zinc-100 rounded-full">
             <div className=" relative flex items-center justify-center">
@@ -227,6 +186,9 @@ const AssetCards: React.FC<AssetCardsProps> = ({ cards }) => {
           >
             {currentCards.map((card, index) => (
               <AssetCard
+                walletAddress={card.walletAddress}
+                marketAddress={card.marketAddress}
+                tokenAddress={card.tokenAddress}
                 key={index}
                 name={card.name}
                 location={card.location}
@@ -234,7 +196,7 @@ const AssetCards: React.FC<AssetCardsProps> = ({ cards }) => {
                 price={card.price}
                 isNew={card.isNew}
                 isFeatured={card.isFeatured}
-                isTraded={card.isTraded}
+                // isTraded={card.isTraded}
                 profitPercentage={card.profitPercentage}
                 lossPercentage={card.lossPercentage}
                 onButtonClick={() => handleButtonClick(card.slug)}

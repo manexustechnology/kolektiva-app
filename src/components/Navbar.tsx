@@ -223,6 +223,7 @@ const Navbar: React.FC = () => {
                           if (wallet) {
                             disconnect(wallet);
                             setIsConnected(false);
+                            router.replace(pathname);
                           }
                         }}
                       >

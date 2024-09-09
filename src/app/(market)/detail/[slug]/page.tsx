@@ -18,14 +18,13 @@ const MarketDetailPage: React.FC<MarketDetailProps> = ({ searchParams }) => {
   const { slug } = useParams(); // Use useParams to get route parameters
   const [propertyData, setPropertyData] = useState<PropertyData | null>(null);
   const [loading, setLoading] = useState(true);
-  const chain = useActiveWalletChain()!;
 
   useEffect(() => {
     if (slug) {
       const fetchPropertyData = async () => {
         try {
           const response = await fetch(
-            `https://kolektiva-be.vercel.app/property/${slug}`
+            `${process.env.NEXT_PUBLIC_API_HOST}/property/${slug}`
           );
           const data: PropertyData = await response.json();
           setPropertyData(data);

@@ -37,7 +37,7 @@ function getContractInstance(
   contractName: string,
   contractAddress?: string
 ): ThirdwebContract<any[]> {
-  const contractDetails = deployedContracts[chain.id]?.[contractName];
+  const contractDetails = deployedContracts[chain?.id]?.[contractName];
 
   if (!contractDetails) {
     throw new Error(`Contract details for ${contractName} not found.`);
@@ -94,7 +94,6 @@ export function useWriteContractHook({
   args = [],
   contractAddress,
 }: UseContractParams) {
-  // Retrieve contract instance
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const chain = useActiveWalletChain()!;
@@ -179,6 +178,6 @@ export function useContractEventHook({
 }
 
 export function useDeployedContractInfo(contractName: string) {
-  const chain = useActiveWalletChain()!;
-  return deployedContracts[chain.id]?.[contractName];
+  const chain = useActiveWalletChain();
+  return chain ? deployedContracts[chain.id]?.[contractName] : null;
 }

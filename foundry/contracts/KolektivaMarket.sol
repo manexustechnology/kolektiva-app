@@ -105,6 +105,7 @@ contract KolektivaMarket is Ownable, ReentrancyGuard {
         propertyOwner = _propertyOwner;
         initialOfferingSupply = kolektivaToken.totalSupply();
         salePrice = _salePrice;
+        lastTradedPrice = _salePrice;
     }
 
     /**
