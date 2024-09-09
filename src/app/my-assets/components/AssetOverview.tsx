@@ -2,12 +2,13 @@
 
 import { Box, Button, Image } from "@chakra-ui/react";
 import { ArrowUpRight, CaretUp } from "@phosphor-icons/react/dist/ssr";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useReadContractHook } from "@/utils/hooks";
 import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
 import { formatUSDTBalance } from "@/utils/formatter";
 
 const AssetOverview: React.FC = () => {
+  const [propertyOwned, setPropertyOwned] = useState<Number>(0);
   const activeAccount = useActiveAccount();
   const address = activeAccount?.address;
 
@@ -21,6 +22,21 @@ const AssetOverview: React.FC = () => {
     console.log(balanceUsdtData, "check balance");
     return balanceUsdtData ? Number(balanceUsdtData) : 0;
   }, [balanceUsdtData, isLoading]);
+
+  useEffect(() => {
+    const fetchProperties = async () => {
+      if (!address) return;
+      const url = `${process.env.NEXT_PUBLIC_API_HOST}/user-property/count/${address}`;
+      const response = await fetch(url);
+
+      const data = await response.json();
+      console.log(data);
+
+      setPropertyOwned(data);
+    };
+
+    fetchProperties();
+  }, [address]);
 
   return (
     <>
@@ -124,7 +140,7 @@ const AssetOverview: React.FC = () => {
               Property owned
             </p>
             <p className="w-[362px] h-[24px] text-lg font-bold text-[#042F2E] leading-[24px]">
-              11
+              {Number(propertyOwned)}
             </p>
           </div>
         </div>
