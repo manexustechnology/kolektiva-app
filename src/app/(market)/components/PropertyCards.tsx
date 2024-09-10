@@ -31,7 +31,7 @@ interface PropertyCardsProps {
   filters: {
     location: string;
     propertyType: string;
-    sortOption: string;
+    sort: string;
     status: string;
     priceRange: number[];
   };
@@ -72,10 +72,10 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
           price: property.price || "-",
           marketAddress: property.marketAddress,
           tokenAddress: property.tokenAddress,
-          isNew: true,
-          isFeatured: property.isFeatured,
+          // isNew: true,
+          // isFeatured: property.isFeatured,mp
           // isTraded: property.isTraded,
-          isUpcoming: property.isUpcoming,
+          // isAfatermarket: property.isAfatermarket,
         }));
 
         if (currentFilters.status && currentFilters.status == "upcoming") {

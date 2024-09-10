@@ -22,6 +22,7 @@ import { formatUSDTBalance, parseUSDTBalance } from "@/utils/formatter";
 import { getTransactionInfo } from "@/app/api/tx-info";
 import { TxInfoData } from "@/types/tx-info";
 import TxFailureToast from "../modals/TxFailureToast";
+import axios from "axios";
 
 interface BuyFormWizardProps {
   propertyData: PropertyData;
@@ -125,6 +126,28 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
     return allowanceData ? Number(allowanceData) : 0;
   }, [allowanceData]);
 
+  const sendUserPropertyData = async () => {
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_HOST}/user-property/`,
+        {
+          walletAddress: address,
+          propertyId: propertyData.id,
+        }
+      );
+
+      // Not success
+      if (response.status !== 200) {
+        throw new Error(response.data?.message || "Something went wrong!");
+      }
+      if (response.status !== 200) {
+        throw new Error(response.data?.message || "Something went wrong!");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     const updateButtonText = () => {
       switch (currentStep) {
@@ -177,6 +200,15 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
   const handleButtonSubmitClick = async () => {
     console.log("formData", formData);
 
+    const executeTransactionAndSendPropertyData = async (
+      transactionType: Promise<any>
+    ) => {
+      await handleTransaction(transactionType, () =>
+        onSubmitButtonClick(formData)
+      );
+      sendUserPropertyData();
+    };
+
     try {
       switch (currentStep) {
         case 1:
@@ -192,15 +224,13 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
           if (!isAfterMarketTrading) {
             onSubmitButtonClick(formData);
           } else if (isAfterMarketTrading) {
+            setIsLoading(true);
+
             const formDataType = (formData as AfterMarketBuyOrderData).type;
             if (formDataType === "market") {
-              await handleTransaction(marketBuy(), () =>
-                onSubmitButtonClick(formData)
-              );
+              await executeTransactionAndSendPropertyData(marketBuy());
             } else if (formDataType === "limit") {
-              await handleTransaction(limitBuy(), () =>
-                onSubmitButtonClick(formData)
-              );
+              await executeTransactionAndSendPropertyData(limitBuy());
             }
           } else {
             console.warn(
@@ -209,10 +239,10 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
           }
           break;
         case 3:
+          setIsLoading(true);
+
           if (!isAfterMarketTrading) {
-            await handleTransaction(initialOfferingBuy(), () =>
-              onSubmitButtonClick(formData)
-            );
+            await executeTransactionAndSendPropertyData(initialOfferingBuy());
           } else {
             console.warn(
               "Market trading operations should not be processed in this step."

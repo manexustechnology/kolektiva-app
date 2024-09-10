@@ -32,7 +32,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   // isTraded,
   onButtonClick,
 }) => {
-  const { data: initialOfferingActive } = useReadContractHook({
+  const { data: initialOfferingActive = true } = useReadContractHook({
     contractName: "KolektivaMarket",
     functionName: "initialOfferingActive",
     contractAddress: marketAddress,
@@ -62,13 +62,13 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   });
 
   const isTraded = useMemo(() => {
+    if (initialOfferingActive === null) {
+      return false;
+    }
     return initialOfferingActive !== true;
   }, [initialOfferingActive]);
 
   const initialOfferingPercentage = useMemo(() => {
-    console.log("tokenTotalSupply", tokenTotalSupply);
-    console.log("initialOfferingSupply", initialOfferingSupply);
-
     if (tokenTotalSupply > initialOfferingSupply) {
       const totalSupply = Number(tokenTotalSupply);
       const ioSupply = Number(initialOfferingSupply);

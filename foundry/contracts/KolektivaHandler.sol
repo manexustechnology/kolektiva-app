@@ -22,21 +22,25 @@ contract KolektivaHandler is Ownable {
     mapping(string name => address) public marketAddresses;
     string[] private tokenNamesList;
 
-    event TokenCreated(string name, address tokenAddress);
-    event TokenRevoked(string name, address tokenAddress);
+    event TokenCreated(string indexed name, address tokenAddress);
+    event TokenRevoked(string indexed name, address tokenAddress);
     event MarketCreated(
-        string name,
+        string indexed name,
         address tokenAddress,
         address marketAddress
     );
     event MarketRevoked(
-        string name,
+        string indexed name,
         address tokenAddress,
         address marketAddress
     );
-    event WithdrawnToken(string name, address tokenAddress, uint256 amount);
+    event WithdrawnToken(
+        string indexed name,
+        address indexed tokenAddress,
+        uint256 amount
+    );
     event WithdrawnFee(uint256 amount);
-    event FeePercentageUpdated(string name, uint256 newFeePercentage);
+    event FeePercentageUpdated(string indexed name, uint256 newFeePercentage);
 
     /**
      * @dev Constructor to initialize the contract with the owner and USDT token address.

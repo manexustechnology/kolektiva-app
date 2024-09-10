@@ -1,5 +1,7 @@
 "use client";
 
+import { formatUSDTBalance } from "@/utils/formatter";
+import { useReadContractHook } from "@/utils/hooks";
 import { Box, Image, Text, Heading, Button, Progress } from "@chakra-ui/react";
 import {
   CaretUp,
@@ -7,32 +9,92 @@ import {
   UsersThree,
   CaretDown,
 } from "@phosphor-icons/react/dist/ssr";
+import { useMemo } from "react";
+import { flowPreviewnet } from "viem/chains";
 
 interface AssetCardProps {
+  walletAddress: string;
+  marketAddress: string;
+  tokenAddress: string;
   name: string;
   location: string;
   img: string;
   price: string;
   isNew: boolean;
   isFeatured: boolean;
-  isTraded: boolean;
+  // isTraded: boolean;
   profitPercentage?: number;
   lossPercentage?: number;
   onButtonClick: () => void;
 }
 
 const AssetCard: React.FC<AssetCardProps> = ({
+  walletAddress,
+  tokenAddress,
+  marketAddress,
   name,
   location,
   img,
   price,
   isNew,
   isFeatured,
-  isTraded,
+  // isTraded,
   profitPercentage,
   lossPercentage,
   onButtonClick,
 }) => {
+  const { data: initialOfferingActive } = useReadContractHook({
+    contractName: "KolektivaMarket",
+    functionName: "initialOfferingActive",
+    contractAddress: marketAddress,
+    args: [],
+  });
+
+  const { data: salePriceData } = useReadContractHook({
+    contractName: "KolektivaMarket",
+    functionName: "salePrice",
+    contractAddress: marketAddress,
+
+    args: [],
+  });
+
+  const { data: lastTradedPrice } = useReadContractHook({
+    contractName: "KolektivaMarket",
+    functionName: "lastTradedPrice",
+    contractAddress: marketAddress,
+
+    args: [],
+  });
+
+  const { data: tokenTotalSupply } = useReadContractHook({
+    contractName: "KolektivaToken",
+    functionName: "totalSupply",
+    contractAddress: tokenAddress,
+    args: [],
+  });
+
+  // const { data: initialOfferingSupply } = useReadContractHook({
+  //   contractName: "KolektivaMarket",
+  //   functionName: "initialOfferingSupply",
+  //   contractAddress: marketAddress,
+  //   args: [],
+  // });
+
+  const { data: balanceTokenData } = useReadContractHook({
+    contractName: "KolektivaToken",
+    functionName: "balanceOf",
+    contractAddress: tokenAddress,
+    args: [walletAddress],
+  });
+
+  const isTraded = useMemo(() => {
+    return initialOfferingActive !== true;
+  }, [initialOfferingActive]);
+
+  const tokenOwnedPercentage = useMemo(() => {
+    return (Number(balanceTokenData) / Number(tokenTotalSupply)) * 100;
+  }, [balanceTokenData, tokenTotalSupply]);
+
   return (
     <Box
       display="flex"
@@ -45,6 +107,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
       backgroundColor="#FFFFFF"
       boxShadow="0px 1px 2px rgba(16, 24, 40, 0.06), 0px 1px 3px rgba(16, 24, 40, 0.1)"
       borderRadius="16px"
+      onClick={onButtonClick}
     >
       <Image
         src={img}
@@ -144,7 +207,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
         <div className="w-[482px] h-[24px] text-lg font-bold text-[#042F2E] leading-[24px] flex items-center">
           <span>{name}</span>
           <div className="flex space-x-2 ml-2">
-            {profitPercentage !== undefined && profitPercentage > 0 && (
+            {/* {profitPercentage !== undefined && profitPercentage > 0 && (
               <span className="flex items-center">
                 <CaretUp size={16} color="#65A30D" weight="fill" />
                 <span className="text-sm font-medium text-[#65A30D] leading-[18px] ml-1">
@@ -159,7 +222,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
                   {lossPercentage}%
                 </span>
               </span>
-            )}
+            )} */}
           </div>
         </div>
         <div className="w-[1037px] h-[1px] bg-zinc-200 self-stretch"></div>
@@ -171,9 +234,12 @@ const AssetCard: React.FC<AssetCardProps> = ({
               Token owned
             </p>
             <div className="flex flex-row items-center gap-1 w-[207.4px] h-[18px]">
-              <p className=" h-[18px] text-sm font-bold text-[#042F2E]">12</p>
+              <p className=" h-[18px] text-sm font-bold text-[#042F2E]">
+                {Number(balanceTokenData).toLocaleString()}
+              </p>
               <p className=" h-[18px] text-sm font-normal text-[#71717A]">
-                of 5386 (0.93%)
+                of {Number(tokenTotalSupply).toLocaleString()} (
+                {tokenOwnedPercentage}%)
               </p>
             </div>
           </div>
@@ -213,7 +279,10 @@ const AssetCard: React.FC<AssetCardProps> = ({
             </p>
             <div className="flex flex-row items-center gap-1 w-[207.4px] h-[18px]">
               <p className=" h-[18px] text-sm font-bold text-[#042F2E]">
-                1200 USDT
+                {lastTradedPrice > 0
+                  ? formatUSDTBalance(lastTradedPrice)
+                  : formatUSDTBalance(salePriceData)}{" "}
+                USDT
               </p>
             </div>
           </div>

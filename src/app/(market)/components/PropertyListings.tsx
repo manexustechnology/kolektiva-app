@@ -26,7 +26,7 @@ const PropertyListings: React.FC = () => {
     location: "",
     propertyType: "",
     status: "",
-    sortOption: "",
+    sort: "",
     priceRange: [0, 1000],
   });
 
@@ -54,7 +54,7 @@ const PropertyListings: React.FC = () => {
       location: "",
       propertyType: "",
       status: "",
-      sortOption: "",
+      sort: "",
       priceRange: [0, 1000],
     });
   };
@@ -86,11 +86,13 @@ const PropertyListings: React.FC = () => {
       {isCorrectNetwork === true ? (
         <PropertyCards filters={filters} />
       ) : (
-        <div className="flex justify-center items-center h-[60vh]">
-          <p className="font-bold text-2xl leading-7 text-center text-teal-600">
-            No data found!
-          </p>
-        </div>
+        activeChain && (
+          <div className="flex justify-center items-center h-[60vh]">
+            <p className="font-bold text-2xl leading-7 text-center text-teal-600">
+              Connect to your wallet!
+            </p>
+          </div>
+        )
       )}
     </Box>
   );
