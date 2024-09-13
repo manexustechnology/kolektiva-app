@@ -257,6 +257,13 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
     }
   };
 
+  const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked;
+    setIsCheckboxChecked(checked);
+    console.log("Checkbox checked:", checked); // Log the checkbox state
+  };
   return (
     <>
       <TxFailureToast txInfo={txInfo} />
@@ -302,7 +309,13 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
                 </div>
               </div>
               <div>
-                <Checkbox colorScheme="teal" display="flex" gap={2}>
+                <Checkbox
+                  colorScheme="teal"
+                  display="flex"
+                  gap={2}
+                  onChange={handleCheckboxChange}
+                  isChecked={isCheckboxChecked}
+                >
                   <span className="text-sm text-zinc-700">
                     I certify that i have read Kolektiva’s Terms of Service in
                     full and agree that I am qualified to invest in this
@@ -349,6 +362,20 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
             >
               Empty Sale Order book
             </Button>
+          ) : currentStep === 3 ? (
+            <Button
+              colorScheme="teal"
+              bgColor="teal.600"
+              w="full"
+              rounded="full"
+              fontWeight="medium"
+              onClick={handleButtonSubmitClick}
+              fontSize="sm"
+              isLoading={isLoading}
+              isDisabled={!isCheckboxChecked}
+            >
+              {buttonText}
+            </Button>
           ) : (
             <Button
               colorScheme="teal"
@@ -359,9 +386,8 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
               onClick={handleButtonSubmitClick}
               fontSize="sm"
               isLoading={isLoading}
-              disabled={isLoading}
             >
-              <>{isLoading ? <Spinner /> : <>{buttonText}</>}</>
+              {buttonText}
             </Button>
           )}
         </div>

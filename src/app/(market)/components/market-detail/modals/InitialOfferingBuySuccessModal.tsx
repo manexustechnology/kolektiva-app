@@ -153,7 +153,7 @@ const InitialOfferingBuySuccessModal: React.FC<
                     height="40px"
                     bg="white"
                     borderRadius="full"
-                    _focus={{ boxShadow: "none" }} // Removes default focus box shadow if needed
+                    _focus={{ boxShadow: "none" }}
                   >
                     <Icon
                       as={copied ? CheckCircle : Copy}
@@ -163,6 +163,7 @@ const InitialOfferingBuySuccessModal: React.FC<
                     />
                   </Button>
                 </div>
+                <p onClick={() => handleRedirectUrl()}>Go to Block Explorer</p>
 
                 <div className="flex flex-row items-center mt-4 gap-2 w-[259px] h-[64px] bg-[#F0FDFA] rounded-full z-[2] p-[12px_24px_12px_12px]">
                   <div className="flex flex-row items-center gap-2">
