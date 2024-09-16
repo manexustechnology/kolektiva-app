@@ -82,7 +82,7 @@ const PropertyListings: React.FC = () => {
   return (
     <>
       <p>isConnecting: {isConnecting}</p>
-      {/* <Box
+      <Box
         width={1238}
         overflow="hidden"
         maxWidth="1238px"
@@ -101,7 +101,7 @@ const PropertyListings: React.FC = () => {
             </div>
           )
         )}
-      </Box> */}
+      </Box>
     </>
   );
 };
