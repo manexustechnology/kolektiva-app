@@ -46,15 +46,6 @@ contract KolektivaMarket is Ownable, ReentrancyGuard {
     OrderLib.Order[] private buyOrders;
     OrderLib.Order[] private sellOrders;
 
-    struct TradeDetails {
-        int256 start;
-        int256 end;
-        int256 step;
-        uint256 remainingAmount;
-        uint256 totalValue;
-        uint256 processedCount;
-    }
-
     // Events
     event OrderPlaced(
         address indexed trader,
@@ -212,24 +203,31 @@ contract KolektivaMarket is Ownable, ReentrancyGuard {
     }
 
     /**
-     * @dev Function to place an order.
-     * @param _amount Amount of tokens to trade.
+     * @dev Function to place a buy order.
+     * @param _amount Amount of tokens to buy.
      * @param _price Price per token.
-     * @param isBuyOrder Indicates if the order is a buy order.
      * @notice This function can only be called after the initial offering has ended.
      */
-    function placeOrder(
+    function placeBuyOrder(
         uint256 _amount,
-        uint256 _price,
-        bool isBuyOrder
+        uint256 _price
     ) external initialOfferingOngoing(false) nonReentrant {
-        uint256 totalValue = _amount * _price;
-        uint256 fee = (totalValue * FEE_PERCENTAGE) / FEE_PRECISION;
+        uint256 totalCost = _amount * _price;
+        uint256 fee = (totalCost * FEE_PERCENTAGE) / FEE_PRECISION;
 
-        // Transfer assets and fee based on order type
-        _transferAssetsAndFee(_amount, totalValue, fee, isBuyOrder);
+        // Transfer USDT from buyer to contract (including fee)
+        if (
+            !usdtToken.transferFrom(msg.sender, address(this), totalCost + fee)
+        ) {
+            revert TransferFailed();
+        }
 
-        // Create and insert the new order
+        // Transfer the fee to the handler
+        if (!usdtToken.transfer(handler, fee)) {
+            revert TransferFailed();
+        }
+
+        // Create and insert the new buy order with an orderId
         OrderLib.Order memory newOrder = OrderLib.Order({
             trader: msg.sender,
             amount: _amount,
@@ -237,221 +235,200 @@ contract KolektivaMarket is Ownable, ReentrancyGuard {
             orderId: nextOrderId++
         });
 
-        _insertOrder(newOrder, isBuyOrder);
+        // Insert the new order in sorted order by price and orderId
+        buyOrders.push(newOrder);
+        buyOrders.addOrderToSortedList(newOrder, true);
 
-        emit OrderPlaced(
-            msg.sender,
-            _amount,
-            _price,
-            isBuyOrder,
-            block.timestamp
-        );
+        emit OrderPlaced(msg.sender, _amount, _price, true, block.timestamp);
         _matchOrders();
     }
 
     /**
-     * @dev Internal function to transfer assets and fee based on order type.
-     * @param _amount Amount of tokens to trade.
-     * @param totalValue Total value of the trade.
-     * @param fee Fee for the trade.
-     * @param isBuyOrder Indicates if the order is a buy order.
+     * @dev Function to place a sell order.
+     * @param _amount Amount of tokens to sell.
+     * @param _price Price per token.
+     * @notice This function can only be called after the initial offering has ended.
      */
-    function _transferAssetsAndFee(
+    function placeSellOrder(
         uint256 _amount,
-        uint256 totalValue,
-        uint256 fee,
-        bool isBuyOrder
-    ) internal {
-        if (isBuyOrder) {
-            if (
-                !usdtToken.transferFrom(
-                    msg.sender,
-                    address(this),
-                    totalValue + fee
-                )
-            ) {
-                revert TransferFailed();
-            }
+        uint256 _price
+    ) external initialOfferingOngoing(false) nonReentrant {
+        uint256 totalProceeds = _amount * _price;
+        uint256 fee = (totalProceeds * FEE_PERCENTAGE) / FEE_PRECISION;
 
-            // Transfer the fee to the handler
-            if (!usdtToken.transfer(handler, fee)) {
-                revert TransferFailed();
-            }
-        } else {
-            if (
-                !kolektivaToken.transferFrom(msg.sender, address(this), _amount)
-            ) {
-                revert TransferFailed();
-            }
-
-            // Transfer the fee to the handler
-            if (!usdtToken.transferFrom(msg.sender, handler, fee)) {
-                revert TransferFailed();
-            }
+        // Transfer tokens from seller to contract
+        if (!kolektivaToken.transferFrom(msg.sender, address(this), _amount)) {
+            revert TransferFailed();
         }
+
+        // Transfer the fee to the handler
+        if (!usdtToken.transferFrom(msg.sender, handler, fee)) {
+            revert TransferFailed();
+        }
+
+        // Create and insert the new sell order with an orderId
+        OrderLib.Order memory newOrder = OrderLib.Order({
+            trader: msg.sender,
+            amount: _amount,
+            price: _price,
+            orderId: nextOrderId++
+        });
+
+        // Insert the new order in sorted order by price and orderId
+        sellOrders.push(newOrder);
+        sellOrders.addOrderToSortedList(newOrder, false);
+
+        emit OrderPlaced(msg.sender, _amount, _price, false, block.timestamp);
+        _matchOrders();
     }
 
     /**
-     * @dev Internal function to insert a new order into the appropriate list.
-     * @param newOrder The new order to insert.
-     * @param isBuyOrder Indicates if the order is a buy order.
+     * @dev Function to instantly buy tokens from the sell orders.
+     * @param _amount Amount of tokens to buy.
+     * @notice This function can only be called after the initial offering has ended.
      */
-    function _insertOrder(
-        OrderLib.Order memory newOrder,
-        bool isBuyOrder
-    ) internal {
-        if (isBuyOrder) {
-            buyOrders.push(newOrder);
-            buyOrders.addOrderToSortedList(newOrder, true);
-        } else {
-            sellOrders.push(newOrder);
-            sellOrders.addOrderToSortedList(newOrder, false);
-        }
-    }
-
-    /**
-     * @dev Function to instantly trade tokens with the market orders.
-     * @param _amount Amount of tokens to trade.
-     * @param isBuy Indicates if the trade is a buy operation.
-     * @notice This function consolidates the logic for both buying and selling operations to adhere to DRY principles.
-     */
-    function instantTrade(
-        uint256 _amount,
-        bool isBuy
+    function instantBuy(
+        uint256 _amount
     ) external initialOfferingOngoing(false) nonReentrant {
         if (_amount == 0) revert InvalidAmount();
 
         uint256 remainingAmount = _amount;
-        uint256 totalValue = 0;
+        uint256 totalCost = 0;
         uint256 processedCount = 0;
-        OrderLib.Order[] storage orders = isBuy ? sellOrders : buyOrders;
 
-        // Determine loop direction based on trade type
-        int256 start = isBuy ? int256(0) : int256(orders.length - 1);
-        int256 end = isBuy ? int256(orders.length) : -1;
-        int256 step = isBuy ? int256(1) : int256(-1);
+        // Prepare the transactions by determining which sell orders will be processed
+        for (uint256 i = 0; i < sellOrders.length && remainingAmount > 0; i++) {
+            OrderLib.Order memory sellOrder = sellOrders[i];
+            uint256 tradeAmount = sellOrder.amount < remainingAmount
+                ? sellOrder.amount
+                : remainingAmount;
+            uint256 cost = tradeAmount * sellOrder.price;
 
-        // Refactor to reduce stack depth
-        TradeDetails memory tradeDetails = TradeDetails({
-            start: start,
-            end: end,
-            step: step,
-            remainingAmount: remainingAmount,
-            totalValue: totalValue,
-            processedCount: processedCount
-        });
+            if (!usdtToken.transferFrom(msg.sender, address(this), cost)) {
+                revert TransferFailed();
+            }
 
-        _processTrade(orders, tradeDetails, isBuy);
+            totalCost += cost;
+            // Execute the trade
+            _executeTrade(
+                msg.sender,
+                sellOrder.trader,
+                tradeAmount,
+                sellOrder.price
+            );
 
-        if (tradeDetails.remainingAmount > 0) revert InsufficientSupply();
+            unchecked {
+                remainingAmount -= tradeAmount;
+                sellOrders[i].amount -= tradeAmount;
+            }
 
-        // Adjust the orders array to remove processed orders
-        _adjustOrdersArray(orders, tradeDetails.processedCount);
+            if (sellOrders[i].amount == 0) {
+                processedCount++;
+            } else {
+                break;
+            }
+        }
 
-        // Fee calculation and transfer
-        _calculateAndTransferFee(tradeDetails.totalValue);
+        // Check for remaining amount after processing all possible orders
+        if (remainingAmount > 0) revert InsufficientSupply();
+
+        // Shift the remaining orders and remove the fully executed ones
+        for (uint256 i = 0; i < sellOrders.length - processedCount; i++) {
+            sellOrders[i] = sellOrders[i + processedCount];
+        }
+        for (uint256 i = 0; i < processedCount; i++) {
+            sellOrders.pop();
+        }
+
+        // Fee calculation
+        uint256 fee = (totalCost * FEE_PERCENTAGE) / FEE_PRECISION;
+
+        if (!usdtToken.transferFrom(msg.sender, handler, fee)) {
+            revert TransferFailed();
+        }
 
         emit InstantTrade(
             msg.sender,
             _amount,
-            tradeDetails.totalValue,
-            isBuy,
+            totalCost,
+            true,
             block.timestamp
         );
     }
 
-    function _processTrade(
-        OrderLib.Order[] storage orders,
-        TradeDetails memory tradeDetails,
-        bool isBuy
-    ) internal {
-        for (
-            int256 i = tradeDetails.start;
-            i != tradeDetails.end && tradeDetails.remainingAmount > 0;
-            i += tradeDetails.step
-        ) {
-            uint256 idx = uint256(i);
-            OrderLib.Order memory order = orders[idx];
-            uint256 tradeAmount = _calculateTradeAmount(
-                order.amount,
-                tradeDetails.remainingAmount
-            );
-            uint256 value = tradeAmount * order.price;
-
-            (address buyer, address seller) = _transferFundsOrTokens(
-                isBuy,
-                value,
-                tradeAmount,
-                order.trader
-            );
-
-            tradeDetails.totalValue += value;
-            _executeTrade(buyer, seller, tradeAmount, order.price);
-
-            tradeDetails.remainingAmount -= tradeAmount;
-            orders[idx].amount -= tradeAmount;
-
-            if (orders[idx].amount == 0) tradeDetails.processedCount++;
-        }
-    }
-
-    function _calculateTradeAmount(
-        uint256 orderAmount,
-        uint256 remainingAmount
-    ) internal pure returns (uint256 tradeAmount) {
-        return (orderAmount < remainingAmount) ? orderAmount : remainingAmount;
-    }
-
-    function _transferFundsOrTokens(
-        bool isBuy,
-        uint256 value,
-        uint256 tradeAmount,
-        address orderTrader
-    ) internal returns (address buyer, address seller) {
-        if (isBuy) {
-            if (!usdtToken.transferFrom(msg.sender, address(this), value))
-                revert TransferFailed();
-            buyer = msg.sender;
-            seller = orderTrader;
-        } else {
-            if (
-                !kolektivaToken.transferFrom(
-                    msg.sender,
-                    address(this),
-                    tradeAmount
-                )
-            ) revert TransferFailed();
-            buyer = orderTrader;
-            seller = msg.sender;
-        }
-        return (buyer, seller);
-    }
-
-    function _calculateAndTransferFee(uint256 totalValue) internal {
-        uint256 fee = (totalValue * FEE_PERCENTAGE) / FEE_PRECISION;
-        if (!usdtToken.transferFrom(msg.sender, handler, fee))
-            revert TransferFailed();
-    }
-
     /**
-     * @dev Helper function to adjust the orders array by removing processed orders.
-     * @param orders Array of orders.
-     * @param processedCount Number of orders that were fully processed.
+     * @dev Function to instantly sell tokens to the buy orders.
+     * @param _amount Amount of tokens to sell.
      */
-    function _adjustOrdersArray(
-        OrderLib.Order[] storage orders,
-        uint256 processedCount /* bool isBuy */
-    ) internal {
-        uint256 ordersLength = orders.length;
+    function instantSell(uint256 _amount) external nonReentrant {
+        if (_amount == 0) revert InvalidAmount();
+        if (!kolektivaToken.transferFrom(msg.sender, address(this), _amount)) {
+            revert TransferFailed();
+        }
 
-        if (processedCount > 0)
-            for (uint256 i = 0; i < ordersLength; i++) {
-                if (i < ordersLength - processedCount) {
-                    orders[i] = orders[i + processedCount];
-                } else {
-                    orders.pop();
-                }
+        uint256 remainingAmount = _amount;
+        uint256 totalProceeds = 0;
+        uint256 processedCount = 0;
+
+        // Prepare the transactions by determining which buy orders will be processed
+        for (uint256 i = buyOrders.length; i > 0 && remainingAmount > 0; i--) {
+            OrderLib.Order memory buyOrder = buyOrders[i - 1];
+            uint256 tradeAmount = buyOrder.amount < remainingAmount
+                ? buyOrder.amount
+                : remainingAmount;
+            uint256 proceeds = tradeAmount * buyOrder.price;
+
+            totalProceeds += proceeds;
+
+            // Execute the trade
+            _executeTrade(
+                buyOrder.trader,
+                msg.sender,
+                tradeAmount,
+                buyOrder.price
+            );
+
+            unchecked {
+                remainingAmount -= tradeAmount;
+                buyOrders[i - 1].amount -= tradeAmount;
             }
+
+            if (buyOrders[i - 1].amount == 0) {
+                processedCount++;
+            } else {
+                break;
+            }
+        }
+
+        // Check for remaining amount after processing all possible orders
+        if (remainingAmount > 0) revert InsufficientSupply();
+
+        // Shift the remaining orders and remove the fully executed ones
+        for (
+            uint256 i = buyOrders.length - processedCount;
+            i < buyOrders.length - 1;
+            i++
+        ) {
+            buyOrders[i] = buyOrders[i + processedCount];
+        }
+        for (uint256 i = 0; i < processedCount; i++) {
+            buyOrders.pop();
+        }
+
+        // Fee calculation
+        uint256 fee = (totalProceeds * FEE_PERCENTAGE) / FEE_PRECISION;
+
+        if (!usdtToken.transferFrom(msg.sender, handler, fee)) {
+            revert TransferFailed();
+        }
+
+        emit InstantTrade(
+            msg.sender,
+            _amount,
+            totalProceeds,
+            false,
+            block.timestamp
+        );
     }
 
     /**
@@ -598,96 +575,6 @@ contract KolektivaMarket is Ownable, ReentrancyGuard {
     }
 
     /**
-     * @dev Retrieves a buy order from the array of buy orders by its index.
-     * @param index The index in the buy orders array.
-     * @notice The index must be a valid index within the range of the buy orders array.
-     * @return order The buy order at the specified index.
-     */
-    function getBuyOrderByIndex(
-        uint256 index
-    )
-        public
-        view
-        validOrderIndex(index, true)
-        returns (OrderLib.Order memory order)
-    {
-        order = buyOrders[index];
-    }
-
-    /**
-     * @dev Retrieves a sell order from the array of sell orders by its index.
-     * @param index The index in the sell orders array.
-     * @notice The index must be a valid index within the range of the sell orders array.
-     * @return order The sell order at the specified index.
-     */
-    function getSellOrderByIndex(
-        uint256 index
-    )
-        public
-        view
-        validOrderIndex(index, false)
-        returns (OrderLib.Order memory order)
-    {
-        order = sellOrders[index];
-    }
-
-    /**
-     * @dev Calculates the total cost and fees for buying a given amount of tokens.
-     * @param _amount The amount of tokens to calculate the buy cost for.
-     * @notice This function assumes a perfect match of sell orders to fulfill the buy amount.
-     * @return totalCost The total cost in USDT for the amount of tokens to buy.
-     * @return fees The total fees in USDT for the amount of tokens to buy.
-     */
-    function calculateBuyCost(
-        uint256 _amount
-    ) external view returns (uint256 totalCost, uint256 fees) {
-        uint256 remainingAmount = _amount;
-        totalCost = 0;
-
-        for (uint256 i = 0; i < sellOrders.length && remainingAmount > 0; i++) {
-            OrderLib.Order memory order = sellOrders[i];
-            uint256 availableAmount = remainingAmount < order.amount
-                ? remainingAmount
-                : order.amount;
-            totalCost += (availableAmount * order.price);
-            remainingAmount -= availableAmount;
-        }
-
-        if (remainingAmount > 0) revert InsufficientSupply();
-
-        fees = (totalCost * FEE_PERCENTAGE) / FEE_PRECISION;
-        totalCost += fees;
-    }
-
-    /**
-     * @dev Calculates the total proceeds and fees for selling a given amount of tokens.
-     * @param _amount The amount of tokens to calculate the sell proceeds for.
-     * @notice This function assumes a perfect match of buy orders to fulfill the sell amount.
-     * @return totalProceeds The total proceeds in USDT for the amount of tokens to sell.
-     * @return fees The total fees in USDT for the amount of tokens to sell.
-     */
-    function calculateSellProceeds(
-        uint256 _amount
-    ) external view returns (uint256 totalProceeds, uint256 fees) {
-        uint256 remainingAmount = _amount;
-        totalProceeds = 0;
-
-        for (uint256 i = buyOrders.length; i > 0 && remainingAmount > 0; i--) {
-            OrderLib.Order memory order = buyOrders[i - 1];
-            uint256 availableAmount = remainingAmount < order.amount
-                ? remainingAmount
-                : order.amount;
-            totalProceeds += (availableAmount * order.price);
-            remainingAmount -= availableAmount;
-        }
-
-        if (remainingAmount > 0) revert InsufficientSupply();
-
-        fees = (totalProceeds * FEE_PERCENTAGE) / FEE_PRECISION;
-        totalProceeds -= fees;
-    }
-
-    /**
      * @dev Function to get the count of buy orders.
      * @return The count of buy orders.
      */
@@ -696,37 +583,83 @@ contract KolektivaMarket is Ownable, ReentrancyGuard {
     }
 
     /**
-     * @dev Retrieves the number of sell orders currently in the market.
-     * @return The count of active sell orders.
+     * @dev Function to get the count of sell orders.
+     * @return The count of sell orders.
      */
     function getSellOrdersCount() external view returns (uint256) {
         return sellOrders.length;
     }
 
     /**
-     * @dev Provides the precision used for fee calculations.
-     * This is the factor that fee percentages are divided by to calculate actual fee amounts.
-     * @return The precision factor for fee calculations.
+     * @dev Function to get a buy order by index.
+     * @param index Index of the buy order.
+     * @return The buy order at the specified index.
      */
-    function getFeePrecision() external pure returns (uint128) {
-        return FEE_PRECISION;
+    function getBuyOrderByIndex(
+        uint256 index
+    ) public view validOrderIndex(index, true) returns (OrderLib.Order memory) {
+        return buyOrders[index];
     }
 
-    /**
-     * @dev Retrieves the fee percentage charged on trades.
-     * The fee is a percentage of the trade amount, represented as a value out of FEE_PRECISION.
-     * @return The fee percentage for trades.
-     */
-    function getFeePercentage() external pure returns (uint128) {
-        return FEE_PERCENTAGE;
+    function getSellOrderByIndex(
+        uint256 index
+    )
+        public
+        view
+        validOrderIndex(index, false)
+        returns (OrderLib.Order memory)
+    {
+        return sellOrders[index];
     }
 
-    /**
-     * @dev Provides the percentage of the total supply allocated for the initial offering.
-     * This value is represented as a percentage out of FEE_PRECISION.
-     * @return The initial offering percentage of the total supply.
-     */
-    function getInitialOfferingPercentage() external pure returns (uint128) {
-        return INITIAL_OFFERING_PERCENTAGE;
+    function calculateBuyCost(
+        uint256 _amount
+    ) external view returns (uint256 totalCost, uint256 fees) {
+        uint256 remainingAmount = _amount;
+        totalCost = 0;
+
+        uint256 i = 0;
+        uint256 sellOrdersLength = sellOrders.length;
+        while (i < sellOrdersLength && remainingAmount > 0) {
+            OrderLib.Order memory order = sellOrders[i];
+            uint256 availableAmount = remainingAmount < order.amount
+                ? remainingAmount
+                : order.amount;
+            totalCost += (availableAmount * order.price);
+            unchecked {
+                remainingAmount -= availableAmount;
+                i++;
+            }
+        }
+
+        if (remainingAmount > 0) revert InsufficientSupply();
+
+        fees = (totalCost * FEE_PERCENTAGE) / FEE_PRECISION;
+        totalCost += fees;
+    }
+
+    function calculateSellProceeds(
+        uint256 _amount
+    ) external view returns (uint256 totalProceeds, uint256 fees) {
+        uint256 remainingAmount = _amount;
+        totalProceeds = 0;
+
+        uint256 i = buyOrders.length;
+        while (i > 0 && remainingAmount > 0) {
+            OrderLib.Order memory order = buyOrders[i - 1];
+            uint256 availableAmount = remainingAmount < order.amount
+                ? remainingAmount
+                : order.amount;
+            totalProceeds += (availableAmount * order.price);
+            unchecked {
+                remainingAmount -= availableAmount;
+                i--;
+            }
+        }
+
+        if (remainingAmount > 0) revert InsufficientSupply();
+
+        fees = (totalProceeds * FEE_PERCENTAGE) / FEE_PRECISION;
+        totalProceeds -= fees;
     }
 }

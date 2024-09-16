@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { Box, Grid, Button, Flex, Skeleton } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { Box, Grid, Button, Flex, Skeleton } from '@chakra-ui/react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 import {
   CaretDoubleLeft,
   CaretLeft,
@@ -10,9 +10,9 @@ import {
   CaretLineLeft,
   CaretLineRight,
   FileMagnifyingGlass,
-} from "@phosphor-icons/react/dist/ssr";
-import AssetCard from "./AssetCard";
-import { useActiveAccount } from "thirdweb/react";
+} from '@phosphor-icons/react/dist/ssr';
+import AssetCard from './AssetCard';
+import { useActiveAccount } from 'thirdweb/react';
 
 interface PropertyCardData {
   walletAddress: string;
@@ -61,13 +61,13 @@ const AssetCards: React.FC<AssetCardsProps> = ({ filters }) => {
       setIsLoading(true);
       try {
         if (!address) return;
-        console.log("filters", filters);
+        console.log('filters', filters);
 
         const currentFilters = filtersRef.current;
         const url = `${
           process.env.NEXT_PUBLIC_API_HOST
         }/user-property/${address}?${new URLSearchParams(
-          currentFilters as any
+          currentFilters as any,
         ).toString()}`;
         console.log(url);
 
@@ -83,8 +83,8 @@ const AssetCards: React.FC<AssetCardsProps> = ({ filters }) => {
             location: `${property.city}, ${property.state}, ${property.country}`,
             img:
               property.images?.[0]?.image ||
-              "https://messagetech.com/wp-content/themes/ml_mti/images/no-image.jpg",
-            price: property.price || "-",
+              'https://messagetech.com/wp-content/themes/ml_mti/images/no-image.jpg',
+            price: property.price || '-',
             marketAddress: property.marketAddress,
             tokenAddress: property.tokenAddress,
             isAftermarket: property.isAftermarket,
@@ -94,7 +94,7 @@ const AssetCards: React.FC<AssetCardsProps> = ({ filters }) => {
 
         setPropertyData(mappedData);
       } catch (error) {
-        console.error("Error fetching properties:", error);
+        console.error('Error fetching properties:', error);
       } finally {
         setIsLoading(false);
       }
@@ -104,7 +104,7 @@ const AssetCards: React.FC<AssetCardsProps> = ({ filters }) => {
   }, [filters]);
 
   const handleButtonClick = (slug: string) => {
-    router.push("/detail/" + slug);
+    router.push('/detail/' + slug);
   };
 
   const totalPages = Math.ceil(propertyData.length / itemsPerPage);
@@ -125,7 +125,7 @@ const AssetCards: React.FC<AssetCardsProps> = ({ filters }) => {
     if (currentPage > 0) pages.push(1);
 
     if (currentPage > showAdjacent + 2) {
-      pages.push("...");
+      pages.push('...');
     }
 
     for (
@@ -137,7 +137,7 @@ const AssetCards: React.FC<AssetCardsProps> = ({ filters }) => {
     }
 
     if (currentPage < totalPages - showAdjacent - 1) {
-      pages.push("...");
+      pages.push('...');
     }
 
     if (totalPages > 1) pages.push(totalPages);
@@ -150,9 +150,9 @@ const AssetCards: React.FC<AssetCardsProps> = ({ filters }) => {
       {isLoading ? (
         <Grid
           templateColumns={{
-            base: "repeat(1, 1fr)",
-            md: "repeat(2, 1fr)",
-            lg: "repeat(3, 1fr)",
+            base: 'repeat(1, 1fr)',
+            md: 'repeat(2, 1fr)',
+            lg: 'repeat(3, 1fr)',
           }}
           gap={4}
         >
@@ -178,9 +178,9 @@ const AssetCards: React.FC<AssetCardsProps> = ({ filters }) => {
         <>
           <Grid
             templateColumns={{
-              base: "repeat(1, 1fr)",
-              md: "repeat(1, 1fr)",
-              lg: "repeat(1, 1fr)",
+              base: 'repeat(1, 1fr)',
+              md: 'repeat(1, 1fr)',
+              lg: 'repeat(1, 1fr)',
             }}
             gap={4}
           >
@@ -225,8 +225,8 @@ const AssetCards: React.FC<AssetCardsProps> = ({ filters }) => {
               h={10}
               isDisabled={currentPage === 1}
               _disabled={{
-                bg: "gray.300",
-                cursor: "not-allowed",
+                bg: 'gray.300',
+                cursor: 'not-allowed',
                 opacity: 0.4,
               }}
             >
@@ -245,8 +245,8 @@ const AssetCards: React.FC<AssetCardsProps> = ({ filters }) => {
               h={10}
               isDisabled={currentPage === 1}
               _disabled={{
-                bg: "gray.300",
-                cursor: "not-allowed",
+                bg: 'gray.300',
+                cursor: 'not-allowed',
                 opacity: 0.4,
               }}
             >
@@ -257,12 +257,12 @@ const AssetCards: React.FC<AssetCardsProps> = ({ filters }) => {
               <Button
                 key={index}
                 onClick={() => {
-                  if (typeof page === "number") {
+                  if (typeof page === 'number') {
                     handlePageChange(page);
                   }
                 }}
-                bg={page === currentPage ? "#0D9488" : "#F4F4F5"}
-                color={page === currentPage ? "white" : "black"}
+                bg={page === currentPage ? '#0D9488' : '#F4F4F5'}
+                color={page === currentPage ? 'white' : 'black'}
                 borderRadius="full"
                 display="flex"
                 alignItems="center"
@@ -270,10 +270,10 @@ const AssetCards: React.FC<AssetCardsProps> = ({ filters }) => {
                 p={2}
                 w={10}
                 h={10}
-                isDisabled={page === "..."}
+                isDisabled={page === '...'}
                 _disabled={{
-                  bg: "gray.300",
-                  cursor: "not-allowed",
+                  bg: 'gray.300',
+                  cursor: 'not-allowed',
                   opacity: 0.4,
                 }}
               >
@@ -293,8 +293,8 @@ const AssetCards: React.FC<AssetCardsProps> = ({ filters }) => {
               h={10}
               isDisabled={currentPage === totalPages}
               _disabled={{
-                bg: "gray.300",
-                cursor: "not-allowed",
+                bg: 'gray.300',
+                cursor: 'not-allowed',
                 opacity: 0.4,
               }}
             >
@@ -312,8 +312,8 @@ const AssetCards: React.FC<AssetCardsProps> = ({ filters }) => {
               h={10}
               isDisabled={currentPage === totalPages}
               _disabled={{
-                bg: "gray.300",
-                cursor: "not-allowed",
+                bg: 'gray.300',
+                cursor: 'not-allowed',
                 opacity: 0.4,
               }}
             >

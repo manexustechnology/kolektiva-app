@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.20;
 
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {KolektivaToken} from "./KolektivaToken.sol";
-import {KolektivaMarket} from "./KolektivaMarket.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {Ownable} from '@openzeppelin/contracts/access/Ownable.sol';
+import {KolektivaToken} from './KolektivaToken.sol';
+import {KolektivaMarket} from './KolektivaMarket.sol';
+import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
 /**
  * @title KolektivaHandler
@@ -40,7 +40,8 @@ contract KolektivaHandler is Ownable {
         uint256 amount
     );
     event WithdrawnFee(uint256 amount);
-    event FeePercentageUpdated(string indexed name, uint256 newFeePercentage);
+
+    // event FeePercentageUpdated(string indexed name, uint256 newFeePercentage);
 
     /**
      * @dev Constructor to initialize the contract with the owner and USDT token address.
@@ -218,19 +219,19 @@ contract KolektivaHandler is Ownable {
         emit WithdrawnFee(amount);
     }
 
-    /**
-     * @dev Sets the fee percentage for a specified market.
-     * @param name The name of the token associated with the market.
-     * @param _newFeePercentage The new fee percentage to set.
-     */
-    function setFeePercentage(
-        string memory name,
-        uint256 _newFeePercentage
-    ) external onlyOwner marketShouldExist(name) {
-        KolektivaMarket market = KolektivaMarket(marketAddresses[name]);
-        market.setFeePercentage(_newFeePercentage);
-        emit FeePercentageUpdated(name, _newFeePercentage);
-    }
+    // /**
+    //  * @dev Sets the fee percentage for a specified market.
+    //  * @param name The name of the token associated with the market.
+    //  * @param _newFeePercentage The new fee percentage to set.
+    //  */
+    // function setFeePercentage(
+    //     string memory name,
+    //     uint256 _newFeePercentage
+    // ) external onlyOwner marketShouldExist(name) {
+    //     KolektivaMarket market = KolektivaMarket(marketAddresses[name]);
+    //     market.setFeePercentage(_newFeePercentage);
+    //     emit FeePercentageUpdated(name, _newFeePercentage);
+    // }
 
     /**
      * @dev Approves the market to transfer tokens on behalf of the contract.
