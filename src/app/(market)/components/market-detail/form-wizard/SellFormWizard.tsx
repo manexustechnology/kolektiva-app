@@ -181,7 +181,9 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
         console.log('tx sell', txInfo);
         setTxInfo(txInfo);
         onTxUpdate(txInfo);
-        successCallback();
+        if (txInfo.isSuccess) {
+          successCallback();
+        }
       }
     } catch (error) {
       console.error('Transaction failed', error);

@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { AfterMarketBuyOrderData, BuyOrderData } from "@/types/order";
-import { cn } from "@/utils/cn";
-import { Input, InputGroup, InputRightElement } from "@chakra-ui/react";
-import { Info, Wallet } from "@phosphor-icons/react/dist/ssr";
-import { Divider } from "antd";
-import { useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
-import { useReadContractHook } from "@/utils/hooks";
-import { readContractFetch } from "@/utils/fetch";
-import { PropertyData } from "@/types/property";
-import { formatUSDTBalance, parseUSDTBalance } from "@/utils/formatter";
-import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
+import { AfterMarketBuyOrderData, BuyOrderData } from '@/types/order';
+import { cn } from '@/utils/cn';
+import { Input, InputGroup, InputRightElement } from '@chakra-ui/react';
+import { Info, Wallet } from '@phosphor-icons/react/dist/ssr';
+import { Divider } from 'antd';
+import { useEffect, useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
+import { useReadContractHook } from '@/utils/hooks';
+import { readContractFetch } from '@/utils/fetch';
+import { PropertyData } from '@/types/property';
+import { formatUSDTBalance, parseUSDTBalance } from '@/utils/formatter';
+import { useActiveAccount, useActiveWalletChain } from 'thirdweb/react';
 
 interface BuyStep1Props {
   propertyData: PropertyData;
@@ -21,8 +21,8 @@ interface BuyStep1Props {
 }
 
 const tabs = [
-  { id: "market" as const, label: "Market" },
-  { id: "limit" as const, label: "Limit" },
+  { id: 'market' as const, label: 'Market' },
+  { id: 'limit' as const, label: 'Limit' },
 ];
 
 const BuyStep1: React.FC<BuyStep1Props> = ({
@@ -34,12 +34,11 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
   const activeAccount = useActiveAccount();
   const address = activeAccount?.address;
   const chain = useActiveWalletChain()!;
+  const feePercentage = 0.005; // 0.5%
 
-  const activeTab = (formData as AfterMarketBuyOrderData).type || "market";
+  const activeTab = (formData as AfterMarketBuyOrderData).type || 'market';
   // e.g. 5% => feePercentage = 500, feePrecision = 10_000
   const [salePrice, setSalePrice] = useState<number | null>(null);
-  const [feePercentage, setFeePercentage] = useState<number | null>(null);
-  const [feePrecision, setFeePrecision] = useState<number | null>(null);
   const [balanceUsdt, setBalanceUsdt] = useState<number | null>(null);
   const [initialOfferingSupply, setInitialOfferingSupply] = useState<
     number | null
@@ -49,51 +48,51 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
   >(null);
 
   const { data: salePriceData } = useReadContractHook({
-    contractName: "KolektivaMarket",
-    functionName: "salePrice",
+    contractName: 'KolektivaMarket',
+    functionName: 'salePrice',
     contractAddress: propertyData.marketAddress,
 
     args: [],
   });
 
-  const { data: feePercentageData } = useReadContractHook({
-    contractName: "KolektivaMarket",
-    functionName: "feePercentage",
-    contractAddress: propertyData.marketAddress,
+  // const { data: feePercentageData } = useReadContractHook({
+  //   contractName: 'KolektivaMarket',
+  //   functionName: 'getFeePercentage',
+  //   contractAddress: propertyData.marketAddress,
 
-    args: [],
-  });
+  //   args: [],
+  // });
 
-  const { data: feePrecisionData } = useReadContractHook({
-    contractName: "KolektivaMarket",
-    functionName: "FEE_PRECISION",
-    contractAddress: propertyData.marketAddress,
+  // const { data: feePrecisionData } = useReadContractHook({
+  //   contractName: 'KolektivaMarket',
+  //   functionName: 'getFeePrecision',
+  //   contractAddress: propertyData.marketAddress,
 
-    args: [],
-  });
+  //   args: [],
+  // });
 
   const { data: initialOfferingSupplyData } = useReadContractHook({
-    contractName: "KolektivaMarket",
-    functionName: "initialOfferingSupply",
+    contractName: 'KolektivaMarket',
+    functionName: 'initialOfferingSupply',
     contractAddress: propertyData.marketAddress,
 
     args: [],
   });
 
   const { data: balanceUsdtData } = useReadContractHook({
-    contractName: "MockUSDT",
-    functionName: "balanceOf",
+    contractName: 'MockUSDT',
+    functionName: 'balanceOf',
     args: [address],
   });
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (isAfterMarketTrading && activeTab == "market") {
+        if (isAfterMarketTrading && activeTab == 'market') {
           const data = await readContractFetch({
             chain,
-            contractName: "KolektivaMarket",
-            functionName: "calculateBuyCost",
+            contractName: 'KolektivaMarket',
+            functionName: 'calculateBuyCost',
             contractAddress: propertyData.marketAddress,
             args: [formData.qtyToken],
           });
@@ -103,7 +102,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
           }
         }
       } catch (error) {
-        console.error("Error fetching sell proceeds:", error);
+        console.error('Error fetching sell proceeds:', error);
       }
     };
     fetchData();
@@ -114,17 +113,17 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
     propertyData.marketAddress,
   ]);
 
-  useEffect(() => {
-    if (feePercentageData) {
-      setFeePercentage(Number(feePercentageData));
-    }
-  }, [feePercentageData]);
+  // useEffect(() => {
+  //   if (feePercentageData) {
+  //     setFeePercentage(Number(feePercentageData));
+  //   }
+  // }, [feePercentageData]);
 
-  useEffect(() => {
-    if (feePrecisionData) {
-      setFeePrecision(Number(feePrecisionData));
-    }
-  }, [feePrecisionData]);
+  // useEffect(() => {
+  //   if (feePrecisionData) {
+  //     setFeePrecision(Number(feePrecisionData));
+  //   }
+  // }, [feePrecisionData]);
 
   useEffect(() => {
     if (salePriceData) {
@@ -148,14 +147,13 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
 
   const calculateCostAndFee = (amount: number, price: number) => {
     const cost = amount * price;
-    const fee = (cost * feePercentage!) / feePrecision!;
+    const fee = cost * feePercentage!;
     const totalCost = cost + fee;
     return { totalCost, fee };
   };
 
   const calculatedData = useMemo(() => {
-    if (feePercentage === null || feePrecision === null || salePrice == null)
-      return;
+    if (feePercentage === null || salePrice == null) return;
 
     const qtyToken = formData.qtyToken;
     let pricePerToken = isAfterMarketTrading
@@ -164,8 +162,8 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
     let fee = 0;
     let totalCost = 0;
 
-    if (isAfterMarketTrading && activeTab == "market") {
-      console.log("buy cost");
+    if (isAfterMarketTrading && activeTab == 'market') {
+      console.log('buy cost');
       console.log(calculateBuyCost);
 
       const [calculatedTotalCost, calculatedFee] = calculateBuyCost || [0, 0];
@@ -185,7 +183,6 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
     calculateBuyCost,
     calculateCostAndFee,
     feePercentage,
-    feePrecision,
     salePrice,
     isAfterMarketTrading,
     activeTab,
@@ -204,7 +201,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
       initialOfferingSupply !== null &&
       token > initialOfferingSupply
     ) {
-      console.warn("Quantity exceeds initial offering supply.");
+      console.warn('Quantity exceeds initial offering supply.');
       return;
     }
     if (formData.qtyToken !== token) {
@@ -223,7 +220,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
     }
   };
 
-  const setActiveTab = (tab: (typeof tabs)[number]["id"]) => {
+  const setActiveTab = (tab: (typeof tabs)[number]['id']) => {
     if ((formData as any).type !== tab) {
       const updatedData = { ...formData, type: tab };
       onDataChange(updatedData);
@@ -245,10 +242,10 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
               <button
                 key={tab.id}
                 className={cn(
-                  "w-full text-center py-3 text-sm relative transition",
+                  'w-full text-center py-3 text-sm relative transition',
                   activeTab === tab.id
-                    ? "font-medium text-white"
-                    : "text-zinc-500"
+                    ? 'font-medium text-white'
+                    : 'text-zinc-500',
                 )}
                 onClick={() => setActiveTab(tab.id)}
               >
@@ -257,7 +254,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
                     layoutId="buy-type-tabs"
                     className="absolute inset-0 bg-teal-600"
                     style={{ borderRadius: 9999 }}
-                    transition={{ type: "spring", duration: 0.6 }}
+                    transition={{ type: 'spring', duration: 0.6 }}
                   />
                 )}
                 <p className="relative z-10">{tab.label}</p>
@@ -298,10 +295,10 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
           <div className="grid grid-cols-3 gap-3">
             <div
               className={cn(
-                "flex flex-col gap-0.5 justify-center items-center rounded-lg p-3 cursor-pointer",
+                'flex flex-col gap-0.5 justify-center items-center rounded-lg p-3 cursor-pointer',
                 formData?.qtyToken === 1
-                  ? "bg-teal-50 border border-teal-600"
-                  : "shadow-sm shadow-zinc-300"
+                  ? 'bg-teal-50 border border-teal-600'
+                  : 'shadow-sm shadow-zinc-300',
               )}
               onClick={() => setTokenQty(1)}
             >
@@ -312,10 +309,10 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             </div>
             <div
               className={cn(
-                "flex flex-col gap-0.5 justify-center items-center rounded-lg p-3 cursor-pointer",
+                'flex flex-col gap-0.5 justify-center items-center rounded-lg p-3 cursor-pointer',
                 formData?.qtyToken === 5
-                  ? "bg-teal-50 border border-teal-600"
-                  : "shadow-sm shadow-zinc-300"
+                  ? 'bg-teal-50 border border-teal-600'
+                  : 'shadow-sm shadow-zinc-300',
               )}
               onClick={() => setTokenQty(5)}
             >
@@ -326,10 +323,10 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             </div>
             <div
               className={cn(
-                "flex flex-col gap-0.5 justify-center items-center rounded-lg p-3 cursor-pointer",
+                'flex flex-col gap-0.5 justify-center items-center rounded-lg p-3 cursor-pointer',
                 formData?.qtyToken === 10
-                  ? "bg-teal-50 border border-teal-600"
-                  : "shadow-sm shadow-zinc-300"
+                  ? 'bg-teal-50 border border-teal-600'
+                  : 'shadow-sm shadow-zinc-300',
               )}
               onClick={() => setTokenQty(10)}
             >
@@ -340,10 +337,10 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             </div>
             <div
               className={cn(
-                "flex flex-col gap-0.5 justify-center items-center rounded-lg p-3 cursor-pointer",
+                'flex flex-col gap-0.5 justify-center items-center rounded-lg p-3 cursor-pointer',
                 formData?.qtyToken === 25
-                  ? "bg-teal-50 border border-teal-600"
-                  : "shadow-sm shadow-zinc-300"
+                  ? 'bg-teal-50 border border-teal-600'
+                  : 'shadow-sm shadow-zinc-300',
               )}
               onClick={() => setTokenQty(25)}
             >
@@ -354,10 +351,10 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             </div>
             <div
               className={cn(
-                "flex flex-col gap-0.5 justify-center items-center rounded-lg p-3 cursor-pointer",
+                'flex flex-col gap-0.5 justify-center items-center rounded-lg p-3 cursor-pointer',
                 formData?.qtyToken === 50
-                  ? "bg-teal-50 border border-teal-600"
-                  : "shadow-sm shadow-zinc-300"
+                  ? 'bg-teal-50 border border-teal-600'
+                  : 'shadow-sm shadow-zinc-300',
               )}
               onClick={() => setTokenQty(50)}
             >
@@ -368,10 +365,10 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
             </div>
             <div
               className={cn(
-                "flex flex-col gap-0.5 justify-center items-center rounded-lg p-3 cursor-pointer",
+                'flex flex-col gap-0.5 justify-center items-center rounded-lg p-3 cursor-pointer',
                 formData?.qtyToken === 100
-                  ? "bg-teal-50 border border-teal-600"
-                  : "shadow-sm shadow-zinc-300"
+                  ? 'bg-teal-50 border border-teal-600'
+                  : 'shadow-sm shadow-zinc-300',
               )}
               onClick={() => setTokenQty(100)}
             >

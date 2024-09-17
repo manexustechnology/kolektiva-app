@@ -186,7 +186,9 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
         console.log('tx buy', txInfo);
         setTxInfo(txInfo);
         onTxUpdate(txInfo);
-        successCallback();
+        if (txInfo.isSuccess) {
+          successCallback();
+        }
       }
     } catch (error) {
       console.error('Transaction failed', error);

@@ -34,7 +34,6 @@ deploy-verify: build
 
 deploy-liskSepolia-usdt: build
 	forge create --rpc-url https://rpc.sepolia-api.lisk.com \
-		--broadcast \
 		--etherscan-api-key 123 \
 		--verify \
 		--verifier blockscout \

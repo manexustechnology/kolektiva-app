@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import { SellOrderData } from "@/types/order";
-import { PropertyData } from "@/types/property";
-import { cn } from "@/utils/cn";
-import { readContractFetch } from "@/utils/fetch";
-import { formatUSDTBalance, parseUSDTBalance } from "@/utils/formatter";
-import { useReadContractHook } from "@/utils/hooks";
-import { Button, Input, InputGroup, InputRightElement } from "@chakra-ui/react";
-import { File, Info } from "@phosphor-icons/react/dist/ssr";
-import { Divider } from "antd";
-import { motion } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
-import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
+import { SellOrderData } from '@/types/order';
+import { PropertyData } from '@/types/property';
+import { cn } from '@/utils/cn';
+import { readContractFetch } from '@/utils/fetch';
+import { formatUSDTBalance, parseUSDTBalance } from '@/utils/formatter';
+import { useReadContractHook } from '@/utils/hooks';
+import { Button, Input, InputGroup, InputRightElement } from '@chakra-ui/react';
+import { File, Info } from '@phosphor-icons/react/dist/ssr';
+import { Divider } from 'antd';
+import { motion } from 'framer-motion';
+import { useEffect, useMemo, useState } from 'react';
+import { useActiveAccount, useActiveWalletChain } from 'thirdweb/react';
 
 interface SellStep1Props {
   propertyData: PropertyData;
@@ -20,8 +20,8 @@ interface SellStep1Props {
 }
 
 const tabs = [
-  { id: "market" as const, label: "Market" },
-  { id: "limit" as const, label: "Limit" },
+  { id: 'market' as const, label: 'Market' },
+  { id: 'limit' as const, label: 'Limit' },
 ];
 
 const SellStep1: React.FC<SellStep1Props> = ({
@@ -32,43 +32,43 @@ const SellStep1: React.FC<SellStep1Props> = ({
   const activeAccount = useActiveAccount();
   const address = activeAccount?.address;
   const chain = useActiveWalletChain()!;
+  const feePercentage = 0.005; // 0.5%
 
-  const activeTab = (formData as SellOrderData).type || "market";
+  const activeTab = (formData as SellOrderData).type || 'market';
   const [salePrice, setSalePrice] = useState<number | null>(null);
-  const [feePercentage, setFeePercentage] = useState<number | null>(null);
-  const [feePrecision, setFeePrecision] = useState<number | null>(null);
   const [balanceToken, setBalanceToken] = useState<number | null>(null);
   const [calculateSellProceeds, setCalculateSellProceeds] = useState<
     [number, number] | null
   >(null);
 
   const { data: salePriceData } = useReadContractHook({
-    contractName: "KolektivaMarket",
-    functionName: "salePrice",
+    contractName: 'KolektivaMarket',
+    functionName: 'salePrice',
     contractAddress: propertyData.marketAddress,
 
     args: [],
   });
 
-  const { data: feePercentageData } = useReadContractHook({
-    contractName: "KolektivaMarket",
-    functionName: "feePercentage",
-    contractAddress: propertyData.marketAddress,
+  //
+  // const { data: feePercentageData } = useReadContractHook({
+  //   contractName: 'KolektivaMarket',
+  //   functionName: 'getFeePercentage',
+  //   contractAddress: propertyData.marketAddress,
 
-    args: [],
-  });
+  //   args: [],
+  // });
 
-  const { data: feePrecisionData } = useReadContractHook({
-    contractName: "KolektivaMarket",
-    functionName: "FEE_PRECISION",
-    contractAddress: propertyData.marketAddress,
+  // const { data: feePrecisionData } = useReadContractHook({
+  //   contractName: 'KolektivaMarket',
+  //   functionName: 'getFeePrecision',
+  //   contractAddress: propertyData.marketAddress,
 
-    args: [],
-  });
+  //   args: [],
+  // });
 
   const { data: balanceTokenData } = useReadContractHook({
-    contractName: "KolektivaToken",
-    functionName: "balanceOf",
+    contractName: 'KolektivaToken',
+    functionName: 'balanceOf',
     contractAddress: propertyData.tokenAddress,
     args: [address],
   });
@@ -76,11 +76,11 @@ const SellStep1: React.FC<SellStep1Props> = ({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        if (activeTab === "market" && formData.qtyToken > 0) {
+        if (activeTab === 'market' && formData.qtyToken > 0) {
           const data = await readContractFetch({
             chain,
-            contractName: "KolektivaMarket",
-            functionName: "calculateSellProceeds",
+            contractName: 'KolektivaMarket',
+            functionName: 'calculateSellProceeds',
             contractAddress: propertyData.marketAddress,
             args: [formData.qtyToken],
           });
@@ -90,23 +90,23 @@ const SellStep1: React.FC<SellStep1Props> = ({
           }
         }
       } catch (error) {
-        console.error("Error fetching sell proceeds:", error);
+        console.error('Error fetching sell proceeds:', error);
       }
     };
     fetchData();
   }, [formData.qtyToken, propertyData.marketAddress, activeTab]);
 
-  useEffect(() => {
-    if (feePercentageData) {
-      setFeePercentage(Number(feePercentageData));
-    }
-  }, [feePercentageData]);
+  // useEffect(() => {
+  //   if (feePercentageData) {
+  //     setFeePercentage(Number(feePercentageData));
+  //   }
+  // }, [feePercentageData]);
 
-  useEffect(() => {
-    if (feePrecisionData) {
-      setFeePrecision(Number(feePrecisionData));
-    }
-  }, [feePrecisionData]);
+  // useEffect(() => {
+  //   if (feePrecisionData) {
+  //     setFeePrecision(Number(feePrecisionData));
+  //   }
+  // }, [feePrecisionData]);
 
   useEffect(() => {
     if (salePriceData) {
@@ -116,7 +116,7 @@ const SellStep1: React.FC<SellStep1Props> = ({
 
   useEffect(() => {
     if (balanceTokenData) {
-      console.log(balanceTokenData, "token data");
+      console.log(balanceTokenData, 'token data');
 
       setBalanceToken(Number(balanceTokenData));
     }
@@ -124,22 +124,21 @@ const SellStep1: React.FC<SellStep1Props> = ({
 
   const calculateCostAndFee = (amount: number, price: number) => {
     const proceeds = amount * Number(price);
-    const fee = (proceeds * feePercentage!) / feePrecision!;
+    const fee = proceeds * feePercentage!;
     const totalProceeds = proceeds - fee;
     return { totalProceeds, fee };
   };
 
   const calculatedData = useMemo(() => {
-    if (feePercentage === null || feePrecision === null || salePrice == null)
-      return;
+    if (feePercentage === null || salePrice == null) return;
 
     const qtyToken = formData.qtyToken;
     let pricePerToken = formData.pricePerToken;
     let fee = 0;
     let totalProceeds = 0;
 
-    if (activeTab == "market") {
-      console.log("sell proceeds");
+    if (activeTab == 'market') {
+      console.log('sell proceeds');
       console.log(calculateSellProceeds);
 
       const [calculatedTotalProceeds, calculatedFee] =
@@ -161,7 +160,6 @@ const SellStep1: React.FC<SellStep1Props> = ({
 
     calculateSellProceeds,
     feePercentage,
-    feePrecision,
     salePrice,
     activeTab,
   ]);
@@ -191,7 +189,7 @@ const SellStep1: React.FC<SellStep1Props> = ({
     }
   };
 
-  const setActiveTab = (tab: (typeof tabs)[number]["id"]) => {
+  const setActiveTab = (tab: (typeof tabs)[number]['id']) => {
     if (formData.type !== tab) {
       // Check if there's an actual change
       const updatedData = { ...formData, type: tab };
@@ -213,10 +211,10 @@ const SellStep1: React.FC<SellStep1Props> = ({
             <button
               key={tab.id}
               className={cn(
-                "w-full text-center py-3 text-sm relative transition",
+                'w-full text-center py-3 text-sm relative transition',
                 activeTab === tab.id
-                  ? "font-medium text-white"
-                  : "text-zinc-500"
+                  ? 'font-medium text-white'
+                  : 'text-zinc-500',
               )}
               onClick={() => setActiveTab(tab.id)}
             >
@@ -225,7 +223,7 @@ const SellStep1: React.FC<SellStep1Props> = ({
                   layoutId="sell-type-tabs"
                   className="absolute inset-0 bg-teal-600"
                   style={{ borderRadius: 9999 }}
-                  transition={{ type: "spring", duration: 0.6 }}
+                  transition={{ type: 'spring', duration: 0.6 }}
                 />
               )}
               <p className="relative z-10">{tab.label}</p>
@@ -272,7 +270,7 @@ const SellStep1: React.FC<SellStep1Props> = ({
               onChange={(e) => setTokenQty(parseInt(e.target.value) || 0)}
             />
             <InputRightElement right={6}>
-              <span className="text-sm text-zinc-500">Token{"(s)"}</span>
+              <span className="text-sm text-zinc-500">Token{'(s)'}</span>
             </InputRightElement>
           </InputGroup>
           <Button
@@ -283,9 +281,9 @@ const SellStep1: React.FC<SellStep1Props> = ({
             bgColor="teal.100"
             color="teal.700"
             _hover={{
-              bgColor: "teal.200",
-              color: "teal.900",
-              cursor: "pointer",
+              bgColor: 'teal.200',
+              color: 'teal.900',
+              cursor: 'pointer',
             }}
             onClick={() => {}}
             className="!px-6 !text-sm !font-medium"
