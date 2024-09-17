@@ -93,16 +93,16 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
 
   const { writeAsync: marketBuy } = useWriteContractHook({
     contractName: 'KolektivaMarket',
-    functionName: 'instantBuy',
+    functionName: 'instantTrade',
     contractAddress: propertyData.marketAddress,
-    args: [formData.qtyToken],
+    args: [formData.qtyToken, true],
   });
 
   const { writeAsync: limitBuy } = useWriteContractHook({
     contractName: 'KolektivaMarket',
-    functionName: 'placeBuyOrder',
+    functionName: 'placeOrder',
     contractAddress: propertyData.marketAddress,
-    args: [formData.qtyToken, formData.pricePerToken],
+    args: [formData.qtyToken, formData.pricePerToken, true],
   });
 
   const {

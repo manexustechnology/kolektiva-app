@@ -33,8 +33,10 @@ import {
   useActiveAccount,
   useActiveWallet,
   useActiveWalletChain,
+  useActiveWalletConnectionStatus,
   useDisconnect,
   useWalletDetailsModal,
+  useConnectModal,
 } from 'thirdweb/react';
 
 const Navbar: React.FC = () => {

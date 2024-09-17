@@ -6,7 +6,7 @@ import FilterBar from './FilterBar';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { IMarketFilter } from '@/types/filter';
-import { useActiveWalletChain } from 'thirdweb/react';
+import { useActiveWalletChain, useConnectModal } from 'thirdweb/react';
 import { validChainIds } from '@/commons/networks';
 
 interface FilterBarProps {
@@ -19,6 +19,7 @@ interface FilterBarProps {
 }
 
 const PropertyListings: React.FC = () => {
+  const { connect, isConnecting } = useConnectModal();
   const [isCorrectNetwork, setIsCorrectNetwork] = useState<boolean>(false);
   const activeChain = useActiveWalletChain()!;
 
@@ -79,26 +80,29 @@ const PropertyListings: React.FC = () => {
   };
 
   return (
-    <Box
-      width={1238}
-      overflow="hidden"
-      maxWidth="1238px"
-      margin="0 auto"
-      alignItems="center"
-    >
-      <FilterBar {...filterBarProps} />
-      {isCorrectNetwork === true ? (
-        <PropertyCards filters={filters} />
-      ) : (
-        activeChain && (
-          <div className="flex justify-center items-center h-[60vh]">
-            <p className="font-bold text-2xl leading-7 text-center text-teal-600">
-              Connect to your wallet!
-            </p>
-          </div>
-        )
-      )}
-    </Box>
+    <>
+      <p>isConnecting: {isConnecting}</p>
+      {/* <Box
+        width={1238}
+        overflow="hidden"
+        maxWidth="1238px"
+        margin="0 auto"
+        alignItems="center"
+      >
+        <FilterBar {...filterBarProps} />
+        {isCorrectNetwork === true ? (
+          <PropertyCards filters={filters} />
+        ) : (
+          activeChain && (
+            <div className="flex justify-center items-center h-[60vh]">
+              <p className="font-bold text-2xl leading-7 text-center text-teal-600">
+                Connect to your wallet!
+              </p>
+            </div>
+          )
+        )}
+      </Box> */}
+    </>
   );
 };
 
