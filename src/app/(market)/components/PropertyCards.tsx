@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { Box, Grid, Button, Flex, Skeleton } from "@chakra-ui/react";
-import PropertyCard from "./PropertyCard";
-import { useRouter } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
+import { Box, Grid, Button, Flex, Skeleton } from '@chakra-ui/react';
+import PropertyCard from './PropertyCard';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect, useRef } from 'react';
 import {
   CaretDoubleLeft,
   CaretLeft,
@@ -11,11 +11,12 @@ import {
   CaretLineLeft,
   CaretLineRight,
   FileMagnifyingGlass,
-} from "@phosphor-icons/react/dist/ssr";
+} from '@phosphor-icons/react/dist/ssr';
 
 interface PropertyCardData {
   marketAddress: string;
   tokenAddress: string;
+  chainId: number;
   name: string;
   slug: string;
   location: string;
@@ -57,8 +58,8 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
         const currentFilters = filtersRef.current;
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_HOST}/property?${new URLSearchParams(
-            currentFilters as any
-          ).toString()}`
+            currentFilters as any,
+          ).toString()}`,
         );
         const data = await response.json();
 
@@ -68,23 +69,24 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
           location: `${property.city}, ${property.state}, ${property.country}`,
           img:
             property.images?.[0]?.image ||
-            "https://messagetech.com/wp-content/themes/ml_mti/images/no-image.jpg",
-          price: property.price || "-",
+            'https://messagetech.com/wp-content/themes/ml_mti/images/no-image.jpg',
+          price: property.price || '-',
           marketAddress: property.marketAddress,
           tokenAddress: property.tokenAddress,
+          chaind: property.chainId,
           // isNew: true,
           // isFeatured: property.isFeatured,mp
           // isTraded: property.isTraded,
           // isAfatermarket: property.isAfatermarket,
         }));
 
-        if (currentFilters.status && currentFilters.status == "upcoming") {
+        if (currentFilters.status && currentFilters.status == 'upcoming') {
           mappedData = mappedData.filter((item: any) => item.isUpcoming);
         }
 
         setPropertyData(mappedData);
       } catch (error) {
-        console.error("Error fetching properties:", error);
+        console.error('Error fetching properties:', error);
       } finally {
         setIsLoading(false);
       }
@@ -115,7 +117,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
     if (currentPage > 1) pages.push(1);
 
     if (currentPage > showAdjacent + 2) {
-      pages.push("...");
+      pages.push('...');
     }
 
     for (
@@ -127,7 +129,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
     }
 
     if (currentPage < totalPages - showAdjacent - 1) {
-      pages.push("...");
+      pages.push('...');
     }
 
     if (totalPages > 1) pages.push(totalPages);
@@ -140,9 +142,9 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
       {isLoading ? (
         <Grid
           templateColumns={{
-            base: "repeat(1, 1fr)",
-            md: "repeat(2, 1fr)",
-            lg: "repeat(3, 1fr)",
+            base: 'repeat(1, 1fr)',
+            md: 'repeat(2, 1fr)',
+            lg: 'repeat(3, 1fr)',
           }}
           gap={4}
         >
@@ -168,9 +170,9 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
         <>
           <Grid
             templateColumns={{
-              base: "repeat(1, 1fr)",
-              md: "repeat(2, 1fr)",
-              lg: "repeat(3, 1fr)",
+              base: 'repeat(1, 1fr)',
+              md: 'repeat(2, 1fr)',
+              lg: 'repeat(3, 1fr)',
             }}
             gap={4}
           >
@@ -213,8 +215,8 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
               h={10}
               isDisabled={currentPage === 1}
               _disabled={{
-                bg: "gray.300",
-                cursor: "not-allowed",
+                bg: 'gray.300',
+                cursor: 'not-allowed',
                 opacity: 0.4,
               }}
             >
@@ -233,8 +235,8 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
               h={10}
               isDisabled={currentPage === 1}
               _disabled={{
-                bg: "gray.300",
-                cursor: "not-allowed",
+                bg: 'gray.300',
+                cursor: 'not-allowed',
                 opacity: 0.4,
               }}
             >
@@ -242,12 +244,12 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
             </Button>
 
             {getPageNumbers().map((page, index) =>
-              typeof page === "number" ? (
+              typeof page === 'number' ? (
                 <Button
                   key={index}
                   onClick={() => handlePageChange(page)}
-                  bg={page === currentPage ? "#0F766E" : "#CCFBF1"}
-                  color={page === currentPage ? "white" : "black"}
+                  bg={page === currentPage ? '#0F766E' : '#CCFBF1'}
+                  color={page === currentPage ? 'white' : 'black'}
                   borderRadius="full"
                   display="flex"
                   alignItems="center"
@@ -273,7 +275,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
                 >
                   {page}
                 </Button>
-              )
+              ),
             )}
 
             <Button
@@ -288,8 +290,8 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
               h={10}
               isDisabled={currentPage === totalPages}
               _disabled={{
-                bg: "gray.300",
-                cursor: "not-allowed",
+                bg: 'gray.300',
+                cursor: 'not-allowed',
                 opacity: 0.4,
               }}
             >
@@ -308,8 +310,8 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
               h={10}
               isDisabled={currentPage === totalPages}
               _disabled={{
-                bg: "gray.300",
-                cursor: "not-allowed",
+                bg: 'gray.300',
+                cursor: 'not-allowed',
                 opacity: 0.4,
               }}
             >

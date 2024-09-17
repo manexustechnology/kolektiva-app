@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import React, { useEffect, useMemo, useState } from "react";
-import MyAssetListing from "./components/MyAssetListing";
-import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
-import AssetOverview from "./components/AssetOverview";
-import { validChainIds } from "@/commons/networks";
+import React, { useEffect, useMemo, useState } from 'react';
+import MyAssetListing from './components/MyAssetListing';
+import { useActiveAccount, useActiveWalletChain } from 'thirdweb/react';
+import AssetOverview from './components/AssetOverview';
+import { validChainIds } from '@/commons/networks';
 
 const MyAssets: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -18,13 +18,11 @@ const MyAssets: React.FC = () => {
     setIsLoading(true);
     if (activeChain && validChainIds.includes(activeChain.id)) {
       setIsCorrectNetwork(true);
+    } else {
+      setIsCorrectNetwork(false);
     }
     setIsLoading(false);
   }, [activeChain]);
-
-  useEffect(() => {
-    console.log("adddress", address);
-  }, [address]);
 
   return (
     <>

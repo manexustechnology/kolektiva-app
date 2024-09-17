@@ -172,8 +172,7 @@ const Navbar: React.FC = () => {
                   className: '!bg-teal-600 !px-6 !py-2 !rounded-full',
                 }}
                 autoConnect={true}
-                // chain={LiskSepoliaTestnet}
-                chain={Localnet}
+                chain={LiskSepoliaTestnet}
                 chains={[LiskSepoliaTestnet, Localnet]}
                 onConnect={() => setIsConnected(true)}
               />

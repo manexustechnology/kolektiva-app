@@ -19,7 +19,6 @@ interface FilterBarProps {
 }
 
 const PropertyListings: React.FC = () => {
-  const { connect, isConnecting } = useConnectModal();
   const [isCorrectNetwork, setIsCorrectNetwork] = useState<boolean>(false);
   const activeChain = useActiveWalletChain()!;
 
@@ -67,6 +66,8 @@ const PropertyListings: React.FC = () => {
   useEffect(() => {
     if (activeChain && validChainIds.includes(activeChain.id)) {
       setIsCorrectNetwork(true);
+    } else {
+      setIsCorrectNetwork(false);
     }
   }, [activeChain]);
 
@@ -81,7 +82,6 @@ const PropertyListings: React.FC = () => {
 
   return (
     <>
-      <p>isConnecting: {isConnecting}</p>
       <Box
         width={1238}
         overflow="hidden"
@@ -90,16 +90,14 @@ const PropertyListings: React.FC = () => {
         alignItems="center"
       >
         <FilterBar {...filterBarProps} />
-        {isCorrectNetwork === true ? (
+        {activeChain && isCorrectNetwork === true ? (
           <PropertyCards filters={filters} />
         ) : (
-          activeChain && (
-            <div className="flex justify-center items-center h-[60vh]">
-              <p className="font-bold text-2xl leading-7 text-center text-teal-600">
-                Connect to your wallet!
-              </p>
-            </div>
-          )
+          <div className="flex justify-center items-center h-[60vh]">
+            <p className="font-bold text-2xl leading-7 text-center text-teal-600">
+              Connect to your wallet!
+            </p>
+          </div>
         )}
       </Box>
     </>

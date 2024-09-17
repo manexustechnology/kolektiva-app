@@ -64,12 +64,6 @@ const MyAssetListing: React.FC = () => {
     });
   };
 
-  // useEffect(() => {
-  //   if (activeChain && validChainIds.includes(activeChain.id)) {
-  //     setIsCorrectNetwork(true);
-  //   }
-  // }, [activeChain]);
-
   const filterBarProps: FilterBarProps = {
     locations: ['DKI Jakarta', 'Surabaya', 'Denpasar', 'Bandung'],
     propertyTypes: ['House', 'Apartment'],
