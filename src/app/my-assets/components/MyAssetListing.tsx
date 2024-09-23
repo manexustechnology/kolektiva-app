@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { Box } from "@chakra-ui/react";
-import AssetCards from "./AssetCards";
+import { Box } from '@chakra-ui/react';
+import AssetCards from './AssetCards';
 
-import FilterBar from "./FilterBar";
-import { IMarketFilter } from "@/types/filter";
-import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { useActiveWalletChain } from "thirdweb/react";
-import { validChainIds } from "@/commons/networks";
+import FilterBar from './FilterBar';
+import { IMarketFilter } from '@/types/filter';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useActiveWalletChain } from 'thirdweb/react';
+import { validChainIds } from '@/commons/networks';
 
 interface FilterBarProps {
   locations: string[];
@@ -24,25 +24,28 @@ interface FilterBarProps {
 
 const MyAssetListing: React.FC = () => {
   const [filters, setFilters] = useState<IMarketFilter>({
-    location: "",
-    propertyType: "",
-    status: "",
-    sort: "",
+    location: '',
+    propertyType: '',
+    status: '',
+    sort: '',
+    search: '',
     priceRange: [0, 1000],
   });
 
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const filterLocation = searchParams.get("location") || "";
-    const filterPropertyType = searchParams.get("propertyType") || "";
-    const filterStatus = searchParams.get("status") || "";
+    const filterLocation = searchParams.get('location') || '';
+    const filterPropertyType = searchParams.get('propertyType') || '';
+    const filterStatus = searchParams.get('status') || '';
+    const filterSearch = searchParams.get('search') || '';
 
     setFilters((prev) => ({
       ...prev,
       location: filterLocation,
       propertyType: filterPropertyType,
       status: filterStatus,
+      search: filterSearch,
     }));
   }, []);
 
@@ -52,24 +55,19 @@ const MyAssetListing: React.FC = () => {
 
   const handleFilterReset = () => {
     setFilters({
-      location: "",
-      propertyType: "",
-      status: "",
-      sort: "",
+      location: '',
+      propertyType: '',
+      status: '',
+      sort: '',
+      search: '',
       priceRange: [0, 1000],
     });
   };
 
-  // useEffect(() => {
-  //   if (activeChain && validChainIds.includes(activeChain.id)) {
-  //     setIsCorrectNetwork(true);
-  //   }
-  // }, [activeChain]);
-
   const filterBarProps: FilterBarProps = {
-    locations: ["DKI Jakarta", "Surabaya", "Denpasar", "Bandung"],
-    propertyTypes: ["House", "Apartment"],
-    sortOptions: ["Featured", "Newest", "Oldest"],
+    locations: ['DKI Jakarta', 'Surabaya', 'Denpasar', 'Bandung'],
+    propertyTypes: ['House', 'Apartment'],
+    sortOptions: ['Featured', 'Newest', 'Oldest'],
     onFilterApply: handleFilterApply,
     onFilterReset: handleFilterReset,
     filters,

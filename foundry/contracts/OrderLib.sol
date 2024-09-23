@@ -36,4 +36,12 @@ library OrderLib {
                 (a.price == b.price && a.orderId < b.orderId));
         }
     }
+
+    function shiftLeft(Order[] storage orders) internal {
+        require(orders.length > 0, 'orders cannot be empty');
+        for (uint256 i = 1; i < orders.length; i++) {
+            orders[i - 1] = orders[i];
+        }
+        orders.pop();
+    }
 }

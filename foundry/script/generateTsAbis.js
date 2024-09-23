@@ -1,8 +1,10 @@
-const fs = require("fs");
-const path = require("path");
+require('dotenv').config();
+
+const fs = require('fs');
+const path = require('path');
 //@ts-expect-error  This script runs after `forge deploy` therefore its deterministic that it will present
 // const deployments = require("../deployments.json");
-const prettier = require("prettier");
+const prettier = require('prettier');
 
 const generatedContractComment = `
 /**
@@ -11,24 +13,34 @@ const generatedContractComment = `
  */
 `;
 
+const validChainIds = process.env.VALID_CHAIN_IDS.split(',');
+const validContractNames = process.env.VALID_CONTRACT_NAMES.split(',');
+const deployedContractsOnChain = {
+  4202: {
+    MockUSDT: process.env.LISK_SEPOLIA_USDT_ADDRESS,
+    KolektivaHandler: process.env.LISK_SEPOLIA_KOLEKTIVA_HANDLER_ADDRESS,
+    KolektivaOracle: process.env.LISK_SEPOLIA_KOLEKTIVA_ORACLE_ADDRESS,
+  },
+};
+
 function getDirectories(path) {
   return fs.readdirSync(path).filter(function (file) {
-    return fs.statSync(path + "/" + file).isDirectory();
+    return fs.statSync(path + '/' + file).isDirectory();
   });
 }
 function getFiles(path) {
   return fs.readdirSync(path).filter(function (file) {
-    return fs.statSync(path + "/" + file).isFile();
+    return fs.statSync(path + '/' + file).isFile();
   });
 }
 function getArtifactOfContract(contractName) {
   const current_path_to_artifacts = path.join(
     __dirname,
-    "..",
-    `out/${contractName}.sol`
+    '..',
+    `out/${contractName}.sol`,
   );
   const artifactJson = JSON.parse(
-    fs.readFileSync(`${current_path_to_artifacts}/${contractName}.json`)
+    fs.readFileSync(`${current_path_to_artifacts}/${contractName}.json`),
   );
 
   return artifactJson;
@@ -38,10 +50,10 @@ function getInheritedFromContracts(artifact) {
   let inheritedFromContracts = [];
   if (artifact?.ast) {
     for (const astNode of artifact.ast.nodes) {
-      if (astNode.nodeType == "ContractDefinition") {
+      if (astNode.nodeType == 'ContractDefinition') {
         if (astNode.baseContracts.length > 0) {
           inheritedFromContracts = astNode.baseContracts.map(
-            ({ baseName }) => baseName.name
+            ({ baseName }) => baseName.name,
           );
         }
       }
@@ -59,7 +71,7 @@ function getInheritedFunctions(mainArtifact) {
       ast: { absolutePath },
     } = getArtifactOfContract(inheritanceContractName);
     for (const abiEntry of abi) {
-      if (abiEntry.type == "function") {
+      if (abiEntry.type == 'function') {
         inheritedFunctions[abiEntry.name] = absolutePath;
       }
     }
@@ -68,12 +80,13 @@ function getInheritedFunctions(mainArtifact) {
 }
 
 function main() {
+  // Generate from deployments
   const current_path_to_broadcast = path.join(
     __dirname,
-    "..",
-    "broadcast/Deploy.s.sol"
+    '..',
+    'broadcast/Deploy.s.sol',
   );
-  const current_path_to_deployments = path.join(__dirname, "..", "deployments");
+  const current_path_to_deployments = path.join(__dirname, '..', 'deployments');
 
   const chains = getDirectories(current_path_to_broadcast);
   const Deploymentchains = getFiles(current_path_to_deployments);
@@ -81,10 +94,10 @@ function main() {
   const deployments = {};
 
   Deploymentchains.forEach((chain) => {
-    if (!chain.endsWith(".json")) return;
+    if (!chain.endsWith('.json')) return;
     chain = chain.slice(0, -5);
     var deploymentObject = JSON.parse(
-      fs.readFileSync(`${current_path_to_deployments}/${chain}.json`)
+      fs.readFileSync(`${current_path_to_deployments}/${chain}.json`),
     );
     deployments[chain] = deploymentObject;
   });
@@ -94,15 +107,15 @@ function main() {
   chains.forEach((chain) => {
     allGeneratedContracts[chain] = {};
     const broadCastObject = JSON.parse(
-      fs.readFileSync(`${current_path_to_broadcast}/${chain}/run-latest.json`)
+      fs.readFileSync(`${current_path_to_broadcast}/${chain}/run-latest.json`),
     );
     const transactionsCreate = broadCastObject.transactions.filter(
       (transaction) =>
-        transaction.transactionType === "CREATE" && transaction.contractName
+        transaction.transactionType === 'CREATE' && transaction.contractName,
     );
 
     console.log(
-      `Processing ${transactionsCreate.length} contract creations for chain ${chain}`
+      `Processing ${transactionsCreate.length} contract creations for chain ${chain}`,
     );
 
     transactionsCreate.forEach((transaction) => {
@@ -121,23 +134,49 @@ function main() {
         console.log(`Successfully processed ${contractKey}`);
       } catch (error) {
         console.error(
-          `Error processing contract ${transaction.contractName}: ${error.message}`
+          `Error processing contract ${transaction.contractName}: ${error.message}`,
         );
       }
     });
   });
 
-  const TARGET_DIR = "./deployed-contracts/";
+  // generate from env
+  // console.log('validChainIds', validChainIds);
+  // console.log('validContractNames', validContractNames);
+  // console.log('deployedContractsOnChain', deployedContractsOnChain);
+  validChainIds.forEach((chain) => {
+    allGeneratedContracts[chain] = allGeneratedContracts[chain] || {};
+    validContractNames.forEach((contractName) => {
+      if (!allGeneratedContracts[chain][contractName]) {
+        try {
+          const artifact = getArtifactOfContract(contractName);
+          const address = deployedContractsOnChain[chain]?.[contractName] || '';
+
+          allGeneratedContracts[chain][contractName] = {
+            address,
+            abi: artifact.abi,
+            inheritedFunctions: getInheritedFunctions(artifact),
+          };
+        } catch (error) {
+          console.error(
+            `Error processing contract ${contractName}: ${error.message}`,
+          );
+        }
+      }
+    });
+  });
+
+  const TARGET_DIR = './deployed-contracts/';
 
   const fileContent = Object.entries(allGeneratedContracts).reduce(
     (content, [chainId, chainConfig]) => {
       return `${content}${parseInt(chainId).toFixed(0)}:${JSON.stringify(
         chainConfig,
         null,
-        2
+        2,
       )},`;
     },
-    ""
+    '',
   );
 
   if (!fs.existsSync(TARGET_DIR)) {
@@ -161,9 +200,9 @@ interface DeployedContracts {
 
 export const deployedContracts: DeployedContracts = {${fileContent}} as const;`,
       {
-        parser: "typescript",
-      }
-    )
+        parser: 'typescript',
+      },
+    ),
   );
 }
 

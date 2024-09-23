@@ -1,28 +1,28 @@
-"use client";
+'use client';
 
-import { AnimatePresence, motion } from "framer-motion";
-import BuyStep1 from "./BuyStep1";
-import BuyStep2 from "./BuyStep2";
-import BuyStep3 from "./BuyStep3";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion } from 'framer-motion';
+import BuyStep1 from './BuyStep1';
+import BuyStep2 from './BuyStep2';
+import BuyStep3 from './BuyStep3';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Button,
   Checkbox,
   ModalBody,
   ModalFooter,
   Spinner,
-} from "@chakra-ui/react";
-import { Divider } from "antd";
-import { AfterMarketBuyOrderData, BuyOrderData } from "@/types/order";
-import { Warning, WarningCircle } from "@phosphor-icons/react/dist/ssr";
-import { useReadContractHook, useWriteContractHook } from "@/utils/hooks";
-import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
-import { PropertyData } from "@/types/property";
-import { formatUSDTBalance, parseUSDTBalance } from "@/utils/formatter";
-import { getTransactionInfo } from "@/app/api/tx-info";
-import { TxInfoData } from "@/types/tx-info";
-import TxFailureToast from "../modals/TxFailureToast";
-import axios from "axios";
+} from '@chakra-ui/react';
+import { Divider } from 'antd';
+import { AfterMarketBuyOrderData, BuyOrderData } from '@/types/order';
+import { Warning, WarningCircle } from '@phosphor-icons/react/dist/ssr';
+import { useReadContractHook, useWriteContractHook } from '@/utils/hooks';
+import { useActiveAccount, useActiveWalletChain } from 'thirdweb/react';
+import { PropertyData } from '@/types/property';
+import { formatUSDTBalance, parseUSDTBalance } from '@/utils/formatter';
+import { getTransactionInfo } from '@/app/api/tx-info';
+import { TxInfoData } from '@/types/tx-info';
+import TxFailureToast from '../modals/TxFailureToast';
+import axios from 'axios';
 
 interface BuyFormWizardProps {
   propertyData: PropertyData;
@@ -61,7 +61,7 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
   onSubmitButtonClick,
 }) => {
   const [formData, setFormData] = useState<BuyOrderData>({
-    type: "market",
+    type: 'market',
     qtyToken: 1,
     pricePerToken: 100,
     orderExpiration: 0,
@@ -69,12 +69,12 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
     fee: 0,
   });
   const [txInfo, setTxInfo] = useState<TxInfoData>({
-    txHash: "",
-    status: "",
-    txUrl: "",
+    txHash: '',
+    status: '',
+    txUrl: '',
     isSuccess: false,
   });
-  const [buttonText, setButtonText] = useState("Loading...");
+  const [buttonText, setButtonText] = useState('Loading...');
   const [isLoading, setIsLoading] = useState(false);
 
   const activeAccount = useActiveAccount();
@@ -85,24 +85,24 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
   const direction = currentStep > prevStep.current ? 1 : -1;
 
   const { writeAsync: initialOfferingBuy } = useWriteContractHook({
-    contractName: "KolektivaMarket",
-    functionName: "initialOfferingBuy",
+    contractName: 'KolektivaMarket',
+    functionName: 'initialOfferingBuy',
     contractAddress: propertyData.marketAddress,
     args: [formData.qtyToken],
   });
 
   const { writeAsync: marketBuy } = useWriteContractHook({
-    contractName: "KolektivaMarket",
-    functionName: "instantBuy",
+    contractName: 'KolektivaMarket',
+    functionName: 'instantTrade',
     contractAddress: propertyData.marketAddress,
-    args: [formData.qtyToken],
+    args: [formData.qtyToken, true],
   });
 
   const { writeAsync: limitBuy } = useWriteContractHook({
-    contractName: "KolektivaMarket",
-    functionName: "placeBuyOrder",
+    contractName: 'KolektivaMarket',
+    functionName: 'placeOrder',
     contractAddress: propertyData.marketAddress,
-    args: [formData.qtyToken, formData.pricePerToken],
+    args: [formData.qtyToken, formData.pricePerToken, true],
   });
 
   const {
@@ -110,19 +110,19 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
     isLoading: isLoadingAllowance,
     refetch: refetchAllowance,
   } = useReadContractHook({
-    contractName: "MockUSDT",
-    functionName: "allowance",
+    contractName: 'MockUSDT',
+    functionName: 'allowance',
     args: [address, propertyData.marketAddress],
   });
 
   const { writeAsync: approveUsdt } = useWriteContractHook({
-    contractName: "MockUSDT",
-    functionName: "approve",
+    contractName: 'MockUSDT',
+    functionName: 'approve',
     args: [propertyData.marketAddress, formData.totalCost],
   });
 
   const allowance = useMemo(() => {
-    console.log(allowanceData, "check allowance");
+    console.log(allowanceData, 'check allowance');
     return allowanceData ? Number(allowanceData) : 0;
   }, [allowanceData]);
 
@@ -133,15 +133,11 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
         {
           walletAddress: address,
           propertyId: propertyData.id,
-        }
+        },
       );
 
-      // Not success
       if (response.status !== 200) {
-        throw new Error(response.data?.message || "Something went wrong!");
-      }
-      if (response.status !== 200) {
-        throw new Error(response.data?.message || "Something went wrong!");
+        throw new Error(response.data?.message || 'Something went wrong!');
       }
     } catch (error) {
       console.error(error);
@@ -152,28 +148,28 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
     const updateButtonText = () => {
       switch (currentStep) {
         case 1:
-          setButtonText("Preview order");
+          setButtonText('Preview order');
           break;
         case 2:
           if (isLoadingAllowance) {
-            setButtonText("Loading...");
+            setButtonText('Loading...');
             setIsLoading(true);
           } else if (allowance < formData.totalCost) {
             setButtonText(
-              `Approve ${formatUSDTBalance(formData.totalCost)} USDT`
+              `Approve ${formatUSDTBalance(formData.totalCost)} USDT`,
             );
             setIsLoading(false);
           } else {
-            setButtonText("Submit Order");
+            setButtonText('Submit Order');
             setIsLoading(false);
           }
           break;
         case 3:
-          setButtonText("Agree");
+          setButtonText('Agree');
           setIsLoading(false);
           break;
         default:
-          setButtonText("Unknown step");
+          setButtonText('Unknown step');
       }
     };
     updateButtonText();
@@ -181,32 +177,34 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
 
   const handleTransaction = async (
     txHashPromise: Promise<any>,
-    successCallback: () => void
+    successCallback: () => void,
   ) => {
     try {
       const txHash = await txHashPromise;
       if (txHash) {
         const txInfo = await getTransactionInfo(chain, txHash);
-        console.log("tx buy", txInfo);
+        console.log('tx buy', txInfo);
         setTxInfo(txInfo);
         onTxUpdate(txInfo);
-        successCallback();
+        if (txInfo.isSuccess) {
+          successCallback();
+        }
       }
     } catch (error) {
-      console.error("Transaction failed", error);
+      console.error('Transaction failed', error);
     }
   };
 
   const handleButtonSubmitClick = async () => {
-    console.log("formData", formData);
+    console.log('formData', formData);
 
     const executeTransactionAndSendPropertyData = async (
-      transactionType: Promise<any>
+      transactionType: Promise<any>,
     ) => {
       await handleTransaction(transactionType, () =>
-        onSubmitButtonClick(formData)
+        onSubmitButtonClick(formData),
       );
-      sendUserPropertyData();
+      await sendUserPropertyData();
     };
 
     try {
@@ -227,14 +225,14 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
             setIsLoading(true);
 
             const formDataType = (formData as AfterMarketBuyOrderData).type;
-            if (formDataType === "market") {
+            if (formDataType === 'market') {
               await executeTransactionAndSendPropertyData(marketBuy());
-            } else if (formDataType === "limit") {
+            } else if (formDataType === 'limit') {
               await executeTransactionAndSendPropertyData(limitBuy());
             }
           } else {
             console.warn(
-              "Initial offering buy should not be processed in this step."
+              'Initial offering buy should not be processed in this step.',
             );
           }
           break;
@@ -245,15 +243,15 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
             await executeTransactionAndSendPropertyData(initialOfferingBuy());
           } else {
             console.warn(
-              "Market trading operations should not be processed in this step."
+              'Market trading operations should not be processed in this step.',
             );
           }
           break;
         default:
-          console.warn("Unknown step");
+          console.warn('Unknown step');
       }
     } catch (error) {
-      console.error("Transaction failed", error);
+      console.error('Transaction failed', error);
     }
   };
 
@@ -271,7 +269,7 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
               animate="center"
               exit="exit"
               transition={{
-                x: { type: "spring", stiffness: 300, damping: 30 },
+                x: { type: 'spring', stiffness: 300, damping: 30 },
                 opacity: { duration: 0.2 },
               }}
               className="absolute w-full"

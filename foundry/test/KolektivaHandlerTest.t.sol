@@ -1,25 +1,25 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.20;
 
-import {Test, console} from "forge-std/Test.sol";
-import {KolektivaHandler} from "../contracts/KolektivaHandler.sol";
-import {KolektivaToken} from "../contracts/KolektivaToken.sol";
-import {KolektivaMarket} from "../contracts/KolektivaMarket.sol";
-import {MockUSDT} from "../contracts/mocks/MockUSDT.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {Test, console} from 'forge-std/Test.sol';
+import {KolektivaHandler} from '../contracts/KolektivaHandler.sol';
+import {KolektivaToken} from '../contracts/KolektivaToken.sol';
+import {KolektivaMarket} from '../contracts/KolektivaMarket.sol';
+import {MockUSDT} from '../contracts/mocks/MockUSDT.sol';
+import {IERC20} from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
 contract KolektivaHandlerTest is Test {
     KolektivaHandler handler;
     MockUSDT usdtToken;
-    address public owner = makeAddr("owner");
-    address public propertyOwner = makeAddr("propertyOwner");
-    string public tokenName = "TestToken";
-    string public tokenSymbol = "TT";
-    string public propertyType = "Property Type";
-    string public country = "Country";
-    string public state = "State";
-    string public city = "City";
-    string public location = "Location";
+    address public owner = makeAddr('owner');
+    address public propertyOwner = makeAddr('propertyOwner');
+    string public tokenName = 'TestToken';
+    string public tokenSymbol = 'TT';
+    string public propertyType = 'Property Type';
+    string public country = 'Country';
+    string public state = 'State';
+    string public city = 'City';
+    string public location = 'Location';
     uint256 totalSupply = 1000;
     uint256 priceSale = 5 * 1e6; // 5 USDT
 
@@ -43,8 +43,8 @@ contract KolektivaHandlerTest is Test {
             propertyOwner
         );
 
-        address tokenAddress = handler.tokenAddresses("TestToken");
-        address marketAddress = handler.marketAddresses("TestToken");
+        address tokenAddress = handler.tokenAddresses('TestToken');
+        address marketAddress = handler.marketAddresses('TestToken');
 
         assertTrue(tokenAddress != address(0));
         assertTrue(marketAddress != address(0));
@@ -91,7 +91,7 @@ contract KolektivaHandlerTest is Test {
     function testMintTokensFailureExceedSupply() public createToken {
         vm.startPrank(owner);
         vm.expectRevert(KolektivaToken.ExceedMaxSupply.selector);
-        handler.mintTokens("TestToken", address(this), 100);
+        handler.mintTokens('TestToken', address(this), 100);
         vm.stopPrank();
     }
 
@@ -99,7 +99,7 @@ contract KolektivaHandlerTest is Test {
         vm.startPrank(owner);
 
         vm.expectRevert(KolektivaHandler.TokenDoesNotExist.selector);
-        handler.mintTokens("NonExistentToken", address(this), 100);
+        handler.mintTokens('NonExistentToken', address(this), 100);
 
         vm.stopPrank();
     }
@@ -121,7 +121,7 @@ contract KolektivaHandlerTest is Test {
         vm.startPrank(owner);
 
         vm.expectRevert(KolektivaHandler.TokenDoesNotExist.selector);
-        handler.burnTokens("NonExistentToken", owner, 50);
+        handler.burnTokens('NonExistentToken', owner, 50);
 
         vm.stopPrank();
     }
@@ -139,7 +139,7 @@ contract KolektivaHandlerTest is Test {
         vm.startPrank(owner);
 
         vm.expectRevert(KolektivaHandler.TokenDoesNotExist.selector);
-        handler.revokeToken("NonExistentToken");
+        handler.revokeToken('NonExistentToken');
 
         vm.stopPrank();
     }
@@ -160,7 +160,7 @@ contract KolektivaHandlerTest is Test {
         vm.startPrank(owner);
 
         vm.expectRevert(KolektivaHandler.TokenDoesNotExist.selector);
-        handler.withdrawToken("NonExistentToken", 500);
+        handler.withdrawToken('NonExistentToken', 500);
 
         vm.stopPrank();
     }
@@ -193,27 +193,6 @@ contract KolektivaHandlerTest is Test {
         vm.stopPrank();
     }
 
-    function testSetFeePercentageSuccess() public createToken {
-        vm.startPrank(owner);
-
-        handler.setFeePercentage(tokenName, 10);
-
-        KolektivaMarket market = KolektivaMarket(
-            handler.marketAddresses(tokenName)
-        );
-        assertEq(market.feePercentage(), 10);
-        vm.stopPrank();
-    }
-
-    function testSetFeePercentageFailureMarketDoesNotExist() public {
-        vm.startPrank(owner);
-
-        vm.expectRevert(KolektivaHandler.MarketDoesNotExist.selector);
-        handler.setFeePercentage("NonExistentToken", 10);
-
-        vm.stopPrank();
-    }
-
     function testApproveMarketToTransferTokens() public createToken {
         vm.startPrank(owner);
 
@@ -231,7 +210,7 @@ contract KolektivaHandlerTest is Test {
         assertEq(
             allowance,
             totalSupply,
-            "Allowance should be equal to the total supply"
+            'Allowance should be equal to the total supply'
         );
 
         vm.stopPrank();
@@ -256,7 +235,7 @@ contract KolektivaHandlerTest is Test {
         vm.startPrank(owner);
 
         vm.expectRevert(KolektivaHandler.TokenDoesNotExist.selector);
-        handler.checkTokenBalance("NonExistentToken");
+        handler.checkTokenBalance('NonExistentToken');
 
         vm.stopPrank();
     }

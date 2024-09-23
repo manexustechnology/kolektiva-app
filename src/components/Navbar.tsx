@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { authApplyInviteCode, authUserInfo } from "@/app/api/user";
-import { LiskSepoliaTestnet } from "@/commons/networks";
-import { thirdwebClient } from "@/commons/thirdweb";
-import { generateToken } from "@/lib/generate-token";
-import { UserData } from "@/types/user";
+import { authApplyInviteCode, authUserInfo } from '@/app/api/user';
+import { generateToken } from '@/lib/generate-token';
+import { UserData } from '@/types/user';
+import { LiskSepoliaTestnet, LiskMainnet, Localnet } from '@/commons/networks';
+import { thirdwebClient } from '@/commons/thirdweb';
 import {
   Box,
   Button,
@@ -14,7 +14,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 import {
   BellSimple,
   Buildings,
@@ -23,11 +23,11 @@ import {
   SignOut,
   User,
   Wallet,
-} from "@phosphor-icons/react/dist/ssr";
-import Link from "next/link";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
-import toast from "react-hot-toast";
+} from '@phosphor-icons/react/dist/ssr';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
+import Link from 'next/link';
 import {
   ConnectButton,
   useActiveAccount,
@@ -35,7 +35,7 @@ import {
   useActiveWalletChain,
   useDisconnect,
   useWalletDetailsModal,
-} from "thirdweb/react";
+} from 'thirdweb/react';
 
 const Navbar: React.FC = () => {
   const searchParams = useSearchParams();
@@ -49,10 +49,10 @@ const Navbar: React.FC = () => {
   const [isConnected, setIsConnected] = useState(false);
   const detailsModal = useWalletDetailsModal();
   const [user, setUser] = useState<UserData | null>(null);
-  const [userAddress, setUserAddress] = useState<string | null>(null)
+  const [userAddress, setUserAddress] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [referral, setReferral] = useState(
-    `${process.env.NEXT_PUBLIC_APP_URL}?referral_code=${user?.referralCode}`
+    `${process.env.NEXT_PUBLIC_APP_URL}?referral_code=${user?.referralCode}`,
   );
   const [isCopied, setIsCopied] = useState(false);
 
@@ -81,50 +81,56 @@ const Navbar: React.FC = () => {
     } catch (error) {
       emptyUser();
     }
-  }
+  };
 
   const emptyUser = () => {
     setUser(null);
-  }
+  };
 
   const handleRedeemCode = async () => {
     try {
       if (inviteCodeUrlParams != user?.referralCode) {
         const finalToken = await generateToken(userAddress);
-        const response = await authApplyInviteCode({ inviteCode: inviteCodeUrlParams }, {
-          headers: {
-            Authorization: `Bearer ${finalToken}`,
-          },
-        });
-  
-        if (response.status === 200) {
-          toast.success('Referral code successfully applied! Welcome to Kolektiva 👋', {
-            style: {
-              fontSize: '14px'
+        const response = await authApplyInviteCode(
+          { inviteCode: inviteCodeUrlParams },
+          {
+            headers: {
+              Authorization: `Bearer ${finalToken}`,
             },
-          });  
+          },
+        );
+
+        if (response.status === 200) {
+          toast.success(
+            'Referral code successfully applied! Welcome to Kolektiva 👋',
+            {
+              style: {
+                fontSize: '14px',
+              },
+            },
+          );
         }
       }
     } catch (error) {
       console.log('Error: Failed to apply referral code. Please try again.');
     }
-  }
+  };
 
   useEffect(() => {
     setIsLoggedIn(address ? true : false);
 
     setUserAddress(address || null);
-  }, [address])
+  }, [address]);
 
   useEffect(() => {
     fetchUserAccount();
-  }, [userAddress])
+  }, [userAddress]);
 
   useEffect(() => {
     setReferral(
       `${process.env.NEXT_PUBLIC_APP_URL}?referral_code=${
-        user?.referralCode || ""
-      }`
+        user?.referralCode || ''
+      }`,
     );
 
     return () => {};
@@ -132,7 +138,7 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     handleRedeemCode();
-  }, [inviteCodeUrlParams, user])
+  }, [inviteCodeUrlParams, user]);
 
   return (
     <div className="flex justify-center items-center gap-2 px-4 bg-[#042F2E] h-[64px] z-[100] fixed w-screen">
@@ -149,33 +155,33 @@ const Navbar: React.FC = () => {
               <ConnectButton
                 client={thirdwebClient}
                 appMetadata={{
-                  name: process.env.NEXT_PUBLIC_APP_NAME || "kolektiva",
+                  name: process.env.NEXT_PUBLIC_APP_NAME || 'kolektiva',
                   url:
-                    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
+                    process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000',
                 }}
                 connectButton={{
                   className:
-                    "!bg-teal-600 !px-3 !py-2 !text-white !text-sm !font-medium !rounded-full",
-                  label: "Connect Wallet",
+                    '!bg-teal-600 !px-3 !py-2 !text-white !text-sm !font-medium !rounded-full',
+                  label: 'Connect Wallet',
                 }}
                 switchButton={{
                   className:
-                    "!bg-teal-600 !px-3 !py-2 !text-white !text-sm !font-medium !rounded-full",
+                    '!bg-teal-600 !px-3 !py-2 !text-white !text-sm !font-medium !rounded-full',
                 }}
                 detailsButton={{
-                  className: "!bg-teal-600 !px-6 !py-2 !rounded-full",
+                  className: '!bg-teal-600 !px-6 !py-2 !rounded-full',
                 }}
                 autoConnect={true}
                 chain={LiskSepoliaTestnet}
-                chains={[LiskSepoliaTestnet]}
+                chains={[LiskSepoliaTestnet, Localnet]}
                 onConnect={() => setIsConnected(true)}
               />
             ) : (
               <div className="flex flex-row items-center gap-2 md:gap-6 h-6 mx-auto p-0">
-                {pathname !== "/list-property" && (
+                {pathname !== '/list-property' && (
                   <span
                     className=" text-xs font-normal md:text-sm md:font-medium text-[#14B8A6] cursor-pointer"
-                    onClick={() => router.push("/list-property")}
+                    onClick={() => router.push('/list-property')}
                   >
                     List your property
                   </span>
@@ -218,15 +224,15 @@ const Navbar: React.FC = () => {
                       borderRadius="full"
                       fontSize="xs"
                       fontWeight="medium"
-                      _hover={{ bg: "teal.700" }}
-                      _active={{ bg: "teal.800" }}
+                      _hover={{ bg: 'teal.700' }}
+                      _active={{ bg: 'teal.800' }}
                       display="flex"
                       alignItems="center"
                       gap="2"
                     >
                       <div className="flex items-center gap-2">
                         <p className="w-[83px] h-[18px] m-0 text-ellipsis overflow-hidden whitespace-nowrap text-white text-xs">
-                          {address || "No Address"}
+                          {address || 'No Address'}
                         </p>
                         <CaretDown weight="fill" size={16} color="#FFFFFF" />
                       </div>
@@ -264,7 +270,7 @@ const Navbar: React.FC = () => {
                         icon={
                           <Buildings weight="fill" size={18} color="#71717A" />
                         }
-                        onClick={() => router.push("/my-assets")}
+                        onClick={() => router.push('/my-assets')}
                       >
                         <p className="h-[18px] text-sm font-medium text-[#3F3F46] leading-[18px] cursor-pointer">
                           Your Assets

@@ -1,5 +1,5 @@
-import { deployedContracts } from "../../foundry/deployed-contracts/deployedContracts"; // ABI and address file
-import { deployedSignatures } from "../../foundry/deployed-contracts/deployedSignatures"; // Event Signatures
+import { deployedContracts } from '../../foundry/deployed-contracts/deployedContracts'; // ABI and address file
+import { deployedSignatures } from '../../foundry/deployed-contracts/deployedSignatures'; // Event Signatures
 import {
   prepareContractCall,
   getContract,
@@ -8,15 +8,14 @@ import {
   sendTransaction,
   prepareEvent,
   Chain,
-} from "thirdweb";
-// import { LiskSepoliaTestnet as chain } from "@/commons/networks";
-import { thirdwebClient as client } from "@/commons/thirdweb";
+} from 'thirdweb';
+import { thirdwebClient as client } from '@/commons/thirdweb';
 import {
   useReadContract,
   useActiveWallet,
   useActiveWalletChain,
-} from "thirdweb/react";
-import { useEffect, useState } from "react";
+} from 'thirdweb/react';
+import { useEffect, useState } from 'react';
 
 interface UseContractParams {
   contractAddress?: string;
@@ -35,16 +34,18 @@ interface UseContractEventsParams {
 function getContractInstance(
   chain: Chain,
   contractName: string,
-  contractAddress?: string
+  contractAddress?: string,
 ): ThirdwebContract<any[]> {
   const contractDetails = deployedContracts[chain?.id]?.[contractName];
 
   if (!contractDetails) {
-    throw new Error(`Contract details for ${contractName} not found.`);
+    console.error(`Contract details for ${contractName} not found.`);
   }
 
-  const abi = contractDetails.abi;
-  const address = contractAddress ? contractAddress : contractDetails.address;
+  const abi = contractDetails?.abi || [];
+  const address = contractAddress
+    ? contractAddress
+    : contractDetails?.address || '';
 
   return getContract({
     client,
@@ -57,13 +58,13 @@ function getContractInstance(
 function getPreparedEventInstance(
   chain: Chain,
   contractName: string,
-  eventName: string
+  eventName: string,
 ) {
   const eventSignature =
-    deployedSignatures[chain.id]?.[contractName][eventName];
+    deployedSignatures[chain.id]?.[contractName]?.[eventName];
 
-  if (typeof eventSignature !== "string") {
-    throw new Error(`Event signature for ${eventName} not found.`);
+  if (typeof eventSignature !== 'string') {
+    console.error(`Event signature for ${eventName} not found.`);
   }
 
   return prepareEvent({
@@ -121,7 +122,7 @@ export function useWriteContractHook({
       });
       return transactionHash;
     } catch (err) {
-      setError("Transaction failed.");
+      setError('Transaction failed.');
     } finally {
       setIsLoading(false);
     }
@@ -150,7 +151,7 @@ export function useContractEventHook({
         const contract = getContractInstance(
           chain,
           contractName,
-          contractAddress
+          contractAddress,
         );
         const event = getPreparedEventInstance(chain, contractName, eventName);
 
@@ -164,7 +165,7 @@ export function useContractEventHook({
         setHasFetched(true);
         setIsLoading(false);
       } catch (err) {
-        console.error("Error fetching contract events:", err);
+        console.error('Error fetching contract events:', err);
         setError(err as Error);
       } finally {
         setIsLoading(false);

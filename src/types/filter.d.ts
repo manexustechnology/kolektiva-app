@@ -3,5 +3,6 @@ export interface IMarketFilter {
   propertyType: string;
   status: string;
   sort: string;
+  search: string;
   priceRange: number[];
 }

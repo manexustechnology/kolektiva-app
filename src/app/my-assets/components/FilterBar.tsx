@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useState } from "react";
+import { useRef, useState } from 'react';
 import {
   CaretDown,
   CaretUp,
   MagnifyingGlass,
   SlidersHorizontal,
   SortDescending,
-} from "@phosphor-icons/react/dist/ssr";
+} from '@phosphor-icons/react/dist/ssr';
 import {
   Box,
   Button,
@@ -24,8 +24,8 @@ import {
   SliderTrack,
   Tooltip,
   useDisclosure,
-} from "@chakra-ui/react";
-import { IMarketFilter } from "@/types/filter";
+} from '@chakra-ui/react';
+import { IMarketFilter } from '@/types/filter';
 
 interface FilterBarProps {
   locations: string[];
@@ -48,6 +48,8 @@ const FilterBar: React.FC<FilterBarProps> = ({
   // initialSliderValue1 = 50,
   // initialSliderValue2 = 50,
 }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+
   const handleFilterChange = (key: string, value: any) => {
     const updatedFilters = { ...filters, [key]: value };
     onFilterApply(updatedFilters);
@@ -68,16 +70,16 @@ const FilterBar: React.FC<FilterBarProps> = ({
           placeholder="Location"
           backgroundColor="#F4F4F5"
           _hover={{
-            backgroundColor: "#CCFBF1",
+            backgroundColor: '#CCFBF1',
           }}
           _focus={{
-            backgroundColor: "#CCFBF1",
+            backgroundColor: '#CCFBF1',
           }}
           icon={<CaretDown weight="fill" />}
           rounded={100}
           width="200px"
           marginRight={5}
-          onChange={(e) => handleFilterChange("location", e.target.value)}
+          onChange={(e) => handleFilterChange('location', e.target.value)}
         >
           {locations.map((location, index) => (
             <option
@@ -96,16 +98,16 @@ const FilterBar: React.FC<FilterBarProps> = ({
           placeholder="Property Type"
           backgroundColor="#F4F4F5"
           _hover={{
-            backgroundColor: "#CCFBF1",
+            backgroundColor: '#CCFBF1',
           }}
           _focus={{
-            backgroundColor: "#CCFBF1",
+            backgroundColor: '#CCFBF1',
           }}
           icon={<CaretDown weight="fill" />}
           width="200px"
           rounded={100}
           marginRight={5}
-          onChange={(e) => handleFilterChange("propertyType", e.target.value)}
+          onChange={(e) => handleFilterChange('propertyType', e.target.value)}
         >
           {propertyTypes.map((type, index) => (
             <option
@@ -126,15 +128,15 @@ const FilterBar: React.FC<FilterBarProps> = ({
             placeholder="Sort"
             backgroundColor="#F4F4F5"
             _hover={{
-              backgroundColor: "#CCFBF1",
+              backgroundColor: '#CCFBF1',
             }}
             _focus={{
-              backgroundColor: "#CCFBF1",
+              backgroundColor: '#CCFBF1',
             }}
             icon={<SortDescending />}
             width="200px"
             rounded="full"
-            onChange={(e) => handleFilterChange("sort", e.target.value)}
+            onChange={(e) => handleFilterChange('sort', e.target.value)}
           >
             {sortOptions.map((option, index) => (
               <option key={index} value={option}>
@@ -154,10 +156,10 @@ const FilterBar: React.FC<FilterBarProps> = ({
             bg="#F4F4F5"
             borderRadius="full"
             _hover={{
-              backgroundColor: "#CCFBF1",
+              backgroundColor: '#CCFBF1',
             }}
             _focus={{
-              backgroundColor: "#CCFBF1",
+              backgroundColor: '#CCFBF1',
             }}
           >
             {/* Magnifying Glass Icon */}
@@ -171,7 +173,14 @@ const FilterBar: React.FC<FilterBarProps> = ({
               fontSize="sm"
               fontWeight="medium"
               color="#71717A"
-              _placeholder={{ color: "#71717A" }}
+              _placeholder={{ color: '#71717A' }}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleFilterChange('search', searchQuery);
+                }
+              }}
             />
           </Flex>
         </Flex>

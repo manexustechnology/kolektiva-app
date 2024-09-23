@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { AnimatePresence, motion } from "framer-motion";
-import SellStep1 from "./SellStep1";
-import SellStep2 from "./SellStep2";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Button, Checkbox, ModalBody, ModalFooter } from "@chakra-ui/react";
-import { Divider } from "antd";
-import { SellOrderData } from "@/types/order";
-import { useReadContractHook, useWriteContractHook } from "@/utils/hooks";
-import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
-import { getTransactionInfo } from "@/app/api/tx-info";
-import { PropertyData } from "@/types/property";
-import { formatUSDTBalance, parseUSDTBalance } from "@/utils/formatter";
-import { Spinner } from "@chakra-ui/react";
-import { TxInfoData } from "@/types/tx-info";
-import TxFailureToast from "../modals/TxFailureToast";
+import { AnimatePresence, motion } from 'framer-motion';
+import SellStep1 from './SellStep1';
+import SellStep2 from './SellStep2';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Button, Checkbox, ModalBody, ModalFooter } from '@chakra-ui/react';
+import { Divider } from 'antd';
+import { SellOrderData } from '@/types/order';
+import { useReadContractHook, useWriteContractHook } from '@/utils/hooks';
+import { useActiveAccount, useActiveWalletChain } from 'thirdweb/react';
+import { getTransactionInfo } from '@/app/api/tx-info';
+import { PropertyData } from '@/types/property';
+import { formatUSDTBalance, parseUSDTBalance } from '@/utils/formatter';
+import { Spinner } from '@chakra-ui/react';
+import { TxInfoData } from '@/types/tx-info';
+import TxFailureToast from '../modals/TxFailureToast';
 
 interface SellFormWizardProps {
   propertyData: PropertyData;
@@ -50,7 +50,7 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
   onSubmitButtonClick,
 }) => {
   const [formData, setFormData] = useState<SellOrderData>({
-    type: "market",
+    type: 'market',
     qtyToken: 1,
     pricePerToken: 0,
     orderExpiration: 0,
@@ -58,12 +58,12 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
     fee: 0,
   });
   const [txInfo, setTxInfo] = useState<TxInfoData>({
-    txHash: "",
-    status: "",
-    txUrl: "",
+    txHash: '',
+    status: '',
+    txUrl: '',
     isSuccess: false,
   });
-  const [buttonText, setButtonText] = useState("Loading...");
+  const [buttonText, setButtonText] = useState('Loading...');
   const [isLoading, setIsLoading] = useState(false);
 
   const activeAccount = useActiveAccount();
@@ -73,17 +73,17 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
   const direction = currentStep > prevStep.current ? 1 : -1;
 
   const { writeAsync: marketSell } = useWriteContractHook({
-    contractName: "KolektivaMarket",
-    functionName: "instantSell",
+    contractName: 'KolektivaMarket',
+    functionName: 'instantTrade',
     contractAddress: propertyData.marketAddress,
-    args: [formData.qtyToken],
+    args: [formData.qtyToken, false],
   });
 
   const { writeAsync: limitSell } = useWriteContractHook({
-    contractName: "KolektivaMarket",
-    functionName: "placeSellOrder",
+    contractName: 'KolektivaMarket',
+    functionName: 'placeOrder',
     contractAddress: propertyData.marketAddress,
-    args: [formData.qtyToken, formData.pricePerToken],
+    args: [formData.qtyToken, formData.pricePerToken, false],
   });
 
   useEffect(() => {
@@ -95,14 +95,14 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
     isLoading: isLoadingAllowanceUsdt,
     refetch: refetchAllowanceUsdt,
   } = useReadContractHook({
-    contractName: "MockUSDT",
-    functionName: "allowance",
+    contractName: 'MockUSDT',
+    functionName: 'allowance',
     args: [address, propertyData.marketAddress],
   });
 
   const { writeAsync: approveUsdt } = useWriteContractHook({
-    contractName: "MockUSDT",
-    functionName: "approve",
+    contractName: 'MockUSDT',
+    functionName: 'approve',
     args: [propertyData.marketAddress, formData.fee],
   });
 
@@ -111,38 +111,38 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
     isLoading: isLoadingAllowanceToken,
     refetch: refetchAllowanceToken,
   } = useReadContractHook({
-    contractName: "KolektivaToken",
-    functionName: "allowance",
+    contractName: 'KolektivaToken',
+    functionName: 'allowance',
     contractAddress: propertyData.tokenAddress,
     args: [address, propertyData.marketAddress],
   });
 
   const { writeAsync: approveToken } = useWriteContractHook({
-    contractName: "KolektivaToken",
-    functionName: "approve",
+    contractName: 'KolektivaToken',
+    functionName: 'approve',
     contractAddress: propertyData.tokenAddress,
     args: [propertyData.marketAddress, formData.qtyToken],
   });
 
   const allowanceUsdt = useMemo(
     () => (allowanceUsdtData ? Number(allowanceUsdtData) : 0),
-    [allowanceUsdtData]
+    [allowanceUsdtData],
   );
 
   const allowanceToken = useMemo(
     () => (allowanceTokenData ? Number(allowanceTokenData) : 0),
-    [allowanceTokenData]
+    [allowanceTokenData],
   );
 
   useEffect(() => {
     const updateButtonText = () => {
       switch (currentStep) {
         case 1:
-          setButtonText("Preview order");
+          setButtonText('Preview order');
           break;
         case 2:
           if (isLoadingAllowanceToken || isLoadingAllowanceUsdt) {
-            setButtonText("Loading...");
+            setButtonText('Loading...');
             setIsLoading(true);
           } else if (allowanceToken < formData.qtyToken) {
             setButtonText(`Approve ${formData.qtyToken} KolektivaToken`);
@@ -151,12 +151,12 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
             setButtonText(`Approve ${formatUSDTBalance(formData.fee)} USDT`);
             setIsLoading(false);
           } else {
-            setButtonText("Submit Order");
+            setButtonText('Submit Order');
             setIsLoading(false);
           }
           break;
         default:
-          setButtonText("Unknown step");
+          setButtonText('Unknown step');
       }
     };
     updateButtonText();
@@ -172,24 +172,26 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
 
   const handleTransaction = async (
     txHashPromise: Promise<any>,
-    successCallback: () => void
+    successCallback: () => void,
   ) => {
     try {
       const txHash = await txHashPromise;
       if (txHash) {
         const txInfo = await getTransactionInfo(chain, txHash);
-        console.log("tx sell", txInfo);
+        console.log('tx sell', txInfo);
         setTxInfo(txInfo);
         onTxUpdate(txInfo);
-        successCallback();
+        if (txInfo.isSuccess) {
+          successCallback();
+        }
       }
     } catch (error) {
-      console.error("Transaction failed", error);
+      console.error('Transaction failed', error);
     }
   };
 
   const handleButtonSubmitClick = async () => {
-    console.log("formData", formData);
+    console.log('formData', formData);
 
     try {
       switch (currentStep) {
@@ -208,22 +210,22 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
             });
           } else {
             const formDataType = (formData as SellOrderData).type;
-            if (formDataType === "market") {
+            if (formDataType === 'market') {
               await handleTransaction(marketSell(), () =>
-                onSubmitButtonClick(formData)
+                onSubmitButtonClick(formData),
               );
             } else {
               await handleTransaction(limitSell(), () =>
-                onSubmitButtonClick(formData)
+                onSubmitButtonClick(formData),
               );
             }
           }
           break;
         default:
-          console.warn("Unknown step");
+          console.warn('Unknown step');
       }
     } catch (error) {
-      console.error("Transaction failed", error);
+      console.error('Transaction failed', error);
     }
   };
 
@@ -241,7 +243,7 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
               animate="center"
               exit="exit"
               transition={{
-                x: { type: "spring", stiffness: 300, damping: 30 },
+                x: { type: 'spring', stiffness: 300, damping: 30 },
                 opacity: { duration: 0.2 },
               }}
               className="absolute w-full"
@@ -262,9 +264,9 @@ const SellFormWizard: React.FC<SellFormWizardProps> = ({
           <Divider className="border-zinc-200 !m-0" />
           <div className="flex justify-between items-center">
             <p className="text-sm text-zinc-500">
-              {formData.type === "market"
-                ? "Estimated total sell price"
-                : "Total sell price"}
+              {formData.type === 'market'
+                ? 'Estimated total sell price'
+                : 'Total sell price'}
             </p>
             <p className="text-xl font-bold text-teal-600">
               {formatUSDTBalance(formData.totalProceeds)} USDT
