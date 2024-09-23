@@ -1,7 +1,10 @@
 "use client";
 
+import { authApplyInviteCode, authUserInfo } from "@/app/api/user";
 import { LiskSepoliaTestnet } from "@/commons/networks";
 import { thirdwebClient } from "@/commons/thirdweb";
+import { generateToken } from "@/lib/generate-token";
+import { UserData } from "@/types/user";
 import {
   Box,
   Button,
@@ -22,8 +25,9 @@ import {
   Wallet,
 } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import {
   ConnectButton,
   useActiveAccount,
@@ -34,6 +38,7 @@ import {
 } from "thirdweb/react";
 
 const Navbar: React.FC = () => {
+  const searchParams = useSearchParams();
   const activeAccount = useActiveAccount();
   const address = activeAccount?.address;
   const { disconnect } = useDisconnect();
@@ -43,6 +48,15 @@ const Navbar: React.FC = () => {
   const router = useRouter();
   const [isConnected, setIsConnected] = useState(false);
   const detailsModal = useWalletDetailsModal();
+  const [user, setUser] = useState<UserData | null>(null);
+  const [userAddress, setUserAddress] = useState<string | null>(null)
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [referral, setReferral] = useState(
+    `${process.env.NEXT_PUBLIC_APP_URL}?referral_code=${user?.referralCode}`
+  );
+  const [isCopied, setIsCopied] = useState(false);
+
+  const inviteCodeUrlParams = searchParams?.get('referral_code') || '';
 
   useEffect(() => {
     console.log(activeChain);
@@ -51,6 +65,74 @@ const Navbar: React.FC = () => {
   function handleWalletOpen() {
     detailsModal.open({ client: thirdwebClient });
   }
+
+  const fetchUserAccount = async () => {
+    try {
+      const finalToken = await generateToken(userAddress);
+      const { data } = await authUserInfo({
+        headers: {
+          Authorization: `Bearer ${finalToken}`,
+        },
+      });
+
+      if (data.data) {
+        setUser(data.data);
+      }
+    } catch (error) {
+      emptyUser();
+    }
+  }
+
+  const emptyUser = () => {
+    setUser(null);
+  }
+
+  const handleRedeemCode = async () => {
+    try {
+      if (inviteCodeUrlParams != user?.referralCode) {
+        const finalToken = await generateToken(userAddress);
+        const response = await authApplyInviteCode({ inviteCode: inviteCodeUrlParams }, {
+          headers: {
+            Authorization: `Bearer ${finalToken}`,
+          },
+        });
+  
+        if (response.status === 200) {
+          toast.success('Referral code successfully applied! Welcome to Kolektiva 👋', {
+            style: {
+              fontSize: '14px'
+            },
+          });  
+        }
+      }
+    } catch (error) {
+      console.log('Error: Failed to apply referral code. Please try again.');
+    }
+  }
+
+  useEffect(() => {
+    setIsLoggedIn(address ? true : false);
+
+    setUserAddress(address || null);
+  }, [address])
+
+  useEffect(() => {
+    fetchUserAccount();
+  }, [userAddress])
+
+  useEffect(() => {
+    setReferral(
+      `${process.env.NEXT_PUBLIC_APP_URL}?referral_code=${
+        user?.referralCode || ""
+      }`
+    );
+
+    return () => {};
+  }, [user]);
+
+  useEffect(() => {
+    handleRedeemCode();
+  }, [inviteCodeUrlParams, user])
 
   return (
     <div className="flex justify-center items-center gap-2 px-4 bg-[#042F2E] h-[64px] z-[100] fixed w-screen">
