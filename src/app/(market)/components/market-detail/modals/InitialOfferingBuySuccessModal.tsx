@@ -64,7 +64,7 @@ const InitialOfferingBuySuccessModal: React.FC<
       <ModalOverlay bg="rgba(4, 47, 46, 0.5)" />
       <ModalContent
         width="394px"
-        height="566px"
+        height="580px"
         bg="white"
         boxShadow="0px 1px 2px rgba(16, 24, 40, 0.06), 0px 1px 3px rgba(16, 24, 40, 0.1)"
         borderRadius="16px"
@@ -153,7 +153,7 @@ const InitialOfferingBuySuccessModal: React.FC<
                     height="40px"
                     bg="white"
                     borderRadius="full"
-                    _focus={{ boxShadow: "none" }} // Removes default focus box shadow if needed
+                    _focus={{ boxShadow: "none" }}
                   >
                     <Icon
                       as={copied ? CheckCircle : Copy}
@@ -162,6 +162,15 @@ const InitialOfferingBuySuccessModal: React.FC<
                       color={copied ? "#4CAF50" : "#0D9488"}
                     />
                   </Button>
+                </div>
+                <div
+                  className="flex flex-row justify-center items-center gap-4"
+                  onClick={() => handleRedirectUrl()}
+                >
+                  <a className="text-teal-500 underline hover:text-teal-700 mt-2">
+                    Go to BlockExplorer
+                  </a>
+                  <ArrowSquareOut color="#0D9488" size={18} />
                 </div>
 
                 <div className="flex flex-row items-center mt-4 gap-2 w-[259px] h-[64px] bg-[#F0FDFA] rounded-full z-[2] p-[12px_24px_12px_12px]">

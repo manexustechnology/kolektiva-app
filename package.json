@@ -29,6 +29,7 @@
     "react-dom": "^18",
     "react-hot-toast": "^2.4.1",
     "react-phone-input-2": "^2.15.1",
+    "swiper": "^11.1.14",
     "tailwind-merge": "^2.4.0",
     "thirdweb": "^5.42.0",
     "viem": "^2.19.3",
