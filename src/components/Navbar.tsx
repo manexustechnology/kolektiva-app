@@ -38,7 +38,6 @@ import {
 } from 'thirdweb/react';
 
 const Navbar: React.FC = () => {
-  const searchParams = useSearchParams();
   const activeAccount = useActiveAccount();
   const address = activeAccount?.address;
   const { disconnect } = useDisconnect();
@@ -56,7 +55,7 @@ const Navbar: React.FC = () => {
   );
   const [isCopied, setIsCopied] = useState(false);
 
-  const inviteCodeUrlParams = searchParams?.get('referral_code') || '';
+  const inviteCodeUrlParams = '';
 
   useEffect(() => {
     console.log(activeChain);
@@ -135,10 +134,6 @@ const Navbar: React.FC = () => {
 
     return () => {};
   }, [user]);
-
-  useEffect(() => {
-    handleRedeemCode();
-  }, [inviteCodeUrlParams, user]);
 
   return (
     <div className="flex justify-center items-center gap-2 px-4 bg-[#042F2E] h-[64px] z-[100] fixed w-screen">
