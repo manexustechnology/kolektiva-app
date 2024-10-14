@@ -1,7 +1,7 @@
 export interface IMarketFilter {
   location: string;
   propertyType: string;
-  status: string;
+  phase: string;
   sort: string;
   search: string;
   priceRange: number[];

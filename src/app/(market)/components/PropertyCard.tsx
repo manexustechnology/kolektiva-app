@@ -1,9 +1,10 @@
-"use client";
+'use client';
 
-import { formatUSDTBalance } from "@/utils/formatter";
-import { useReadContractHook } from "@/utils/hooks";
-import { Box, Image, Text, Heading, Button, Progress } from "@chakra-ui/react";
-import { useEffect, useMemo, useState } from "react";
+import { setPropertyToAftermarket } from '@/app/api/property';
+import { formatUSDTBalance } from '@/utils/formatter';
+import { useReadContractHook } from '@/utils/hooks';
+import { Box, Image, Text, Heading, Button, Progress } from '@chakra-ui/react';
+import { useEffect, useMemo, useState } from 'react';
 
 interface PropertyCardProps {
   marketAddress: string;
@@ -12,61 +13,83 @@ interface PropertyCardProps {
   location: string;
   img: string;
   price: string;
-  isNew: boolean;
+  tokenName: string;
+  tokenSymbol: string;
+  slug: string;
+  phase: string;
   isFeatured: boolean;
+  isAftermarket: boolean;
   isUpcoming: boolean;
-  // isTraded: boolean;
   onButtonClick: () => void;
 }
 
 const PropertyCard: React.FC<PropertyCardProps> = ({
-  tokenAddress,
   marketAddress,
+  tokenAddress,
   name,
   location,
   img,
+  slug,
   price,
-  isNew,
+  tokenName,
+  tokenSymbol,
+  phase,
   isFeatured,
   isUpcoming,
-  // isTraded,
   onButtonClick,
 }) => {
+  const [isAftermarket, setIsAftermarket] = useState<boolean>(false);
   const { data: initialOfferingActive = true } = useReadContractHook({
-    contractName: "KolektivaMarket",
-    functionName: "initialOfferingActive",
+    contractName: 'KolektivaMarket',
+    functionName: 'initialOfferingActive',
     contractAddress: marketAddress,
     args: [],
   });
 
   const { data: salePriceData } = useReadContractHook({
-    contractName: "KolektivaMarket",
-    functionName: "salePrice",
+    contractName: 'KolektivaMarket',
+    functionName: 'salePrice',
     contractAddress: marketAddress,
 
     args: [],
   });
 
   const { data: tokenTotalSupply } = useReadContractHook({
-    contractName: "KolektivaToken",
-    functionName: "totalSupply",
+    contractName: 'KolektivaToken',
+    functionName: 'totalSupply',
     contractAddress: tokenAddress,
     args: [],
   });
 
   const { data: initialOfferingSupply } = useReadContractHook({
-    contractName: "KolektivaMarket",
-    functionName: "initialOfferingSupply",
+    contractName: 'KolektivaMarket',
+    functionName: 'initialOfferingSupply',
     contractAddress: marketAddress,
     args: [],
   });
 
-  const isTraded = useMemo(() => {
-    if (initialOfferingActive === null) {
-      return false;
-    }
-    return initialOfferingActive !== true;
-  }, [initialOfferingActive]);
+  useEffect(() => {
+    const updatePropertyPhaseToAftermarket = async () => {
+      try {
+        await setPropertyToAftermarket(slug);
+        phase = 'aftermarket';
+      } catch (error) {
+        console.error('Error updating property phase to aftermarket:', error);
+      }
+    };
+
+    const determineTradeAllowance = () => {
+      if (phase === 'aftermarket') {
+        setIsAftermarket(true);
+      } else if (phase === 'initial-offering' && !initialOfferingActive) {
+        updatePropertyPhaseToAftermarket().then(() => setIsAftermarket(true));
+      } else {
+        setIsAftermarket(false);
+      }
+    };
+
+    determineTradeAllowance();
+  }, [initialOfferingActive, slug]);
 
   const initialOfferingPercentage = useMemo(() => {
     if (tokenTotalSupply > initialOfferingSupply) {
@@ -124,7 +147,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
         >
           Upcoming
         </Box>
-      ) : isTraded ? (
+      ) : isAftermarket ? (
         <Box
           position="absolute"
           top={2}
@@ -178,7 +201,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
         </p>
 
         {/* Progress Bar */}
-        {isTraded || isUpcoming ? (
+        {isAftermarket || isUpcoming ? (
           <>
             {/* Dividing Line */}
             <Box
@@ -255,7 +278,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             </p>
             <p className=" font-medium text-[12px] leading-[16px] text-right text-[#042F2E]">
               {isUpcoming
-                ? "-"
+                ? '-'
                 : Number(initialOfferingSupply).toLocaleString()}
             </p>
           </Box>
@@ -295,7 +318,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             </p>
 
             <p className="w-[80px] font-medium text-[10px] leading-[10px] text-right text-[#042F2E]">
-              {isUpcoming ? "-" : "8.7%"}
+              {isUpcoming ? '-' : '8.7%'}
             </p>
           </Box>
 
@@ -327,7 +350,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             </p>
 
             <p className="w-[80px] font-medium text-[10px] leading-[10px] text-right text-[#042F2E]">
-              {isUpcoming ? "-" : "Active"}
+              {isUpcoming ? '-' : 'Active'}
             </p>
           </Box>
         </Box>

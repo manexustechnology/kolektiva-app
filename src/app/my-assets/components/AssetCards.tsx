@@ -18,14 +18,17 @@ interface PropertyCardData {
   walletAddress: string;
   marketAddress: string;
   tokenAddress: string;
+  tokenName: string;
+  tokenSymbol: string;
   name: string;
   slug: string;
   location: string;
   img: string;
   price: string;
+  phase: string;
   isNew: boolean;
   isFeatured: boolean;
-  isTraded: boolean;
+  isAftermarket: boolean;
   profitPercentage?: number;
   lossPercentage?: number;
 }
@@ -35,7 +38,7 @@ interface AssetCardsProps {
     location: string;
     propertyType: string;
     sort: string;
-    status: string;
+    phase: string;
     priceRange: number[];
   };
 }
@@ -89,6 +92,7 @@ const AssetCards: React.FC<AssetCardsProps> = ({ filters }) => {
             tokenAddress: property.tokenAddress,
             isAftermarket: property.isAftermarket,
             walletAddress: data.walletAddress,
+            phase: property.phase,
           };
         });
 
@@ -194,9 +198,10 @@ const AssetCards: React.FC<AssetCardsProps> = ({ filters }) => {
                 location={card.location}
                 img={card.img}
                 price={card.price}
+                phase={card.phase}
                 isNew={card.isNew}
                 isFeatured={card.isFeatured}
-                // isTraded={card.isTraded}
+                isAftermarket={card.isAftermarket}
                 profitPercentage={card.profitPercentage}
                 lossPercentage={card.lossPercentage}
                 onButtonClick={() => handleButtonClick(card.slug)}

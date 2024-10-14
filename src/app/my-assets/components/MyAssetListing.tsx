@@ -26,7 +26,7 @@ const MyAssetListing: React.FC = () => {
   const [filters, setFilters] = useState<IMarketFilter>({
     location: '',
     propertyType: '',
-    status: '',
+    phase: '',
     sort: '',
     search: '',
     priceRange: [0, 1000],
@@ -37,14 +37,14 @@ const MyAssetListing: React.FC = () => {
   useEffect(() => {
     const filterLocation = searchParams.get('location') || '';
     const filterPropertyType = searchParams.get('propertyType') || '';
-    const filterStatus = searchParams.get('status') || '';
+    const filterPhase = searchParams.get('phase') || '';
     const filterSearch = searchParams.get('search') || '';
 
     setFilters((prev) => ({
       ...prev,
       location: filterLocation,
       propertyType: filterPropertyType,
-      status: filterStatus,
+      phase: filterPhase,
       search: filterSearch,
     }));
   }, []);
@@ -57,7 +57,7 @@ const MyAssetListing: React.FC = () => {
     setFilters({
       location: '',
       propertyType: '',
-      status: '',
+      phase: '',
       sort: '',
       search: '',
       priceRange: [0, 1000],

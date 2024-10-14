@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useEffect, useMemo, useState } from "react";
-import { CaretDown } from "@phosphor-icons/react/dist/ssr";
+import { useEffect, useMemo, useState } from 'react';
+import { CaretDown } from '@phosphor-icons/react/dist/ssr';
 import {
   Box,
   Select,
@@ -9,8 +9,8 @@ import {
   TabList,
   Tabs,
   useDisclosure,
-} from "@chakra-ui/react";
-import { IMarketFilter } from "@/types/filter";
+} from '@chakra-ui/react';
+import { IMarketFilter } from '@/types/filter';
 
 interface FilterBarProps {
   locations: string[];
@@ -20,29 +20,29 @@ interface FilterBarProps {
   filters: IMarketFilter;
 }
 
-const statusStringToIndex = (value: string): number => {
+const phaseStringToIndex = (value: string): number => {
   switch (value) {
-    case "upcoming":
+    case 'upcoming':
       return 1;
-    case "initial-offering":
+    case 'initial-offering':
       return 2;
-    case "aftermarket":
+    case 'aftermarket':
       return 3;
     default:
       return 0;
   }
 };
 
-const statusIndexToString = (value: number): string => {
+const phaseIndexToString = (value: number): string => {
   switch (value) {
     case 1:
-      return "upcoming";
+      return 'upcoming';
     case 2:
-      return "initial-offering";
+      return 'initial-offering';
     case 3:
-      return "aftermarket";
+      return 'aftermarket';
     default:
-      return "";
+      return '';
   }
 };
 
@@ -53,12 +53,12 @@ const FilterBar: React.FC<FilterBarProps> = ({
   onFilterApply,
   filters,
 }) => {
-  const [statusTabIndex, setStatusTabIndex] = useState(
-    statusStringToIndex(filters.status)
+  const [phaseTabIndex, setPhaseTabIndex] = useState(
+    phaseStringToIndex(filters.phase),
   );
 
   useEffect(() => {
-    setStatusTabIndex(statusStringToIndex(filters.status));
+    setPhaseTabIndex(phaseStringToIndex(filters.phase));
   }, [filters]);
 
   const handleFilterChange = (key: string, value: any) => {
@@ -67,8 +67,8 @@ const FilterBar: React.FC<FilterBarProps> = ({
   };
 
   const handleTabChange = (index: number) => {
-    setStatusTabIndex(index);
-    const updatedFilters = { ...filters, status: statusIndexToString(index) };
+    setPhaseTabIndex(index);
+    const updatedFilters = { ...filters, status: phaseIndexToString(index) };
     onFilterApply(updatedFilters);
   };
 
@@ -87,16 +87,16 @@ const FilterBar: React.FC<FilterBarProps> = ({
           placeholder="Default Sort"
           backgroundColor="#F4F4F5"
           _hover={{
-            backgroundColor: "#CCFBF1",
+            backgroundColor: '#CCFBF1',
           }}
           _focus={{
-            backgroundColor: "#CCFBF1",
+            backgroundColor: '#CCFBF1',
           }}
           icon={<CaretDown weight="fill" />}
           width="200px"
           marginRight={5}
           rounded={100}
-          onChange={(e) => handleFilterChange("sort", e.target.value)}
+          onChange={(e) => handleFilterChange('sort', e.target.value)}
         >
           {sortOptions.map((option, index) => (
             <option key={index} value={option}>
@@ -110,16 +110,16 @@ const FilterBar: React.FC<FilterBarProps> = ({
           placeholder="All Location"
           backgroundColor="#F4F4F5"
           _hover={{
-            backgroundColor: "#CCFBF1",
+            backgroundColor: '#CCFBF1',
           }}
           _focus={{
-            backgroundColor: "#CCFBF1",
+            backgroundColor: '#CCFBF1',
           }}
           icon={<CaretDown weight="fill" />}
           rounded={100}
           width="200px"
           marginRight={5}
-          onChange={(e) => handleFilterChange("location", e.target.value)}
+          onChange={(e) => handleFilterChange('location', e.target.value)}
         >
           {locations.map((location, index) => (
             <option
@@ -139,16 +139,16 @@ const FilterBar: React.FC<FilterBarProps> = ({
           placeholder="All Property Type"
           backgroundColor="#F4F4F5"
           _hover={{
-            backgroundColor: "#CCFBF1",
+            backgroundColor: '#CCFBF1',
           }}
           _focus={{
-            backgroundColor: "#CCFBF1",
+            backgroundColor: '#CCFBF1',
           }}
           icon={<CaretDown weight="fill" />}
           width="200px"
           rounded={100}
           marginRight={5}
-          onChange={(e) => handleFilterChange("propertyType", e.target.value)}
+          onChange={(e) => handleFilterChange('propertyType', e.target.value)}
         >
           {propertyTypes.map((type, index) => (
             <option
@@ -297,7 +297,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
           <Tabs
             variant="soft-rounded"
             colorScheme="teal"
-            index={statusTabIndex}
+            index={phaseTabIndex}
             onChange={handleTabChange}
           >
             <TabList
@@ -311,15 +311,15 @@ const FilterBar: React.FC<FilterBarProps> = ({
             >
               <Tab
                 _selected={{
-                  bg: "white",
-                  color: "#0D9488",
-                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-                  transform: "scale(1.05)",
-                  transition: "all 0.3s ease-in-out",
+                  bg: 'white',
+                  color: '#0D9488',
+                  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                  transform: 'scale(1.05)',
+                  transition: 'all 0.3s ease-in-out',
                 }}
                 _hover={{
-                  transform: "scale(1.02)",
-                  transition: "transform 0.2s ease-in-out",
+                  transform: 'scale(1.02)',
+                  transition: 'transform 0.2s ease-in-out',
                 }}
                 fontSize="14px"
                 fontWeight="500"
@@ -333,15 +333,15 @@ const FilterBar: React.FC<FilterBarProps> = ({
               </Tab>
               <Tab
                 _selected={{
-                  bg: "white",
-                  color: "#0D9488",
-                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-                  transform: "scale(1.05)",
-                  transition: "all 0.3s ease-in-out",
+                  bg: 'white',
+                  color: '#0D9488',
+                  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                  transform: 'scale(1.05)',
+                  transition: 'all 0.3s ease-in-out',
                 }}
                 _hover={{
-                  transform: "scale(1.02)",
-                  transition: "transform 0.2s ease-in-out",
+                  transform: 'scale(1.02)',
+                  transition: 'transform 0.2s ease-in-out',
                 }}
                 fontSize="14px"
                 fontWeight="500"
@@ -355,15 +355,15 @@ const FilterBar: React.FC<FilterBarProps> = ({
               </Tab>
               <Tab
                 _selected={{
-                  bg: "white",
-                  color: "#0D9488",
-                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-                  transform: "scale(1.05)",
-                  transition: "all 0.3s ease-in-out",
+                  bg: 'white',
+                  color: '#0D9488',
+                  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                  transform: 'scale(1.05)',
+                  transition: 'all 0.3s ease-in-out',
                 }}
                 _hover={{
-                  transform: "scale(1.02)",
-                  transition: "transform 0.2s ease-in-out",
+                  transform: 'scale(1.02)',
+                  transition: 'transform 0.2s ease-in-out',
                 }}
                 fontSize="14px"
                 fontWeight="500"
@@ -377,15 +377,15 @@ const FilterBar: React.FC<FilterBarProps> = ({
               </Tab>
               <Tab
                 _selected={{
-                  bg: "white",
-                  color: "#0D9488",
-                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-                  transform: "scale(1.05)",
-                  transition: "all 0.3s ease-in-out",
+                  bg: 'white',
+                  color: '#0D9488',
+                  boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                  transform: 'scale(1.05)',
+                  transition: 'all 0.3s ease-in-out',
                 }}
                 _hover={{
-                  transform: "scale(1.02)",
-                  transition: "transform 0.2s ease-in-out",
+                  transform: 'scale(1.02)',
+                  transition: 'transform 0.2s ease-in-out',
                 }}
                 fontSize="14px"
                 fontWeight="500"

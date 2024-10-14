@@ -10,11 +10,11 @@ export function parseUSDTBalance(formattedBalance: number | string): number {
   let numericValue: number;
 
   // Check if the input is a number or a string
-  if (typeof formattedBalance === "number") {
+  if (typeof formattedBalance === 'number') {
     numericValue = formattedBalance;
   } else {
     // Remove any non-numeric characters except for the decimal point
-    const cleanedString = formattedBalance.replace(/[^0-9.]/g, "");
+    const cleanedString = formattedBalance.replace(/[^0-9.]/g, '');
 
     // Convert to number, handling any potential edge cases like multiple dots
     numericValue = parseFloat(cleanedString);

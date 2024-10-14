@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Box,
@@ -10,57 +10,56 @@ import {
   TabPanels,
   Tabs,
   TabIndicator,
-} from "@chakra-ui/react";
-import { House, WarningCircle } from "@phosphor-icons/react/dist/ssr";
-import { Divider } from "antd";
-import MarketDetailPhotos from "./MarketDetailPhotos";
-import MarketDetailPhotosMobile from "./MarketDetailPhotosMobile";
-import MarketDetailDescriptionPanel from "./panel/MarketDetailDescriptionPanel";
-import MarketDetailFinancialPanel from "./panel/MarketDetailFinancialPanel";
-import MarketDetailOrderbookPanel from "./panel/MarketDetailOrderbookPanel";
-import MarketDetailDocumentPanel from "./panel/MarketDetailDocumentPanel";
-import MarketDetailMarketPanel from "./panel/MarketDetailMarketPanel";
-import { ApexOptions } from "apexcharts";
-import { useEffect, useMemo, useState } from "react";
-import PlaceBuyOrderModal from "./modals/PlaceBuyOrderModal";
-import PlaceSellOrderModal from "./modals/PlaceSellOrderModal";
+} from '@chakra-ui/react';
+import { House, WarningCircle } from '@phosphor-icons/react/dist/ssr';
+import { Divider } from 'antd';
+import MarketDetailPhotos from './MarketDetailPhotos';
+import MarketDetailPhotosMobile from './MarketDetailPhotosMobile';
+import MarketDetailDescriptionPanel from './panel/MarketDetailDescriptionPanel';
+import MarketDetailFinancialPanel from './panel/MarketDetailFinancialPanel';
+import MarketDetailOrderbookPanel from './panel/MarketDetailOrderbookPanel';
+import MarketDetailDocumentPanel from './panel/MarketDetailDocumentPanel';
+import MarketDetailMarketPanel from './panel/MarketDetailMarketPanel';
+import { ApexOptions } from 'apexcharts';
+import { useEffect, useMemo, useState } from 'react';
+import PlaceBuyOrderModal from './modals/PlaceBuyOrderModal';
+import PlaceSellOrderModal from './modals/PlaceSellOrderModal';
 import {
   AfterMarketBuyOrderData,
   SellOrderData,
   BuyOrderData,
   MarketDetailOrderData,
-} from "@/types/order";
-import { TxInfoData } from "@/types/tx-info";
-import InitialOfferingBuySuccessModal from "./modals/InitialOfferingBuySuccessModal";
-import { useActiveAccount } from "thirdweb/react";
-import { cn } from "@/utils/cn";
-import { useReadContractHook } from "@/utils/hooks";
-import { PropertyData } from "@/types/property";
+} from '@/types/order';
+import { TxInfoData } from '@/types/tx-info';
+import InitialOfferingBuySuccessModal from './modals/InitialOfferingBuySuccessModal';
+import { useActiveAccount } from 'thirdweb/react';
+import { cn } from '@/utils/cn';
+import { useReadContractHook } from '@/utils/hooks';
+import { PropertyData } from '@/types/property';
 
-import Link from "next/link";
-import { formatUSDTBalance } from "@/utils/formatter";
-import LimitOrderSuccessModal from "./modals/LimitOrderSuccessModal";
-import MarketOrderSuccessModal from "./modals/MarketOrderSuccessModal";
+import Link from 'next/link';
+import { formatUSDTBalance } from '@/utils/formatter';
+import LimitOrderSuccessModal from './modals/LimitOrderSuccessModal';
+import MarketOrderSuccessModal from './modals/MarketOrderSuccessModal';
+import { setPropertyToAftermarket } from '@/app/api/property';
 
 interface MarketDetailClientPageProps {
   propertyData: PropertyData;
-  // allowTrade: boolean;
 }
 
 const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
-  propertyData,
-  // allowTrade,
+  propertyData: marketPropertyData,
 }) => {
   const account = useActiveAccount();
   const [ReactApexChart, setReactApexChart] = useState<any>();
   useEffect(() => {
-    import("react-apexcharts").then((mod) => {
+    import('react-apexcharts').then((mod) => {
       setReactApexChart(() => mod.default);
     });
   }, []);
 
   const [pricePerTokenChartSeries, setPricePerTokenChartSeries] = useState<
-    ApexOptions["series"]
+    ApexOptions['series']
   >([
     {
       data: [
@@ -345,7 +344,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
   const [pricePerTokenChartOptions, setpricePerTokenChartOptions] =
     useState<ApexOptions>({
       chart: {
-        type: "area",
+        type: 'area',
         height: 350,
         zoom: {
           autoScaleYaxis: true,
@@ -355,21 +354,21 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
         enabled: false,
       },
       xaxis: {
-        type: "datetime",
-        min: new Date("01 Mar 2012").getTime(),
+        type: 'datetime',
+        min: new Date('01 Mar 2012').getTime(),
         tickAmount: 6,
       },
       tooltip: {
         x: {
-          format: "dd MMM yyyy",
+          format: 'dd MMM yyyy',
         },
       },
       stroke: {
-        curve: "smooth",
+        curve: 'smooth',
       },
-      colors: ["#0D9488"],
+      colors: ['#0D9488'],
       fill: {
-        type: "gradient",
+        type: 'gradient',
         gradient: {
           shadeIntensity: 1,
           opacityFrom: 0.7,
@@ -393,7 +392,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
     useState<boolean>(false);
   const [isLimitOrderSuccessModalOpen, setIsLimitOrderSuccessModalOpen] =
     useState<boolean>(false);
-  const [orderType, setOrderType] = useState<"buy" | "sell">("buy"); // New state to track order type
+  const [orderType, setOrderType] = useState<'buy' | 'sell'>('buy'); // New state to track order type
   const [allowTrade, setAllowTrade] = useState<boolean>(false);
   const [detailFormData, setDetailFormData] = useState<MarketDetailOrderData>({
     qtyToken: 1,
@@ -403,48 +402,75 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
     fee: 0,
   });
   const [txInfo, setTxInfo] = useState<TxInfoData>({
-    txHash: "",
-    status: "",
-    txUrl: "",
+    txHash: '',
+    status: '',
+    txUrl: '',
     isSuccess: false,
   });
+  const [propertyData, setPropertyData] =
+    useState<PropertyData>(marketPropertyData);
   const handleTxUpdate = (txInfo: any) => {
     setTxInfo(txInfo);
   };
 
   const { data: initialOfferingActive } = useReadContractHook({
-    contractName: "KolektivaMarket",
-    functionName: "initialOfferingActive",
+    contractName: 'KolektivaMarket',
+    functionName: 'initialOfferingActive',
     contractAddress: propertyData.marketAddress,
     args: [],
   });
 
   const { data: salePriceData } = useReadContractHook({
-    contractName: "KolektivaMarket",
-    functionName: "salePrice",
+    contractName: 'KolektivaMarket',
+    functionName: 'salePrice',
     contractAddress: propertyData.marketAddress,
     args: [],
   });
 
   const { data: tokenTotalSupply } = useReadContractHook({
-    contractName: "KolektivaToken",
-    functionName: "totalSupply",
+    contractName: 'KolektivaToken',
+    functionName: 'totalSupply',
     contractAddress: propertyData.tokenAddress,
     args: [],
   });
 
   const { data: initialOfferingSupply } = useReadContractHook({
-    contractName: "KolektivaMarket",
-    functionName: "initialOfferingSupply",
+    contractName: 'KolektivaMarket',
+    functionName: 'initialOfferingSupply',
     contractAddress: propertyData.marketAddress,
     args: [],
   });
 
   useEffect(() => {
-    if (!initialOfferingActive) {
-      setAllowTrade(true);
-    }
-  }, [initialOfferingActive]);
+    const updatePropertyPhaseToAftermarket = async () => {
+      try {
+        await setPropertyToAftermarket(propertyData.id);
+        setPropertyData({
+          ...propertyData,
+          phase: 'aftermarket',
+          isUpcoming: false,
+          isAftermarket: true,
+        });
+      } catch (error) {
+        console.error('Error updating property phase to aftermarket:', error);
+      }
+    };
+
+    const determineTradeAllowance = () => {
+      if (propertyData.phase === 'aftermarket') {
+        setAllowTrade(true);
+      } else if (
+        propertyData.phase === 'initial-offering' &&
+        !initialOfferingActive
+      ) {
+        updatePropertyPhaseToAftermarket().then(() => setAllowTrade(true));
+      } else {
+        setAllowTrade(false);
+      }
+    };
+
+    determineTradeAllowance();
+  }, [initialOfferingActive, propertyData]);
 
   const handleBuyButtonClick = () => {
     setIsBuyOrderModalOpen(true);
@@ -458,7 +484,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
 
   const handleDetailFormData = (
     order: BuyOrderData | SellOrderData,
-    isBuy: boolean
+    isBuy: boolean,
   ) => {
     const total = isBuy
       ? (order as BuyOrderData).totalCost
@@ -481,12 +507,12 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
       setIsInitialOfferingBuySuccessModalOpen(true);
       return;
     }
-    setOrderType("buy");
+    setOrderType('buy');
     switch ((formData as AfterMarketBuyOrderData)?.type) {
-      case "market":
+      case 'market':
         setIsMarketOrderSuccessModalOpen(true);
         break;
-      case "limit":
+      case 'limit':
         setIsLimitOrderSuccessModalOpen(true);
         break;
     }
@@ -499,12 +525,12 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
     if (txInfo.isSuccess === false) {
       return;
     }
-    setOrderType("sell");
+    setOrderType('sell');
     switch ((formData as SellOrderData)?.type) {
-      case "market":
+      case 'market':
         setIsMarketOrderSuccessModalOpen(true);
         break;
-      case "limit":
+      case 'limit':
         setIsLimitOrderSuccessModalOpen(true);
         break;
     }
@@ -591,7 +617,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                   </h2>
                   <Link href="/?location={propertyData.city}, {propertyData.state}, {propertyData.country}">
                     <p className="text-sm text-zinc-500">
-                      {propertyData.city}, {propertyData.state},{" "}
+                      {propertyData.city}, {propertyData.state},{' '}
                       {propertyData.country}
                     </p>
                   </Link>
@@ -617,7 +643,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                   >
                     <div className="flex items-center gap-1">
                       <p className="text-sm text-zinc-500">
-                        {allowTrade ? "Estimated Price" : "Starting at"}
+                        {allowTrade ? 'Estimated Price' : 'Starting at'}
                       </p>
                       <WarningCircle
                         size={18}
@@ -712,11 +738,11 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                       isDisabled={!allowTrade}
                       bgColor="teal.100"
                       color="teal.700"
-                      _disabled={{ bgColor: "teal.50", color: "teal.600" }}
+                      _disabled={{ bgColor: 'teal.50', color: 'teal.600' }}
                       _hover={{
-                        bgColor: allowTrade ? "teal.200" : "teal.50",
-                        color: allowTrade ? "teal.900" : "teal.600",
-                        cursor: allowTrade ? "pointer" : "no-drop",
+                        bgColor: allowTrade ? 'teal.200' : 'teal.50',
+                        color: allowTrade ? 'teal.900' : 'teal.600',
+                        cursor: allowTrade ? 'pointer' : 'no-drop',
                       }}
                       onClick={handleSellButtonClick}
                     >
@@ -815,15 +841,15 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
         <div className="hidden md:block md:w-1/3 md:relative">
           <div
             className={cn(
-              "flex flex-col gap-6 sticky top-0",
-              account?.address ? "top-[92px]" : "top-[84px]"
+              'flex flex-col gap-6 sticky top-0',
+              account?.address ? 'top-[92px]' : 'top-[84px]',
             )}
           >
             <div className="flex flex-col gap-1">
               <h2 className="text-2xl font-bold">{propertyData.address}</h2>
               <Link href="/?location={propertyData.city}, {propertyData.state}, {propertyData.country}">
                 <p className="text-lg text-zinc-500">
-                  {propertyData.city}, {propertyData.state},{" "}
+                  {propertyData.city}, {propertyData.state},{' '}
                   {propertyData.country}
                 </p>
               </Link>
@@ -901,7 +927,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                 >
                   <div className="flex items-center gap-1">
                     <p className="text-sm text-zinc-500">
-                      {allowTrade ? "Estimated Price" : "Starting at"}
+                      {allowTrade ? 'Estimated Price' : 'Starting at'}
                     </p>
                     <WarningCircle
                       size={18}
@@ -996,11 +1022,11 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                     isDisabled={!allowTrade}
                     bgColor="teal.100"
                     color="teal.700"
-                    _disabled={{ bgColor: "teal.50", color: "teal.600" }}
+                    _disabled={{ bgColor: 'teal.50', color: 'teal.600' }}
                     _hover={{
-                      bgColor: allowTrade ? "teal.200" : "teal.50",
-                      color: allowTrade ? "teal.900" : "teal.600",
-                      cursor: allowTrade ? "pointer" : "no-drop",
+                      bgColor: allowTrade ? 'teal.200' : 'teal.50',
+                      color: allowTrade ? 'teal.900' : 'teal.600',
+                      cursor: allowTrade ? 'pointer' : 'no-drop',
                     }}
                     onClick={handleSellButtonClick}
                   >
