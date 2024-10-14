@@ -25,7 +25,7 @@ const PropertyListings: React.FC = () => {
   const [filters, setFilters] = useState<IMarketFilter>({
     location: '',
     propertyType: '',
-    status: '',
+    phase: '',
     sort: '',
     search: '',
     priceRange: [0, 1000],
@@ -36,14 +36,14 @@ const PropertyListings: React.FC = () => {
   useEffect(() => {
     const filterLocation = searchParams.get('location') || '';
     const filterPropertyType = searchParams.get('propertyType') || '';
-    const filterStatus = searchParams.get('status') || '';
+    const filterPhase = searchParams.get('phase') || '';
     const filterSearch = searchParams.get('search') || '';
 
     setFilters((prev) => ({
       ...prev,
       location: filterLocation,
       propertyType: filterPropertyType,
-      status: filterStatus,
+      pahse: filterPhase,
       search: filterSearch,
     }));
   }, []);
@@ -56,7 +56,7 @@ const PropertyListings: React.FC = () => {
     setFilters({
       location: '',
       propertyType: '',
-      status: '',
+      phase: '',
       sort: '',
       search: '',
       priceRange: [0, 1000],
@@ -73,7 +73,7 @@ const PropertyListings: React.FC = () => {
 
   const filterBarProps: FilterBarProps = {
     locations: ['DKI Jakarta', 'Surabaya', 'Denpasar', 'Bandung'],
-    propertyTypes: ['House', 'Apartment'],
+    propertyTypes: ['House', 'Apartment', 'Villa'],
     sortOptions: ['Featured', 'Newest', 'Oldest'],
     onFilterApply: handleFilterApply,
     onFilterReset: handleFilterReset,

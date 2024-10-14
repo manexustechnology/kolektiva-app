@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Accordion,
@@ -7,7 +7,7 @@ import {
   AccordionItem,
   AccordionPanel,
   Box,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 import {
   Bathtub,
   Bed,
@@ -21,11 +21,11 @@ import {
   HouseLine,
   Plant,
   SwimmingPool,
-} from "@phosphor-icons/react/dist/ssr";
-import { Divider } from "antd";
-import Link from "next/link";
-import MapEmbed from "../../MapEmbed";
-import { PropertyData } from "@/types/property";
+} from '@phosphor-icons/react/dist/ssr';
+import { Divider } from 'antd';
+import Link from 'next/link';
+import MapEmbed from '../../MapEmbed';
+import { PropertyData } from '@/types/property';
 
 interface MarketDetailDescriptionPanelProps {
   property: PropertyData;
@@ -36,25 +36,25 @@ const MarketDetailDescriptionPanel: React.FC<
 > = ({ property }) => {
   const renderFacilityIcon = (type: string) => {
     switch (type) {
-      case "LAND_AREA":
+      case 'LAND_AREA':
         return <Blueprint weight="fill" size={24} className="text-teal-600" />;
-      case "FLOORS":
+      case 'FLOORS':
         return <Buildings weight="fill" size={24} className="text-teal-600" />;
-      case "BUILDING_AREA":
+      case 'BUILDING_AREA':
         return <HouseLine weight="fill" size={24} className="text-teal-600" />;
-      case "WATER_SUPPLY":
+      case 'WATER_SUPPLY':
         return <Drop weight="fill" size={24} className="text-teal-600" />;
-      case "CERTIFICATE":
+      case 'CERTIFICATE':
         return <Files weight="fill" size={24} className="text-teal-600" />;
-      case "PARKING":
+      case 'GARAGE':
         return <Car weight="fill" size={24} className="text-teal-600" />;
-      case "BEDROOMS":
+      case 'BEDROOMS':
         return <Bed weight="fill" size={24} className="text-teal-600" />;
-      case "GARDEN":
+      case 'GARDEN':
         return <Plant weight="fill" size={24} className="text-teal-600" />;
-      case "BATHROOMS":
+      case 'BATHROOMS':
         return <Bathtub weight="fill" size={24} className="text-teal-600" />;
-      case "POOL":
+      case 'POOL':
         return (
           <SwimmingPool weight="fill" size={24} className="text-teal-600" />
         );
@@ -138,7 +138,7 @@ const MarketDetailDescriptionPanel: React.FC<
           <br />
           <Link href="#" className="text-teal-600">
             Click here
-          </Link>{" "}
+          </Link>{' '}
           to learn more about how third parties sell their properties on the
           Kolektiva Marketplace.
         </p>

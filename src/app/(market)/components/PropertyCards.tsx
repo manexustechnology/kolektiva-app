@@ -22,9 +22,11 @@ interface PropertyCardData {
   location: string;
   img: string;
   price: string;
-  isNew: boolean;
+  tokenName: string;
+  tokenSymbol: string;
+  phase: string;
   isFeatured: boolean;
-  isTraded: boolean;
+  isAftermarket: boolean;
   isUpcoming: boolean;
 }
 
@@ -33,7 +35,7 @@ interface PropertyCardsProps {
     location: string;
     propertyType: string;
     sort: string;
-    status: string;
+    phase: string;
     priceRange: number[];
   };
 }
@@ -74,13 +76,15 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
           marketAddress: property.marketAddress,
           tokenAddress: property.tokenAddress,
           chaind: property.chainId,
-          // isNew: true,
-          // isFeatured: property.isFeatured,mp
-          // isTraded: property.isTraded,
-          // isAfatermarket: property.isAfatermarket,
+          isFeatured: property.isFeatured,
+          isUpcoming: property.isUpcoming,
+          isAfatermarket: property.isAfatermarket,
+          phase: property.phase,
+          tokenName: property.tokenName,
+          tokenSymbol: property.tokenSymbol,
         }));
 
-        if (currentFilters.status && currentFilters.status == 'upcoming') {
+        if (currentFilters.phase && currentFilters.phase == 'upcoming') {
           mappedData = mappedData.filter((item: any) => item.isUpcoming);
         }
 
@@ -181,14 +185,17 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
                 marketAddress={card.marketAddress}
                 tokenAddress={card.tokenAddress}
                 key={index}
+                slug={card.slug}
                 name={card.name}
                 location={card.location}
                 img={card.img}
                 price={card.price}
-                isNew={card.isNew}
+                tokenName={card.tokenName}
+                tokenSymbol={card.tokenSymbol}
+                phase={card.phase}
                 isFeatured={card.isFeatured}
                 isUpcoming={card.isUpcoming}
-                // isTraded={card.isTraded}
+                isAftermarket={card.isAftermarket}
                 onButtonClick={() => handleButtonClick(card.slug)}
               />
             ))}

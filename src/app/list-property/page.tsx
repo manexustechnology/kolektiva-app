@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { Button } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
-import React, { useState } from "react";
-import FormPart1 from "./components/FormPart1";
-import FormPart2 from "./components/FormPart2";
-import RequestSentModal from "./modals/RequestSentModal";
-import axios from "axios";
+import { Button } from '@chakra-ui/react';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
+import FormPart1 from './components/FormPart1';
+import FormPart2 from './components/FormPart2';
+import RequestSentModal from './modals/RequestSentModal';
+import axios from 'axios';
 
 interface FormData {
   name: string;
@@ -36,23 +36,23 @@ const ListProperty: React.FC = () => {
   const [isRequestSentModalOpen, setIsRequestSentModal] =
     useState<boolean>(false);
   const [formData, setFormData] = useState<FormData>({
-    name: "",
-    contactPh: "",
-    contactEm: "",
-    address: "",
-    mapLink: "",
+    name: '',
+    contactPh: '',
+    contactEm: '',
+    address: '',
+    mapLink: '',
     landArea: 0,
     buildingArea: 0,
     priceEstimation: 0,
-    planToSell: "",
-    propertyType: "",
-    ownershipStatus: "",
-    propertyCondition: "",
-    occupancyStatus: "",
-    propertyManager: "",
-    furniture: "",
+    planToSell: '',
+    propertyType: '',
+    ownershipStatus: '',
+    propertyCondition: '',
+    occupancyStatus: '',
+    propertyManager: '',
+    furniture: '',
     propertyIssues: [],
-    includedFurniture: "",
+    includedFurniture: '',
     errmsg: false,
     validEmail: false,
     validMap: false,
@@ -64,7 +64,7 @@ const ListProperty: React.FC = () => {
 
   const onClose = () => {
     setIsRequestSentModal(false);
-    router.push("/");
+    router.push('/');
   };
 
   const nextStep = () => {
@@ -87,44 +87,47 @@ const ListProperty: React.FC = () => {
         ...prevData,
         errmsg: false,
       }));
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       setStep(step + 1);
     } else {
       setFormData((prevData) => ({
         ...prevData,
         errmsg: true,
       }));
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
   const prevStep = () => {
     setStep(step - 1);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const sendFormData = async () => {
     setLoadingSubmit(true);
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_HOST}/property-listing-request/submit`, {
-        name: formData.name,
-        phone: formData.contactPh,
-        email: formData.contactEm,
-        address: formData.address,
-        priceEstimation: formData.priceEstimation,
-        googleMapsLink: formData.mapLink,
-        landArea: formData.landArea,
-        buildingArea: formData.buildingArea,
-        planToSell: formData.planToSell,
-        propertyType: formData.propertyType,
-        ownershipStatus: formData.ownershipStatus,
-        propertyCondition: formData.propertyCondition,
-        occupancyStatus: formData.occupancyStatus,
-        propertyManager: formData.propertyManager,
-        furniture: formData.furniture,
-        propertyIssues: formData.propertyIssues,
-        includedFurniture: formData.includedFurniture,
-      });
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_HOST}/property-listing-request/submit`,
+        {
+          name: formData.name,
+          phone: formData.contactPh,
+          email: formData.contactEm,
+          address: formData.address,
+          priceEstimation: formData.priceEstimation,
+          googleMapsLink: formData.mapLink,
+          landArea: formData.landArea,
+          buildingArea: formData.buildingArea,
+          planToSell: formData.planToSell,
+          propertyType: formData.propertyType,
+          ownershipStatus: formData.ownershipStatus,
+          propertyCondition: formData.propertyCondition,
+          occupancyStatus: formData.occupancyStatus,
+          propertyManager: formData.propertyManager,
+          furniture: formData.furniture,
+          propertyIssues: formData.propertyIssues,
+          includedFurniture: formData.includedFurniture,
+        },
+      );
 
       // Not success
       if (response.status !== 200) {
@@ -137,7 +140,7 @@ const ListProperty: React.FC = () => {
     } finally {
       setLoadingSubmit(false);
     }
-  }
+  };
 
   const handleSubmit = () => {
     const allFieldsFilled =
@@ -166,14 +169,14 @@ const ListProperty: React.FC = () => {
         ...prevData,
         errmsg: false,
       }));
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       sendFormData();
     } else {
       setFormData((prevData) => ({
         ...prevData,
         errmsg: true,
       }));
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -188,11 +191,17 @@ const ListProperty: React.FC = () => {
             <FormPart1 formData={formData} setFormData={setFormData} />
           )}
           {step === 2 && (
-            <FormPart2 formData={formData} setFormData={setFormData} isLoading={loadingSubmit} />
+            <FormPart2
+              formData={formData}
+              setFormData={setFormData}
+              isLoading={loadingSubmit}
+            />
           )}
           <div className="flex flex-col mt-4 gap-2">
             {submitErrorMsg && (
-              <p className="text-sm text-rose-500 w-full text-center">{submitErrorMsg}</p>
+              <p className="text-sm text-rose-500 w-full text-center">
+                {submitErrorMsg}
+              </p>
             )}
             <div className="flex flex-row">
               {step > 1 && (
@@ -210,7 +219,7 @@ const ListProperty: React.FC = () => {
                   borderRadius="100px"
                   _hover={{
                     boxShadow:
-                      "0px 2px 4px rgba(16, 24, 40, 0.12), 0px 2px 6px rgba(16, 24, 40, 0.15)",
+                      '0px 2px 4px rgba(16, 24, 40, 0.12), 0px 2px 6px rgba(16, 24, 40, 0.15)',
                   }}
                   onClick={prevStep}
                 >
