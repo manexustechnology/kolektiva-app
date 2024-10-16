@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
+import React, { useState } from 'react';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 interface FormData {
   name: string;
@@ -39,7 +39,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
 
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const numericValue = value === "" ? 0 : Number(value);
+    const numericValue = value === '' ? 0 : Number(value);
 
     setFormData((prevData) => ({
       ...prevData,
@@ -47,8 +47,8 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
     }));
   };
 
-  const [errorEmail, setErrorEmail] = useState("");
-  const [errorMap, setErrorMap] = useState("");
+  const [errorEmail, setErrorEmail] = useState('');
+  const [errorMap, setErrorMap] = useState('');
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -57,13 +57,13 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
         ...prevData,
         validEmail: false,
       }));
-      setErrorEmail("Please enter a valid email address.");
+      setErrorEmail('Please enter a valid email address.');
     } else {
       setFormData((prevData) => ({
         ...prevData,
         validEmail: true,
       }));
-      setErrorEmail("");
+      setErrorEmail('');
     }
   };
 
@@ -75,13 +75,13 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
         ...prevData,
         validMap: false,
       }));
-      setErrorMap("Please enter a valid Google Maps URL.");
+      setErrorMap('Please enter a valid Google Maps URL.');
     } else {
       setFormData((prevData) => ({
         ...prevData,
         validMap: true,
       }));
-      setErrorMap("");
+      setErrorMap('');
     }
   };
 
@@ -130,7 +130,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
           <p className="text-sm font-normal text-zinc-700">
             Name <span className="text-zinc-400">*</span>
           </p>
-          {formData.errmsg && formData.name === "" && (
+          {formData.errmsg && formData.name === '' && (
             <span className="text-red-500 text-xs">Required Field</span>
           )}
         </div>
@@ -154,7 +154,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
             <p className="text-sm font-normal text-zinc-700">
               Phone <span className="text-zinc-400">*</span>
             </p>
-            {formData.errmsg && formData.contactPh === "" && (
+            {formData.errmsg && formData.contactPh === '' && (
               <span className="text-red-500 text-xs">Required Field</span>
             )}
           </div>
@@ -168,20 +168,20 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
               placeholder="Enter your Phone number"
             /> */}
             <PhoneInput
-              country={"us"}
+              country={'us'}
               value={formData.contactPh}
               onChange={handlePhoneChange}
               containerStyle={{
-                backgroundColor: "#F4F4F5",
-                borderRadius: "9999px",
+                backgroundColor: '#F4F4F5',
+                borderRadius: '9999px',
               }}
               inputStyle={{
-                backgroundColor: "transparent",
-                border: "none",
-                borderRadius: "9999px",
+                backgroundColor: 'transparent',
+                border: 'none',
+                borderRadius: '9999px',
               }}
               buttonStyle={{
-                border: "none",
+                border: 'none',
               }}
             />
           </div>
@@ -193,7 +193,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
             <p className="text-sm font-normal text-zinc-700">
               Email <span className="text-zinc-400">*</span>
             </p>
-            {formData.errmsg && formData.contactEm === "" && (
+            {formData.errmsg && formData.contactEm === '' && (
               <span className="text-red-500 text-xs">Required Field</span>
             )}
           </div>
@@ -217,7 +217,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
           <p className="text-sm font-normal text-zinc-700">
             Property address <span className="text-zinc-400">*</span>
           </p>
-          {formData.errmsg && formData.address === "" && (
+          {formData.errmsg && formData.address === '' && (
             <span className="text-red-500 text-xs">Required Field</span>
           )}
         </div>
@@ -239,7 +239,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
           <p className="text-sm font-normal text-zinc-700">
             Google Maps URL <span className="text-zinc-400">*</span>
           </p>
-          {formData.errmsg && formData.mapLink === "" && (
+          {formData.errmsg && formData.mapLink === '' && (
             <span className="text-red-500 text-xs">Required Field</span>
           )}
         </div>
@@ -282,7 +282,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
                 onChange={handleNumberChange}
                 className="flex-grow h-full bg-transparent border-none rounded-full pl-3 md:pr-10 focus:outline-none focus:ring-0 focus:border-none"
               />
-              <span className="text-sm text-[#3F3F46] pr-3">m³</span>
+              <span className="text-sm text-[#3F3F46] pr-3">m²</span>
             </div>
           </div>
         </div>
@@ -311,7 +311,7 @@ const FormPart1: React.FC<FormPart1Props> = ({ formData, setFormData }) => {
                 onChange={handleNumberChange}
                 className="flex-grow h-full bg-transparent border-none rounded-full pl-3 md:pr-10 focus:outline-none focus:ring-0 focus:border-none"
               />
-              <span className="text-sm text-[#3F3F46] pr-3">m³</span>
+              <span className="text-sm text-[#3F3F46] pr-3">m²</span>
             </div>
           </div>
         </div>

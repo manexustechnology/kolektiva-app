@@ -829,7 +829,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                   />
                 </TabPanel>
                 <TabPanel px={0} py={4}>
-                  <MarketDetailDocumentPanel />
+                  <MarketDetailDocumentPanel property={propertyData} />
                 </TabPanel>
                 <TabPanel px={0} py={4}>
                   <MarketDetailMarketPanel />
