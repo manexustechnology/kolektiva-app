@@ -304,9 +304,12 @@ const Navbar: React.FC = () => {
                         }
                         onClick={() => {
                           if (wallet) {
-                            disconnect(wallet);
-                            setIsConnected(false);
-                            router.replace(pathname);
+                            router.replace('/');
+
+                            setTimeout(() => {
+                              disconnect(wallet);
+                              setIsConnected(false);
+                            }, 100);
                           }
                         }}
                       >
@@ -314,6 +317,7 @@ const Navbar: React.FC = () => {
                           Logout
                         </p>
                       </MenuItem>
+
                       {/* Add more menu items here */}
                     </MenuList>
                   </Menu>
