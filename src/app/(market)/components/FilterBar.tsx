@@ -68,7 +68,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
 
   const handleTabChange = (index: number) => {
     setPhaseTabIndex(index);
-    const updatedFilters = { ...filters, status: phaseIndexToString(index) };
+    const updatedFilters = { ...filters, phase: phaseIndexToString(index) };
     onFilterApply(updatedFilters);
   };
 

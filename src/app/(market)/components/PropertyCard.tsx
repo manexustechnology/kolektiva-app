@@ -1,6 +1,6 @@
 'use client';
 
-import { setPropertyToAftermarket } from '@/app/api/property';
+import { setPropertyToSettlement } from '@/app/api/property';
 import { formatUSDTBalance } from '@/utils/formatter';
 import { useReadContractHook } from '@/utils/hooks';
 import { Box, Image, Text, Heading, Button, Progress } from '@chakra-ui/react';
@@ -33,12 +33,13 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   price,
   tokenName,
   tokenSymbol,
-  phase,
   isFeatured,
   isUpcoming,
   onButtonClick,
+  phase,
 }) => {
   const [isAftermarket, setIsAftermarket] = useState<boolean>(false);
+  const [propertyPhase, setPropertyPhase] = useState<string>(phase);
   const { data: initialOfferingActive = true } = useReadContractHook({
     contractName: 'KolektivaMarket',
     functionName: 'initialOfferingActive',
@@ -71,18 +72,21 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   useEffect(() => {
     const updatePropertyPhaseToAftermarket = async () => {
       try {
-        await setPropertyToAftermarket(slug);
-        phase = 'aftermarket';
+        await setPropertyToSettlement(slug);
+        setPropertyPhase('settlement');
       } catch (error) {
         console.error('Error updating property phase to aftermarket:', error);
       }
     };
 
     const determineTradeAllowance = () => {
-      if (phase === 'aftermarket') {
+      if (propertyPhase === 'aftermarket') {
         setIsAftermarket(true);
-      } else if (phase === 'initial-offering' && !initialOfferingActive) {
-        updatePropertyPhaseToAftermarket().then(() => setIsAftermarket(true));
+      } else if (
+        propertyPhase === 'initial-offering' &&
+        !initialOfferingActive
+      ) {
+        updatePropertyPhaseToAftermarket().then(() => setIsAftermarket(false));
       } else {
         setIsAftermarket(false);
       }
@@ -131,7 +135,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
         >
           Featured
         </Box>
-      ) : isUpcoming ? (
+      ) : propertyPhase === 'upcoming' ? (
         <Box
           position="absolute"
           top={2}
@@ -147,7 +151,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
         >
           Upcoming
         </Box>
-      ) : isAftermarket ? (
+      ) : propertyPhase === 'aftermarket' ? (
         <Box
           position="absolute"
           top={2}
@@ -162,6 +166,22 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
           zIndex={10}
         >
           Aftermarket
+        </Box>
+      ) : propertyPhase === 'settlement' ? (
+        <Box
+          position="absolute"
+          top={2}
+          left={2}
+          backgroundColor="#F0FDFA"
+          color="#0D9488"
+          padding="2px 8px"
+          borderWidth="1px"
+          borderRadius="full"
+          borderColor="#0D9488"
+          fontSize="xs"
+          zIndex={10}
+        >
+          Settlement
         </Box>
       ) : (
         <Box

@@ -43,7 +43,7 @@ const PropertyListings: React.FC = () => {
       ...prev,
       location: filterLocation,
       propertyType: filterPropertyType,
-      pahse: filterPhase,
+      phase: filterPhase,
       search: filterSearch,
     }));
   }, []);
