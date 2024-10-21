@@ -1,4 +1,4 @@
-import { Chain } from "thirdweb";
+import { Chain } from 'thirdweb';
 
 interface BlockExplorer {
   name: string;
@@ -22,6 +22,12 @@ const txRoute: TxUrlParams = {
       txUrl: `${blockExplorer.url}/tx`,
     }),
   },
+  84532: {
+    getTxUrl: (blockExplorer: BlockExplorer) => ({
+      txApiUrl: `${blockExplorer.apiUrl}/transactions`,
+      txUrl: `${blockExplorer.url}/tx`,
+    }),
+  },
 };
 
 export const getTxRoutes = (chain: Chain) => {
@@ -30,7 +36,7 @@ export const getTxRoutes = (chain: Chain) => {
     ? chain.blockExplorers[0]
     : null;
   if (!blockExplorer) {
-    throw new Error("Block explorer not found.");
+    throw new Error('Block explorer not found.');
   }
   if (!txRoute.hasOwnProperty(chainId)) {
     throw new Error(`API route not found for chain ID: ${chainId}`);

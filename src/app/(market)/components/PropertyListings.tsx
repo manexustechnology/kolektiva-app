@@ -19,7 +19,7 @@ interface FilterBarProps {
 }
 
 const PropertyListings: React.FC = () => {
-  const [isCorrectNetwork, setIsCorrectNetwork] = useState<boolean>(false);
+  // const [isCorrectNetwork, setIsCorrectNetwork] = useState<boolean>(false);
   const activeChain = useActiveWalletChain()!;
 
   const [filters, setFilters] = useState<IMarketFilter>({
@@ -63,13 +63,13 @@ const PropertyListings: React.FC = () => {
     });
   };
 
-  useEffect(() => {
-    if (activeChain && validChainIds.includes(activeChain.id)) {
-      setIsCorrectNetwork(true);
-    } else {
-      setIsCorrectNetwork(false);
-    }
-  }, [activeChain]);
+  // useEffect(() => {
+  //   if (activeChain && validChainIds.includes(activeChain.id)) {
+  //     setIsCorrectNetwork(true);
+  //   } else {
+  //     setIsCorrectNetwork(false);
+  //   }
+  // }, [activeChain]);
 
   const filterBarProps: FilterBarProps = {
     locations: ['DKI Jakarta', 'Surabaya', 'Denpasar', 'Bandung'],
@@ -90,15 +90,15 @@ const PropertyListings: React.FC = () => {
         alignItems="center"
       >
         <FilterBar {...filterBarProps} />
-        {activeChain && isCorrectNetwork === true ? (
-          <PropertyCards filters={filters} />
+        <PropertyCards filters={filters} />
+        {/* {activeChain && isCorrectNetwork === true ? (
         ) : (
           <div className="flex justify-center items-center h-[60vh]">
             <p className="font-bold text-2xl leading-7 text-center text-teal-600">
               Connect to your wallet!
             </p>
           </div>
-        )}
+        )} */}
       </Box>
     </>
   );

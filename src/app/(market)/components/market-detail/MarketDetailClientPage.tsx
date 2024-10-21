@@ -42,6 +42,7 @@ import { formatUSDTBalance } from '@/utils/formatter';
 import LimitOrderSuccessModal from './modals/LimitOrderSuccessModal';
 import MarketOrderSuccessModal from './modals/MarketOrderSuccessModal';
 import { setPropertyToSettlement } from '@/app/api/property';
+import { thirdwebChains } from '@/commons/networks';
 
 interface MarketDetailClientPageProps {
   propertyData: PropertyData;
@@ -51,6 +52,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
   propertyData: marketPropertyData,
 }) => {
   const account = useActiveAccount();
+
   const [ReactApexChart, setReactApexChart] = useState<any>();
   useEffect(() => {
     import('react-apexcharts').then((mod) => {
@@ -409,18 +411,23 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
   });
   const [propertyData, setPropertyData] =
     useState<PropertyData>(marketPropertyData);
+
   const handleTxUpdate = (txInfo: any) => {
     setTxInfo(txInfo);
   };
 
-  const { data: initialOfferingActive } = useReadContractHook({
-    contractName: 'KolektivaMarket',
-    functionName: 'initialOfferingActive',
-    contractAddress: propertyData.marketAddress,
-    args: [],
-  });
+  const { data: initialOfferingActive = true, isLoading } = useReadContractHook(
+    {
+      chainId: propertyData.chainId.toString(),
+      contractName: 'KolektivaMarket',
+      functionName: 'initialOfferingActive',
+      contractAddress: propertyData.marketAddress,
+      args: [],
+    },
+  );
 
   const { data: salePriceData } = useReadContractHook({
+    chainId: propertyData.chainId.toString(),
     contractName: 'KolektivaMarket',
     functionName: 'salePrice',
     contractAddress: propertyData.marketAddress,
@@ -428,6 +435,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
   });
 
   const { data: tokenTotalSupply } = useReadContractHook({
+    chainId: propertyData.chainId.toString(),
     contractName: 'KolektivaToken',
     functionName: 'totalSupply',
     contractAddress: propertyData.tokenAddress,
@@ -435,6 +443,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
   });
 
   const { data: initialOfferingSupply } = useReadContractHook({
+    chainId: propertyData.chainId.toString(),
     contractName: 'KolektivaMarket',
     functionName: 'initialOfferingSupply',
     contractAddress: propertyData.marketAddress,
@@ -460,6 +469,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
       if (propertyData.phase === 'aftermarket') {
         setAllowTrade(true);
       } else if (
+        !isLoading &&
         propertyData.phase === 'initial-offering' &&
         !initialOfferingActive
       ) {
@@ -470,7 +480,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
     };
 
     determineTradeAllowance();
-  }, [initialOfferingActive, propertyData]);
+  }, [initialOfferingActive, isLoading, propertyData]);
 
   const handleBuyButtonClick = () => {
     setIsBuyOrderModalOpen(true);
@@ -846,6 +856,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                 <TabPanel px={0} py={4}>
                   <MarketDetailFinancialPanel />
                 </TabPanel>
+
                 <TabPanel px={0} py={4}>
                   <MarketDetailOrderbookPanel
                     allowTrade={allowTrade}
@@ -853,6 +864,7 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                   />
                 </TabPanel>
                 <TabPanel px={0} py={4}>
+                  {/* add for ignoring error */}
                   <MarketDetailDocumentPanel property={propertyData} />
                 </TabPanel>
                 <TabPanel px={0} py={4}>
@@ -1104,40 +1116,46 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
         </div>
       </div>
       {/* Modals */}
-      <PlaceBuyOrderModal
-        propertyData={propertyData}
-        onTxUpdate={handleTxUpdate}
-        isOpen={isBuyOrderModalOpen}
-        onClose={() => setIsBuyOrderModalOpen(false)}
-        isAfterMarketTrading={allowTrade} // change !isInitialOffering after implemented
-        onSuccess={handleBuySuccess}
-      />
-      <PlaceSellOrderModal
-        propertyData={propertyData}
-        onTxUpdate={handleTxUpdate}
-        isOpen={isSellOrderModalOpen}
-        onClose={() => setIsSellOrderModalOpen(false)}
-        onSuccess={handleSellSuccess}
-      />
-      <InitialOfferingBuySuccessModal
-        propertyData={propertyData}
-        txInfo={txInfo}
-        isOpen={isInitialOfferingBuySuccessModalOpen}
-        onClose={() => setIsInitialOfferingBuySuccessModalOpen(false)}
-      />
-      <LimitOrderSuccessModal
-        orderType={orderType}
-        txInfo={txInfo}
-        isOpen={isLimitOrderSuccessModalOpen}
-        formData={detailFormData}
-        onClose={() => setIsLimitOrderSuccessModalOpen(false)}
-      />
-      <MarketOrderSuccessModal
-        orderType={orderType}
-        txInfo={txInfo}
-        isOpen={isMarketOrderSuccessModalOpen}
-        onClose={() => setIsMarketOrderSuccessModalOpen(false)}
-      />
+      {account ? (
+        <>
+          <PlaceBuyOrderModal
+            propertyData={propertyData}
+            onTxUpdate={handleTxUpdate}
+            isOpen={isBuyOrderModalOpen}
+            onClose={() => setIsBuyOrderModalOpen(false)}
+            isAfterMarketTrading={allowTrade} // change !isInitialOffering after implemented
+            onSuccess={handleBuySuccess}
+          />
+          <PlaceSellOrderModal
+            propertyData={propertyData}
+            onTxUpdate={handleTxUpdate}
+            isOpen={isSellOrderModalOpen}
+            onClose={() => setIsSellOrderModalOpen(false)}
+            onSuccess={handleSellSuccess}
+          />
+          <InitialOfferingBuySuccessModal
+            propertyData={propertyData}
+            txInfo={txInfo}
+            isOpen={isInitialOfferingBuySuccessModalOpen}
+            onClose={() => setIsInitialOfferingBuySuccessModalOpen(false)}
+          />
+          <LimitOrderSuccessModal
+            orderType={orderType}
+            txInfo={txInfo}
+            isOpen={isLimitOrderSuccessModalOpen}
+            formData={detailFormData}
+            onClose={() => setIsLimitOrderSuccessModalOpen(false)}
+          />
+          <MarketOrderSuccessModal
+            orderType={orderType}
+            txInfo={txInfo}
+            isOpen={isMarketOrderSuccessModalOpen}
+            onClose={() => setIsMarketOrderSuccessModalOpen(false)}
+          />
+        </>
+      ) : (
+        ''
+      )}
     </div>
   );
 };

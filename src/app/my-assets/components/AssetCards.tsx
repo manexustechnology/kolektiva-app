@@ -26,7 +26,7 @@ interface PropertyCardData {
   img: string;
   price: string;
   phase: string;
-  isNew: boolean;
+  chainId: string;
   isFeatured: boolean;
   isAftermarket: boolean;
   profitPercentage?: number;
@@ -93,6 +93,7 @@ const AssetCards: React.FC<AssetCardsProps> = ({ filters }) => {
             isAftermarket: property.isAftermarket,
             walletAddress: data.walletAddress,
             phase: property.phase,
+            chainId: property.chainId.toString(),
           };
         });
 
@@ -199,7 +200,7 @@ const AssetCards: React.FC<AssetCardsProps> = ({ filters }) => {
                 img={card.img}
                 price={card.price}
                 phase={card.phase}
-                isNew={card.isNew}
+                chainId={card.chainId}
                 isFeatured={card.isFeatured}
                 isAftermarket={card.isAftermarket}
                 profitPercentage={card.profitPercentage}

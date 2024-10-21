@@ -21,7 +21,7 @@ interface AssetCardProps {
   img: string;
   price: string;
   phase: string;
-  isNew: boolean;
+  chainId: string;
   isFeatured: boolean;
   isAftermarket: boolean;
   profitPercentage?: number;
@@ -37,7 +37,7 @@ const AssetCard: React.FC<AssetCardProps> = ({
   location,
   img,
   price,
-  isNew,
+  chainId,
   isFeatured,
   phase,
   isAftermarket,

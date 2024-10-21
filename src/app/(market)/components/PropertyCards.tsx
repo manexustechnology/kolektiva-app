@@ -12,11 +12,13 @@ import {
   CaretLineRight,
   FileMagnifyingGlass,
 } from '@phosphor-icons/react/dist/ssr';
+import { thirdwebChains } from '@/commons/networks';
+import { Chain } from 'thirdweb';
 
 interface PropertyCardData {
   marketAddress: string;
   tokenAddress: string;
-  chainId: number;
+  chainId: string;
   name: string;
   slug: string;
   location: string;
@@ -72,17 +74,19 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
           img:
             property.images?.[0]?.image ||
             'https://messagetech.com/wp-content/themes/ml_mti/images/no-image.jpg',
-          price: property.price || '-',
+          price: property.salePrice || '-',
           marketAddress: property.marketAddress,
           tokenAddress: property.tokenAddress,
-          chaind: property.chainId,
+          chainId: property.chainId.toString(),
           isFeatured: property.isFeatured,
           isUpcoming: property.isUpcoming,
-          isAfatermarket: property.isAfatermarket,
-          phase: property.phase,
+          isAftermarket: property.isAfatermarket,
           tokenName: property.tokenName,
           tokenSymbol: property.tokenSymbol,
+          phase: property.phase,
         }));
+
+        console.log(mappedData);
 
         if (currentFilters.phase && currentFilters.phase == 'upcoming') {
           mappedData = mappedData.filter((item: any) => item.isUpcoming);
@@ -196,6 +200,7 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
                 isFeatured={card.isFeatured}
                 isUpcoming={card.isUpcoming}
                 isAftermarket={card.isAftermarket}
+                chainId={card.chainId}
                 onButtonClick={() => handleButtonClick(card.slug)}
               />
             ))}
