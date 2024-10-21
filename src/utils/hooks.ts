@@ -16,8 +16,10 @@ import {
   useActiveWalletChain,
 } from 'thirdweb/react';
 import { useEffect, useState } from 'react';
+import { thirdwebChains } from '@/commons/networks';
 
 interface UseContractParams {
+  chainId?: string;
   contractAddress?: string;
   contractName: string;
   functionName: string;
@@ -25,6 +27,7 @@ interface UseContractParams {
 }
 
 interface UseContractEventsParams {
+  chainId?: string;
   contractAddress?: string;
   contractName: string;
   fromBlock: bigint;
@@ -73,13 +76,16 @@ function getPreparedEventInstance(
 }
 
 export function useReadContractHook({
+  chainId,
   contractName,
   functionName,
   args = [],
   contractAddress,
 }: UseContractParams) {
-  const chain = useActiveWalletChain()!;
+  const activeChain = useActiveWalletChain()!;
+  const chain = chainId ? thirdwebChains[chainId] : activeChain;
   const contract = getContractInstance(chain, contractName, contractAddress);
+
   const { data, isLoading, error, refetch } = useReadContract({
     contract,
     method: functionName,
@@ -90,6 +96,7 @@ export function useReadContractHook({
 }
 
 export function useWriteContractHook({
+  chainId,
   contractName,
   functionName,
   args = [],
@@ -97,7 +104,8 @@ export function useWriteContractHook({
 }: UseContractParams) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const chain = useActiveWalletChain()!;
+  const activeChain = useActiveWalletChain()!;
+  const chain = chainId ? thirdwebChains[chainId] : activeChain;
 
   const contract = getContractInstance(chain, contractName, contractAddress);
   const wallet = useActiveWallet()!;
@@ -132,12 +140,15 @@ export function useWriteContractHook({
 }
 
 export function useContractEventHook({
+  chainId,
   contractName,
   eventName,
   fromBlock,
   contractAddress,
 }: UseContractEventsParams) {
-  const chain = useActiveWalletChain()!;
+  const activeChain = useActiveWalletChain()!;
+  const chain = chainId ? thirdwebChains[chainId] : activeChain;
+
   const [data, setData] = useState<any[]>([]); // Adjust type based on your event data
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);

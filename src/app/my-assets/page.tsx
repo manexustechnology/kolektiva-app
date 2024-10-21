@@ -35,7 +35,7 @@ const MyAssets: React.FC = () => {
       ) : isCorrectNetwork === false ? (
         <div className="flex justify-center items-center h-[60vh]">
           <p className="font-bold text-2xl leading-7 text-center text-teal-600">
-            Please change into Lisk Network!
+            Please change into Available Network!
           </p>
         </div>
       ) : (

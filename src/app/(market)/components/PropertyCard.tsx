@@ -1,16 +1,19 @@
 'use client';
 
 import { setPropertyToSettlement } from '@/app/api/property';
+import { thirdwebChains } from '@/commons/networks';
 import { formatUSDTBalance } from '@/utils/formatter';
 import { useReadContractHook } from '@/utils/hooks';
 import { Box, Image, Text, Heading, Button, Progress } from '@chakra-ui/react';
 import { useEffect, useMemo, useState } from 'react';
+import { Chain } from 'thirdweb';
 
 interface PropertyCardProps {
   marketAddress: string;
   tokenAddress: string;
   name: string;
   location: string;
+  chainId: string;
   img: string;
   price: string;
   tokenName: string;
@@ -30,17 +33,21 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   location,
   img,
   slug,
+  chainId,
   price,
+  phase,
   tokenName,
   tokenSymbol,
   isFeatured,
   isUpcoming,
   onButtonClick,
-  phase,
 }) => {
-  const [isAftermarket, setIsAftermarket] = useState<boolean>(false);
+  const [isAftermarket, setIsAftermarket] = useState(false);
   const [propertyPhase, setPropertyPhase] = useState<string>(phase);
+  // const chain = thirdwebChains[chainId];
+
   const { data: initialOfferingActive = true } = useReadContractHook({
+    chainId,
     contractName: 'KolektivaMarket',
     functionName: 'initialOfferingActive',
     contractAddress: marketAddress,
@@ -48,14 +55,15 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   });
 
   const { data: salePriceData } = useReadContractHook({
+    chainId,
     contractName: 'KolektivaMarket',
     functionName: 'salePrice',
     contractAddress: marketAddress,
-
     args: [],
   });
 
   const { data: tokenTotalSupply } = useReadContractHook({
+    chainId,
     contractName: 'KolektivaToken',
     functionName: 'totalSupply',
     contractAddress: tokenAddress,
@@ -63,6 +71,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   });
 
   const { data: initialOfferingSupply } = useReadContractHook({
+    chainId,
     contractName: 'KolektivaMarket',
     functionName: 'initialOfferingSupply',
     contractAddress: marketAddress,
@@ -221,7 +230,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
         </p>
 
         {/* Progress Bar */}
-        {isAftermarket || isUpcoming ? (
+        {propertyPhase != 'initial-offering' ? (
           <>
             {/* Dividing Line */}
             <Box
@@ -280,7 +289,10 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             </p>
 
             <p className=" font-bold text-[12px] leading-[16px] text-[#0D9488]">
-              {formatUSDTBalance(salePriceData || 0)} USDT
+              {propertyPhase === 'upcoming'
+                ? formatUSDTBalance(price, 0)
+                : formatUSDTBalance(salePriceData || 0)}{' '}
+              USDT
             </p>
           </Box>
 
@@ -297,7 +309,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
               Available Tokens
             </p>
             <p className=" font-medium text-[12px] leading-[16px] text-right text-[#042F2E]">
-              {isUpcoming
+              {propertyPhase === 'upcoming'
                 ? '-'
                 : Number(initialOfferingSupply).toLocaleString()}
             </p>
@@ -338,7 +350,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             </p>
 
             <p className="w-[80px] font-medium text-[10px] leading-[10px] text-right text-[#042F2E]">
-              {isUpcoming ? '-' : '8.7%'}
+              {propertyPhase === 'upcoming' ? '-' : '8.7%'}
             </p>
           </Box>
 
@@ -370,7 +382,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
             </p>
 
             <p className="w-[80px] font-medium text-[10px] leading-[10px] text-right text-[#042F2E]">
-              {isUpcoming ? '-' : 'Active'}
+              {propertyPhase === 'upcoming' ? '-' : 'Active'}
             </p>
           </Box>
         </Box>

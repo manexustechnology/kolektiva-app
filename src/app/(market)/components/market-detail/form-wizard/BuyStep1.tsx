@@ -12,6 +12,7 @@ import { readContractFetch } from '@/utils/fetch';
 import { PropertyData } from '@/types/property';
 import { formatUSDTBalance, parseUSDTBalance } from '@/utils/formatter';
 import { useActiveAccount, useActiveWalletChain } from 'thirdweb/react';
+import { thirdwebChains } from '@/commons/networks';
 
 interface BuyStep1Props {
   propertyData: PropertyData;
@@ -34,6 +35,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
   const activeAccount = useActiveAccount();
   const address = activeAccount?.address;
   const chain = useActiveWalletChain()!;
+  // const chain = thirdwebChains[propertyData.chainId];
   const feePercentage = 0.005; // 0.5%
 
   const activeTab = (formData as AfterMarketBuyOrderData).type || 'market';
@@ -51,31 +53,13 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
     contractName: 'KolektivaMarket',
     functionName: 'salePrice',
     contractAddress: propertyData.marketAddress,
-
     args: [],
   });
-
-  // const { data: feePercentageData } = useReadContractHook({
-  //   contractName: 'KolektivaMarket',
-  //   functionName: 'getFeePercentage',
-  //   contractAddress: propertyData.marketAddress,
-
-  //   args: [],
-  // });
-
-  // const { data: feePrecisionData } = useReadContractHook({
-  //   contractName: 'KolektivaMarket',
-  //   functionName: 'getFeePrecision',
-  //   contractAddress: propertyData.marketAddress,
-
-  //   args: [],
-  // });
 
   const { data: initialOfferingSupplyData } = useReadContractHook({
     contractName: 'KolektivaMarket',
     functionName: 'initialOfferingSupply',
     contractAddress: propertyData.marketAddress,
-
     args: [],
   });
 
@@ -90,7 +74,7 @@ const BuyStep1: React.FC<BuyStep1Props> = ({
       try {
         if (isAfterMarketTrading && activeTab == 'market') {
           const data = await readContractFetch({
-            chain,
+            chainId: propertyData.chainId.toString(),
             contractName: 'KolektivaMarket',
             functionName: 'calculateBuyCost',
             contractAddress: propertyData.marketAddress,

@@ -3,7 +3,14 @@
 import { authApplyInviteCode, authUserInfo } from '@/app/api/user';
 import { generateToken } from '@/lib/generate-token';
 import { UserData } from '@/types/user';
-import { LiskSepoliaTestnet, LiskMainnet, Localnet } from '@/commons/networks';
+import {
+  LiskSepoliaTestnet,
+  BaseSepoliaTestnet,
+  BaseMainnet,
+  LiskMainnet,
+  Localnet,
+} from '@/commons/networks';
+
 import { thirdwebClient } from '@/commons/thirdweb';
 import {
   Box,
@@ -148,6 +155,8 @@ const Navbar: React.FC = () => {
           <div>
             {!isConnected ? (
               <ConnectButton
+                chain={activeChain}
+                chains={[BaseSepoliaTestnet, LiskSepoliaTestnet, Localnet]}
                 client={thirdwebClient}
                 appMetadata={{
                   name: process.env.NEXT_PUBLIC_APP_NAME || 'kolektiva',
@@ -165,10 +174,12 @@ const Navbar: React.FC = () => {
                 }}
                 detailsButton={{
                   className: '!bg-teal-600 !px-6 !py-2 !rounded-full',
+                  // displayBalanceToken: {
+                  //   [BaseSepoliaTestnet.id.toString()]: address!,
+                  //   [LiskSepoliaTestnet.id.toString()]: address!,
+                  // },
                 }}
                 autoConnect={true}
-                chain={LiskSepoliaTestnet}
-                chains={[LiskSepoliaTestnet, Localnet]}
                 onConnect={() => setIsConnected(true)}
               />
             ) : (

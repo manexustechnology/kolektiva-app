@@ -78,7 +78,7 @@ const SellStep1: React.FC<SellStep1Props> = ({
       try {
         if (activeTab === 'market' && formData.qtyToken > 0) {
           const data = await readContractFetch({
-            chain,
+            chainId: propertyData.chainId.toString(),
             contractName: 'KolektivaMarket',
             functionName: 'calculateSellProceeds',
             contractAddress: propertyData.marketAddress,

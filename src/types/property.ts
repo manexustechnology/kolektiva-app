@@ -33,6 +33,7 @@ export interface PropertyData {
   tokenAddress: string;
   tokenName: string;
   tokenSymbol: string;
+  chainId: number;
   address: string;
   location: string;
   city: string;
