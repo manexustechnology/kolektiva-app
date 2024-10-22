@@ -127,50 +127,57 @@ const MarketDetailDescriptionPanel: React.FC<
               </div>
             ))}
         </div>
-        <Accordion border="none" defaultIndex={[0]} allowMultiple>
-          <AccordionItem border="none" bgColor="teal.100" rounded="lg">
-            {({ isExpanded }) => (
-              <>
-                <h2>
-                  <AccordionButton>
-                    <Box
-                      as="span"
-                      flex="1"
-                      textAlign="left"
-                      className="!text-md !font-medium !text-teal-600"
-                    >
-                      Other Facilities
-                    </Box>
-                    {isExpanded ? (
-                      <CaretUp
-                        size={18}
-                        weight="fill"
-                        className="text-teal-600"
-                      />
-                    ) : (
-                      <CaretDown
-                        size={18}
-                        weight="fill"
-                        className="text-teal-600"
-                      />
-                    )}
-                  </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4}>
-                  <ul className="grid grid-cols-2 list-disc list-inside px-2">
-                    {property.facilities
-                      .filter((facility) => !facility.isHighlight)
-                      .map((facility) => (
-                        <li key={facility.id} className="text-sm font-medium">
-                          {facility.facility}
-                        </li>
-                      ))}
-                  </ul>
-                </AccordionPanel>
-              </>
-            )}
-          </AccordionItem>
-        </Accordion>
+        {property.facilities &&
+          property.facilities.length > 0 &&
+          property.facilities.some((facility) => !facility.isHighlight) && (
+            <Accordion border="none" defaultIndex={[0]} allowMultiple>
+              <AccordionItem border="none" bgColor="teal.100" rounded="lg">
+                {({ isExpanded }) => (
+                  <>
+                    <h2>
+                      <AccordionButton>
+                        <Box
+                          as="span"
+                          flex="1"
+                          textAlign="left"
+                          className="!text-md !font-medium !text-teal-600"
+                        >
+                          Other Facilities
+                        </Box>
+                        {isExpanded ? (
+                          <CaretUp
+                            size={18}
+                            weight="fill"
+                            className="text-teal-600"
+                          />
+                        ) : (
+                          <CaretDown
+                            size={18}
+                            weight="fill"
+                            className="text-teal-600"
+                          />
+                        )}
+                      </AccordionButton>
+                    </h2>
+                    <AccordionPanel pb={4}>
+                      <ul className="grid grid-cols-2 list-disc list-inside px-2">
+                        {property.facilities
+                          .filter((facility) => !facility.isHighlight)
+                          .map((facility) => (
+                            <li
+                              key={facility.id}
+                              className="text-sm font-medium"
+                            >
+                              {facility.facility}
+                            </li>
+                          ))}
+                      </ul>
+                    </AccordionPanel>
+                  </>
+                )}
+              </AccordionItem>
+            </Accordion>
+          )}
       </div>
       <Divider className="border-zinc-200 !m-0" />
       {/* <MapEmbed
