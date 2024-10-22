@@ -26,6 +26,7 @@ import { Divider } from 'antd';
 import Link from 'next/link';
 import MapEmbed from '../../MapEmbed';
 import { PropertyData } from '@/types/property';
+import '../../../../../styles/quill-custom-styles.css';
 
 interface MarketDetailDescriptionPanelProps {
   property: PropertyData;
@@ -194,7 +195,7 @@ const MarketDetailDescriptionPanel: React.FC<
       <div className="flex flex-col gap-3">
         <h2 className="text-black text-base font-medium">About the Property</h2>
         <div
-          className=""
+          className="quill-wrapper"
           dangerouslySetInnerHTML={{ __html: property.description }}
         />
       </div>
