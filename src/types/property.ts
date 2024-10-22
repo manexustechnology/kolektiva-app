@@ -35,6 +35,7 @@ export interface PropertyData {
   tokenSymbol: string;
   chainId: number;
   address: string;
+  googleMapUrl: string;
   location: string;
   city: string;
   state: string;

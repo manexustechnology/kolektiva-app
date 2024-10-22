@@ -1,8 +1,15 @@
 import {
+  PROPERTY_LOCATIONS_ROUTE,
   PROPERTY_SET_AFTERMAKET_ROUTE,
   PROPERTY_SET_SETTLEMENT_ROUTE,
 } from '@/constants/api-routes';
-import axios from 'axios';
+import queryString from 'query-string';
+import axios, { AxiosResponse } from 'axios';
+import { ResponseData } from '@/types/response';
+import {
+  PropertyLocationFilter,
+  PropertyLocationResponse,
+} from '@/types/location';
 
 export const setPropertyToAftermarket = async (
   propertyId: string,
@@ -27,5 +34,19 @@ export const setPropertyToSettlement = async (
     return response.data;
   } catch (error) {
     throw new Error('Failed to set property to aftermarket phase');
+  }
+};
+
+export const findPropertyLocations = async (
+  params: PropertyLocationFilter,
+): Promise<AxiosResponse<ResponseData<PropertyLocationResponse[]>>> => {
+  try {
+    const queryParams = queryString.stringify(params as any);
+    const response = await axios.get(
+      `${PROPERTY_LOCATIONS_ROUTE}?${queryParams}`,
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error('Failed to retrieve property locations');
   }
 };

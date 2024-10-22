@@ -19,7 +19,7 @@ import { useReadContractHook, useWriteContractHook } from '@/utils/hooks';
 import { useActiveAccount, useActiveWalletChain } from 'thirdweb/react';
 import { PropertyData } from '@/types/property';
 import { formatUSDTBalance, parseUSDTBalance } from '@/utils/formatter';
-import { getTransactionInfo } from '@/app/api/tx-info';
+import { getTransactionInfo } from '@/app/api/tx-info.api';
 import { TxInfoData } from '@/types/tx-info';
 import TxFailureToast from '../modals/TxFailureToast';
 import axios from 'axios';
@@ -260,7 +260,7 @@ const BuyFormWizard: React.FC<BuyFormWizardProps> = ({
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const checked = e.target.checked;
     setIsCheckboxChecked(checked);
-    console.log("Checkbox checked:", checked); // Log the checkbox state
+    console.log('Checkbox checked:', checked); // Log the checkbox state
   };
   return (
     <>

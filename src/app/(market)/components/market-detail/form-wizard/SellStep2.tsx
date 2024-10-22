@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { SellOrderData } from "@/types/order";
-import { useReadContractHook, useWriteContractHook } from "@/utils/hooks";
-import { getTransactionInfo } from "@/app/api/tx-info";
+import { SellOrderData } from '@/types/order';
+import { useReadContractHook, useWriteContractHook } from '@/utils/hooks';
+import { getTransactionInfo } from '@/app/api/tx-info.api';
 
-import { Divider } from "antd";
-import { useMemo } from "react";
-import { useActiveAccount } from "thirdweb/react";
-import { PropertyData } from "@/types/property";
-import { formatUSDTBalance } from "@/utils/formatter";
+import { Divider } from 'antd';
+import { useMemo } from 'react';
+import { useActiveAccount } from 'thirdweb/react';
+import { PropertyData } from '@/types/property';
+import { formatUSDTBalance } from '@/utils/formatter';
 
 interface SellStep2Props {
   propertyData: PropertyData;
@@ -21,31 +21,31 @@ const SellStep2: React.FC<SellStep2Props> = ({ propertyData, formData }) => {
 
   const { data: allowanceUsdtData, isLoading: isLoadingAllowanceUsdt } =
     useReadContractHook({
-      contractName: "MockUSDT",
-      functionName: "allowance",
+      contractName: 'MockUSDT',
+      functionName: 'allowance',
       // args: [address, "_spender market address"],
       args: [address, propertyData.marketAddress],
     });
 
   const { writeAsync: approveUsdt } = useWriteContractHook({
-    contractName: "MockUSDT",
-    functionName: "approve",
+    contractName: 'MockUSDT',
+    functionName: 'approve',
     // args: ["_spender market address", formData.totalCost],
     args: [propertyData.marketAddress, , formData.fee],
   });
 
   const { data: allowanceTokenData, isLoading: isLoadingAllowanceToken } =
     useReadContractHook({
-      contractName: "KolektivaToken",
-      functionName: "allowance",
+      contractName: 'KolektivaToken',
+      functionName: 'allowance',
       contractAddress: propertyData.tokenAddress,
       // args: [address, "_spender market address"],
       args: [address, propertyData.marketAddress],
     });
 
   const { writeAsync: approveToken } = useWriteContractHook({
-    contractName: "KolektivaToken",
-    functionName: "approve",
+    contractName: 'KolektivaToken',
+    functionName: 'approve',
     contractAddress: propertyData.tokenAddress,
     // args: ["_spender market address", formData.totalCost],
     args: [propertyData.marketAddress, , formData.qtyToken],
@@ -53,18 +53,18 @@ const SellStep2: React.FC<SellStep2Props> = ({ propertyData, formData }) => {
 
   const allowanceUsdt = useMemo(
     () => (allowanceUsdtData ? Number(allowanceUsdtData) : 0),
-    [allowanceUsdtData]
+    [allowanceUsdtData],
   );
 
   const allowanceToken = useMemo(
     () => (allowanceTokenData ? Number(allowanceTokenData) : 0),
-    [allowanceTokenData]
+    [allowanceTokenData],
   );
 
   const buttonText = useMemo(() => {
-    if (isLoadingAllowanceUsdt && isLoadingAllowanceToken) return "Loading...";
+    if (isLoadingAllowanceUsdt && isLoadingAllowanceToken) return 'Loading...';
     if (allowanceUsdt >= formData.fee && allowanceToken >= formData.qtyToken)
-      return "Submit Order";
+      return 'Submit Order';
     if (allowanceToken < formData.qtyToken)
       return `Approve ${formData.qtyToken} Token`;
     return `Approve ${formData.fee} USDT`;
@@ -82,18 +82,18 @@ const SellStep2: React.FC<SellStep2Props> = ({ propertyData, formData }) => {
       if (allowanceToken < formData.qtyToken) {
         // If KolektivaToken allowance is insufficient, approve it first
         await approveToken();
-        console.log("Approve KolektivaToken");
+        console.log('Approve KolektivaToken');
       } else if (allowanceUsdt < formData.fee) {
         // If USDT allowance is insufficient, approve it next
         await approveUsdt();
-        console.log("Approve USDT");
+        console.log('Approve USDT');
       } else {
         // Both allowances are sufficient, proceed with order submission
-        console.log("Submit Order");
+        console.log('Submit Order');
         // Add your order submission logic here
       }
     } catch (error) {
-      console.error("Action failed", error);
+      console.error('Action failed', error);
     }
   };
 
@@ -109,7 +109,7 @@ const SellStep2: React.FC<SellStep2Props> = ({ propertyData, formData }) => {
         </div>
       </div>
       <div className="flex flex-col gap-4 shadow-md rounded-2xl p-4">
-        {formData?.type === "limit" && (
+        {formData?.type === 'limit' && (
           <>
             <div className="flex justify-between items-center">
               <p className="text-base text-zinc-500">Limit price per token</p>
@@ -125,11 +125,11 @@ const SellStep2: React.FC<SellStep2Props> = ({ propertyData, formData }) => {
           <p className="text-base text-zinc-500">
             <span className="text-base font-bold text-teal-950">
               {formData?.qtyToken}
-            </span>{" "}
+            </span>{' '}
             Tokens
           </p>
         </div>
-        {formData?.type === "market" && (
+        {formData?.type === 'market' && (
           <>
             <Divider className="border-zinc-200 !m-0" />
             <div className="flex justify-between items-center">
@@ -140,7 +140,7 @@ const SellStep2: React.FC<SellStep2Props> = ({ propertyData, formData }) => {
             </div>
           </>
         )}
-        {formData?.type === "limit" && (
+        {formData?.type === 'limit' && (
           <>
             <Divider className="border-zinc-200 !m-0" />
             <div className="flex justify-between items-center">

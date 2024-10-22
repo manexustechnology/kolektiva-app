@@ -41,7 +41,7 @@ import Link from 'next/link';
 import { formatUSDTBalance } from '@/utils/formatter';
 import LimitOrderSuccessModal from './modals/LimitOrderSuccessModal';
 import MarketOrderSuccessModal from './modals/MarketOrderSuccessModal';
-import { setPropertyToSettlement } from '@/app/api/property';
+import { setPropertyToSettlement } from '@/app/api/property.api';
 import { thirdwebChains } from '@/commons/networks';
 
 interface MarketDetailClientPageProps {
