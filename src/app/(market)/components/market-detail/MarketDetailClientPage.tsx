@@ -853,7 +853,6 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                 <TabPanel px={0} py={4}>
                   <MarketDetailDescriptionPanel property={propertyData} />
                 </TabPanel>
-<<<<<<< HEAD
                 {!propertyData.isUpcoming && (
                   <TabPanel px={0} py={4}>
                     <MarketDetailFinancialPanel />
@@ -867,7 +866,6 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                     />
                   </TabPanel>
                 )}
-=======
                 <TabPanel px={0} py={4}>
                   <MarketDetailFinancialPanel />
                 </TabPanel>
@@ -878,7 +876,6 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                     propertyData={propertyData}
                   />
                 </TabPanel>
->>>>>>> origin/main
                 <TabPanel px={0} py={4}>
                   {/* add for ignoring error */}
                   <MarketDetailDocumentPanel property={propertyData} />
