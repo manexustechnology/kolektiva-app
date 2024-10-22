@@ -26,6 +26,7 @@ import { Divider } from 'antd';
 import Link from 'next/link';
 import MapEmbed from '../../MapEmbed';
 import { PropertyData } from '@/types/property';
+import '../../../../../styles/quill-custom-styles.css';
 
 interface MarketDetailDescriptionPanelProps {
   property: PropertyData;
@@ -126,59 +127,67 @@ const MarketDetailDescriptionPanel: React.FC<
               </div>
             ))}
         </div>
-        <Accordion border="none" defaultIndex={[0]} allowMultiple>
-          <AccordionItem border="none" bgColor="teal.100" rounded="lg">
-            {({ isExpanded }) => (
-              <>
-                <h2>
-                  <AccordionButton>
-                    <Box
-                      as="span"
-                      flex="1"
-                      textAlign="left"
-                      className="!text-md !font-medium !text-teal-600"
-                    >
-                      Other Facilities
-                    </Box>
-                    {isExpanded ? (
-                      <CaretUp
-                        size={18}
-                        weight="fill"
-                        className="text-teal-600"
-                      />
-                    ) : (
-                      <CaretDown
-                        size={18}
-                        weight="fill"
-                        className="text-teal-600"
-                      />
-                    )}
-                  </AccordionButton>
-                </h2>
-                <AccordionPanel pb={4}>
-                  <ul className="grid grid-cols-2 list-disc list-inside px-2">
-                    {property.facilities
-                      .filter((facility) => !facility.isHighlight)
-                      .map((facility) => (
-                        <li key={facility.id} className="text-sm font-medium">
-                          {facility.facility}
-                        </li>
-                      ))}
-                  </ul>
-                </AccordionPanel>
-              </>
-            )}
-          </AccordionItem>
-        </Accordion>
+        {property.facilities &&
+          property.facilities.length > 0 &&
+          property.facilities.some((facility) => !facility.isHighlight) && (
+            <Accordion border="none" defaultIndex={[0]} allowMultiple>
+              <AccordionItem border="none" bgColor="teal.100" rounded="lg">
+                {({ isExpanded }) => (
+                  <>
+                    <h2>
+                      <AccordionButton>
+                        <Box
+                          as="span"
+                          flex="1"
+                          textAlign="left"
+                          className="!text-md !font-medium !text-teal-600"
+                        >
+                          Other Facilities
+                        </Box>
+                        {isExpanded ? (
+                          <CaretUp
+                            size={18}
+                            weight="fill"
+                            className="text-teal-600"
+                          />
+                        ) : (
+                          <CaretDown
+                            size={18}
+                            weight="fill"
+                            className="text-teal-600"
+                          />
+                        )}
+                      </AccordionButton>
+                    </h2>
+                    <AccordionPanel pb={4}>
+                      <ul className="grid grid-cols-2 list-disc list-inside px-2">
+                        {property.facilities
+                          .filter((facility) => !facility.isHighlight)
+                          .map((facility) => (
+                            <li
+                              key={facility.id}
+                              className="text-sm font-medium"
+                            >
+                              {facility.facility}
+                            </li>
+                          ))}
+                      </ul>
+                    </AccordionPanel>
+                  </>
+                )}
+              </AccordionItem>
+            </Accordion>
+          )}
       </div>
       <Divider className="border-zinc-200 !m-0" />
-      <MapEmbed
+      {/* <MapEmbed
         latitude={property.latitude}
         longitude={property.longitude}
         width="100%"
         height="350px"
         className="rounded-2xl"
-      />
+      /> */}
+
       {/* <iframe
         width="100%"
         height="350px"
@@ -186,14 +195,14 @@ const MarketDetailDescriptionPanel: React.FC<
         style={{ border: 0 }}
         loading="lazy"
         allowFullScreen
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3151.8354345094286!2d144.95373631590436!3d-37.81720997975181!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zTmljZSBQbGFjZQ!5e0!3m2!1sen!2sus!4v1634073146420!5m2!1sen!2sus"
-      ></iframe> */}
+        src={property.mapUrl}
+      /> */}
 
       <Divider className="border-zinc-200 !m-0" />
       <div className="flex flex-col gap-3">
         <h2 className="text-black text-base font-medium">About the Property</h2>
         <div
-          className="text-sm font-medium text-zinc-500"
+          className="quill-wrapper"
           dangerouslySetInnerHTML={{ __html: property.description }}
         />
       </div>
