@@ -1,12 +1,12 @@
 // Add this at the top of your file
-"use client";
+'use client';
 
-import MarketDetailClientPage from "../../components/market-detail/MarketDetailClientPage";
-import { useParams } from "next/navigation"; // Use this for App Router
-import { useEffect, useState } from "react";
-import { PropertyData } from "@/types/property";
-import { Spinner, Stack } from "@chakra-ui/react";
-import { useActiveWalletChain } from "thirdweb/react";
+import MarketDetailClientPage from '../../components/market-detail/MarketDetailClientPage';
+import { useParams } from 'next/navigation'; // Use this for App Router
+import { useEffect, useState } from 'react';
+import { PropertyData } from '@/types/property';
+import { Spinner, Stack } from '@chakra-ui/react';
+import { useActiveWalletChain } from 'thirdweb/react';
 
 interface MarketDetailProps {
   searchParams: {
@@ -24,12 +24,14 @@ const MarketDetailPage: React.FC<MarketDetailProps> = ({ searchParams }) => {
       const fetchPropertyData = async () => {
         try {
           const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_HOST}/property/${slug}`
+            `${process.env.NEXT_PUBLIC_API_HOST}/property/${slug}`,
           );
-          const data: PropertyData = await response.json();
+          let data: PropertyData = await response.json();
+          console.log('data', data);
+
           setPropertyData(data);
         } catch (error) {
-          console.error("Error fetching property data:", error);
+          console.error('Error fetching property data:', error);
         } finally {
           setLoading(false);
         }

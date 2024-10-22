@@ -18,12 +18,22 @@ export interface Image {
   updatedAt: string;
 }
 
+export interface Document {
+  id: string;
+  propertyId: string;
+  document: string;
+  isHighlight: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface PropertyData {
   id: string;
   marketAddress: string;
   tokenAddress: string;
   tokenName: string;
   tokenSymbol: string;
+  chainId: number;
   address: string;
   location: string;
   city: string;
@@ -45,6 +55,7 @@ export interface PropertyData {
   deletedAt: string | null;
   facilities: Facility[];
   images: Image[];
+  documents: Document[];
 }
 
 export interface Property {

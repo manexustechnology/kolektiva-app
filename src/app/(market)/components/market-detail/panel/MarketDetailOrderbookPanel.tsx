@@ -1,16 +1,17 @@
-"use client";
+'use client';
 
-import { useContractEventHook, useReadContractHook } from "@/utils/hooks";
-import { getOrderbookWidthStyle } from "@/utils/style";
-import { ListBullets } from "@phosphor-icons/react/dist/ssr";
-import { Divider } from "antd";
-import { useEffect, useState } from "react";
+import { useContractEventHook, useReadContractHook } from '@/utils/hooks';
+import { getOrderbookWidthStyle } from '@/utils/style';
+import { ListBullets } from '@phosphor-icons/react/dist/ssr';
+import { Divider } from 'antd';
+import { useEffect, useState } from 'react';
 // import { BuyOrderEvent } from "./MarketBuyOrderEvent";
 // import { SellOrderEvent } from "./MarketSellOrderEvent";
-import { readContractFetch } from "@/utils/fetch";
-import { PropertyData } from "@/types/property";
-import { formatUSDTBalance } from "@/utils/formatter";
-import { useActiveWalletChain } from "thirdweb/react";
+import { readContractFetch } from '@/utils/fetch';
+import { PropertyData } from '@/types/property';
+import { formatUSDTBalance } from '@/utils/formatter';
+import { useActiveWalletChain } from 'thirdweb/react';
+import { viemChains } from '@/commons/networks';
 
 interface MarketDetailOrderbookPanelProps {
   propertyData: PropertyData;
@@ -28,8 +29,6 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
   propertyData,
   allowTrade = false,
 }) => {
-  const chain = useActiveWalletChain()!;
-
   const [buyOrders, setBuyOrders] = useState<Order[]>([]);
   const [loadingBuy, setLoadingBuy] = useState<boolean>(true);
   const [buyOrdersCount, setBuyOrdersCount] = useState<number | null>(null);
@@ -39,29 +38,33 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
   const [sellOrdersCount, setSellOrdersCount] = useState<number | null>(null);
 
   const { data: InitialOfferingPurchaseEvent } = useContractEventHook({
-    contractName: "KolektivaMarket",
-    eventName: "InitialOfferingPurchase",
+    chainId: propertyData.chainId.toString(),
+    contractName: 'KolektivaMarket',
+    eventName: 'InitialOfferingPurchase',
     contractAddress: propertyData.marketAddress,
     fromBlock: BigInt(8906493),
   });
 
   const { data: OrderFulfilledEvent } = useContractEventHook({
-    contractName: "KolektivaMarket",
-    eventName: "OrderFulfilled",
+    chainId: propertyData.chainId.toString(),
+    contractName: 'KolektivaMarket',
+    eventName: 'OrderFulfilled',
     contractAddress: propertyData.marketAddress,
     fromBlock: BigInt(8906493),
   });
 
   const { data: sellOrdersCountData } = useReadContractHook({
-    contractName: "KolektivaMarket",
-    functionName: "getSellOrdersCount",
+    chainId: propertyData.chainId.toString(),
+    contractName: 'KolektivaMarket',
+    functionName: 'getSellOrdersCount',
     contractAddress: propertyData.marketAddress,
     args: [],
   });
 
   const { data: buyOrdersCountData } = useReadContractHook({
-    contractName: "KolektivaMarket",
-    functionName: "getBuyOrdersCount",
+    chainId: propertyData.chainId.toString(),
+    contractName: 'KolektivaMarket',
+    functionName: 'getBuyOrdersCount',
     contractAddress: propertyData.marketAddress,
     args: [],
   });
@@ -90,14 +93,14 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
 
       for (let i = 0; i < buyOrdersCount; i++) {
         const orderData = await readContractFetch({
-          chain,
-          contractName: "KolektivaMarket",
-          functionName: "getBuyOrderByIndex",
+          chainId: propertyData.chainId.toString(),
+          contractName: 'KolektivaMarket',
+          functionName: 'getBuyOrderByIndex',
           contractAddress: propertyData.marketAddress,
           args: [i],
         });
 
-        console.log("from fetch buy", orderData);
+        console.log('from fetch buy', orderData);
         if (orderData) {
           let { amount, price } = orderData as any;
           amount = Number(amount);
@@ -129,14 +132,14 @@ const MarketDetailOrderbookPanel: React.FC<MarketDetailOrderbookPanelProps> = ({
 
       for (let i = 0; i < sellOrdersCount; i++) {
         const orderData = await readContractFetch({
-          chain,
-          contractName: "KolektivaMarket",
-          functionName: "getSellOrderByIndex",
+          chainId: propertyData.chainId.toString(),
+          contractName: 'KolektivaMarket',
+          functionName: 'getSellOrderByIndex',
           contractAddress: propertyData.marketAddress,
           args: [i],
         });
 
-        console.log("from fetch sell", orderData);
+        console.log('from fetch sell', orderData);
         if (orderData) {
           let { amount, price } = orderData as any;
           amount = Number(amount);
