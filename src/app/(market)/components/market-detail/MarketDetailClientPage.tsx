@@ -819,15 +819,19 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                 <TabPanel px={0} py={4}>
                   <MarketDetailDescriptionPanel property={propertyData} />
                 </TabPanel>
-                <TabPanel px={0} py={4}>
-                  <MarketDetailFinancialPanel />
-                </TabPanel>
-                <TabPanel px={0} py={4}>
-                  <MarketDetailOrderbookPanel
-                    allowTrade={allowTrade}
-                    propertyData={propertyData}
-                  />
-                </TabPanel>
+                {!propertyData.isUpcoming && (
+                  <TabPanel px={0} py={4}>
+                    <MarketDetailFinancialPanel />
+                  </TabPanel>
+                )}
+                {!propertyData.isUpcoming && (
+                  <TabPanel px={0} py={4}>
+                    <MarketDetailOrderbookPanel
+                      allowTrade={allowTrade}
+                      propertyData={propertyData}
+                    />
+                  </TabPanel>
+                )}
                 <TabPanel px={0} py={4}>
                   <MarketDetailDocumentPanel property={propertyData} />
                 </TabPanel>
