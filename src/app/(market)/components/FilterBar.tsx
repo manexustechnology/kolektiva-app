@@ -83,9 +83,8 @@ const FilterBar: React.FC<FilterBarProps> = ({
           country: true,
         });
 
-        // Assuming response contains a 'cities' field or similar
-        if (response && response.cities) {
-          setLocations(response.cities); // Update state with fetched cities
+        if (response && response.city) {
+          setLocations(response.city);
         }
 
         console.log('Property Locations:', response);
