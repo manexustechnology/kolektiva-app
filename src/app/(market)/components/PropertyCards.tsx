@@ -78,12 +78,12 @@ const PropertyCards: React.FC<PropertyCardsProps> = ({ filters }) => {
           marketAddress: property.marketAddress,
           tokenAddress: property.tokenAddress,
           chainId: property.chainId.toString(),
+          phase: property.phase,
           isFeatured: property.isFeatured,
           isUpcoming: property.isUpcoming,
           isAftermarket: property.isAfatermarket,
           tokenName: property.tokenName,
           tokenSymbol: property.tokenSymbol,
-          phase: property.phase,
         }));
 
         console.log(mappedData);

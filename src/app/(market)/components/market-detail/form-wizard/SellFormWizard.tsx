@@ -9,7 +9,7 @@ import { Divider } from 'antd';
 import { SellOrderData } from '@/types/order';
 import { useReadContractHook, useWriteContractHook } from '@/utils/hooks';
 import { useActiveAccount, useActiveWalletChain } from 'thirdweb/react';
-import { getTransactionInfo } from '@/app/api/tx-info';
+import { getTransactionInfo } from '@/app/api/tx-info.api';
 import { PropertyData } from '@/types/property';
 import { formatUSDTBalance, parseUSDTBalance } from '@/utils/formatter';
 import { Spinner } from '@chakra-ui/react';

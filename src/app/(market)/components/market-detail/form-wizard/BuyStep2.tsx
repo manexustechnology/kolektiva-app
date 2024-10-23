@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { BuyOrderData } from "@/types/order";
-import { useReadContractHook, useWriteContractHook } from "@/utils/hooks";
-import { getTransactionInfo } from "@/app/api/tx-info";
-import { Divider } from "antd";
-import { useMemo } from "react";
-import { useActiveAccount } from "thirdweb/react";
-import { PropertyData } from "@/types/property";
-import { formatUSDTBalance } from "@/utils/formatter";
+import { BuyOrderData } from '@/types/order';
+import { useReadContractHook, useWriteContractHook } from '@/utils/hooks';
+import { getTransactionInfo } from '@/app/api/tx-info.api';
+import { Divider } from 'antd';
+import { useMemo } from 'react';
+import { useActiveAccount } from 'thirdweb/react';
+import { PropertyData } from '@/types/property';
+import { formatUSDTBalance } from '@/utils/formatter';
 
 interface BuyStep2Props {
   propertyData: PropertyData;
@@ -25,27 +25,27 @@ const BuyStep2: React.FC<BuyStep2Props> = ({
 
   const { data: allowanceData, isLoading: isLoadingAllowance } =
     useReadContractHook({
-      contractName: "MockUSDT",
-      functionName: "allowance",
+      contractName: 'MockUSDT',
+      functionName: 'allowance',
       // args: [address, "_spender market address"],
       args: [address, propertyData.marketAddress],
     });
 
   const { writeAsync: approveUsdt } = useWriteContractHook({
-    contractName: "MockUSDT",
-    functionName: "approve",
+    contractName: 'MockUSDT',
+    functionName: 'approve',
     // args: ["_spender market address", formData.totalCost],
     args: [propertyData.marketAddress, formData.totalCost],
   });
 
   const allowance = useMemo(
     () => (allowanceData ? Number(allowanceData) : 0),
-    [allowanceData]
+    [allowanceData],
   );
 
   const buttonText = useMemo(() => {
-    if (isLoadingAllowance) return "Loading...";
-    if (allowance >= formData.totalCost) return "Submit Order";
+    if (isLoadingAllowance) return 'Loading...';
+    if (allowance >= formData.totalCost) return 'Submit Order';
     return `Approve ${formatUSDTBalance(formData.totalCost)} USDT`;
   }, [isLoadingAllowance, allowance, formData.totalCost]);
 
@@ -53,13 +53,13 @@ const BuyStep2: React.FC<BuyStep2Props> = ({
     if (allowance < formData.totalCost) {
       try {
         await approveUsdt(); // Call approve function here
-        console.log("Approve USDT");
+        console.log('Approve USDT');
       } catch (error) {
-        console.error("Approval failed", error);
+        console.error('Approval failed', error);
       }
     } else {
       // Handle submit order logic here
-      console.log("Submit Order");
+      console.log('Submit Order');
     }
   };
 
@@ -80,7 +80,7 @@ const BuyStep2: React.FC<BuyStep2Props> = ({
           <p className="text-base text-zinc-500">
             <span className="text-base font-bold text-teal-950">
               {formData?.qtyToken}
-            </span>{" "}
+            </span>{' '}
             Token
           </p>
         </div>

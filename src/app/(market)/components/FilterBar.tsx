@@ -11,6 +11,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { IMarketFilter } from '@/types/filter';
+import { findPropertyLocations } from '@/app/api/property.api';
 
 interface FilterBarProps {
   locations: string[];
@@ -71,6 +72,25 @@ const FilterBar: React.FC<FilterBarProps> = ({
     const updatedFilters = { ...filters, phase: phaseIndexToString(index) };
     onFilterApply(updatedFilters);
   };
+
+  useEffect(() => {
+    const fetchPropertyLocations = async () => {
+      try {
+        const response = await findPropertyLocations({
+          city: true,
+          location: true,
+          state: true,
+          country: true,
+        });
+
+        console.log('Property Locations:', response);
+      } catch (error) {
+        console.error('Error fetching property locations:', error);
+      }
+    };
+
+    fetchPropertyLocations();
+  }, []);
 
   return (
     <Box

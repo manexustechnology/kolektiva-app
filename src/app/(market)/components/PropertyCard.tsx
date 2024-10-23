@@ -1,6 +1,6 @@
 'use client';
 
-import { setPropertyToSettlement } from '@/app/api/property';
+import { setPropertyToSettlement } from '@/app/api/property.api';
 import { thirdwebChains } from '@/commons/networks';
 import { formatUSDTBalance } from '@/utils/formatter';
 import { useReadContractHook } from '@/utils/hooks';
@@ -46,13 +46,15 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
   const [propertyPhase, setPropertyPhase] = useState<string>(phase);
   // const chain = thirdwebChains[chainId];
 
-  const { data: initialOfferingActive = true } = useReadContractHook({
-    chainId,
-    contractName: 'KolektivaMarket',
-    functionName: 'initialOfferingActive',
-    contractAddress: marketAddress,
-    args: [],
-  });
+  const { data: initialOfferingActive = true, isLoading } = useReadContractHook(
+    {
+      chainId,
+      contractName: 'KolektivaMarket',
+      functionName: 'initialOfferingActive',
+      contractAddress: marketAddress,
+      args: [],
+    },
+  );
 
   const { data: salePriceData } = useReadContractHook({
     chainId,
@@ -92,6 +94,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
       if (propertyPhase === 'aftermarket') {
         setIsAftermarket(true);
       } else if (
+        !isLoading &&
         propertyPhase === 'initial-offering' &&
         !initialOfferingActive
       ) {
@@ -102,7 +105,7 @@ const PropertyCard: React.FC<PropertyCardProps> = ({
     };
 
     determineTradeAllowance();
-  }, [initialOfferingActive, slug]);
+  }, [initialOfferingActive, slug, isLoading]);
 
   const initialOfferingPercentage = useMemo(() => {
     if (tokenTotalSupply > initialOfferingSupply) {
