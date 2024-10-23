@@ -7,6 +7,7 @@ import FormPart1 from './components/FormPart1';
 import FormPart2 from './components/FormPart2';
 import RequestSentModal from './modals/RequestSentModal';
 import axios from 'axios';
+import { PropertyDataForm } from '@/types/property-data-form';
 
 interface FormData {
   name: string;
@@ -106,31 +107,103 @@ const ListProperty: React.FC = () => {
   const sendFormData = async () => {
     setLoadingSubmit(true);
     try {
+      const propertyData: PropertyDataForm = {
+        propertyDetails: {
+          propertyStatus: {
+            phase: 'draft',
+            status: 'hidden',
+            rentalStatus: '',
+          },
+          issuerDetails: {
+            issuedBy: '',
+            name: formData.name,
+            phoneNum: formData.contactPh,
+            email: formData.contactEm,
+          },
+          propertySummary: {
+            title: '',
+            googleMapUrl: formData.mapLink,
+            country: '',
+            state: '',
+            city: '',
+            district: '',
+            address: formData.address,
+            landArea: formData.landArea,
+            buildingArea: formData.buildingArea,
+            priceEstimation: formData.priceEstimation,
+          },
+          propertyImages: {
+            primary: '',
+            others: [],
+          },
+          propertyDetails: {
+            planToSell: formData.planToSell || 'Not Specified',
+            propertyType: formData.propertyType || 'Residential',
+            ownershipStatus: formData.ownershipStatus || 'Not Specified',
+            propertyCondition: formData.propertyCondition || 'Not Specified',
+            occupancyStatus: formData.occupancyStatus || 'Vacant',
+            propertyManager: formData.propertyManager || 'Self',
+            furnish: formData.furniture || 'Unfurnished',
+            furniture: [],
+            propertyIssues: formData.propertyIssues,
+          },
+          propertySpecifications: {
+            propertyCertificate: '',
+            floors: 0,
+            waterSupply: '',
+            bedrooms: 0,
+            bathrooms: 0,
+            garage: '',
+            garden: '',
+            swimPool: '',
+          },
+          description: '',
+        },
+        chain: {
+          chainName: '',
+          chainId: 0,
+        },
+        financials: {
+          token: {
+            tokenPrice: 0,
+            tokenSupply: 0,
+            tokenValue: 0,
+          },
+          propertyFinancials: {
+            furnitureValueEstimation: 0,
+            legalAdminCost: 0,
+            platformListingFee: 0,
+            marketingMangementCost: 0,
+            propertyTaxes: 0,
+            rentalTaxes: 0,
+            rentalYeild: 0,
+          },
+        },
+        documents: {
+          documents: [],
+        },
+        markets: {
+          markets: '',
+        },
+        errmsg: false,
+        validEmail: formData.validEmail,
+        validMap: formData.validMap,
+      };
+      const request = {
+        name: formData.name,
+        phone: formData.contactPh,
+        email: formData.contactEm,
+        address: formData.address,
+        priceEstimation: formData.priceEstimation.toString(),
+        propertyData,
+      };
+
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_HOST}/property-listing-request/submit`,
-        {
-          name: formData.name,
-          phone: formData.contactPh,
-          email: formData.contactEm,
-          address: formData.address,
-          priceEstimation: formData.priceEstimation,
-          googleMapsLink: formData.mapLink,
-          landArea: formData.landArea,
-          buildingArea: formData.buildingArea,
-          planToSell: formData.planToSell,
-          propertyType: formData.propertyType,
-          ownershipStatus: formData.ownershipStatus,
-          propertyCondition: formData.propertyCondition,
-          occupancyStatus: formData.occupancyStatus,
-          propertyManager: formData.propertyManager,
-          furniture: formData.furniture,
-          propertyIssues: formData.propertyIssues,
-          includedFurniture: formData.includedFurniture,
-        },
+        request,
       );
 
-      // Not success
-      if (response.status !== 200) {
+      if (response.status !== 200 && response.status !== 201) {
         throw new Error(response.data?.message || 'Something went wrong!');
       }
 
