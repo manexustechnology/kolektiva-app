@@ -20,6 +20,13 @@ interface FilterBarProps {
   filters: IMarketFilter;
 }
 
+interface PropertyLocationResponse {
+  city: string;
+  location: string;
+  state: string;
+  country: string;
+}
+
 const phaseStringToIndex = (value: string): number => {
   switch (value) {
     case 'upcoming':
@@ -81,7 +88,10 @@ const FilterBar: React.FC<FilterBarProps> = ({
           state: true,
           country: true,
         });
-        const allCities: string[] = response.map((property) => property.city);
+
+        const allCities: string[] = response.data.map(
+          (property: PropertyLocationResponse) => property.city,
+        );
 
         const uniqueCities = Array.from(new Set(allCities));
 
