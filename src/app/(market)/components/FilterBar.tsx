@@ -89,13 +89,20 @@ const FilterBar: React.FC<FilterBarProps> = ({
           country: true,
         });
 
-        const allCities: string[] = response.data.map(
-          (property: PropertyLocationResponse) => property.city,
-        );
+        if (response.data.data !== undefined) {
+          const propertyLocations = response.data.data;
 
-        const uniqueCities = Array.from(new Set(allCities));
+          const allCities: string[] = propertyLocations
+            .map((property) => {
+              return property.city !== undefined ? property.city : '';
+            })
+            .filter((city: string) => city !== '');
 
-        setLocations(uniqueCities);
+          const uniqueCities = Array.from(new Set(allCities));
+          setLocations(uniqueCities);
+        } else {
+          console.warn('No property locations found.');
+        }
       } catch (error) {
         console.error('Error fetching property locations:', error);
       }
