@@ -180,23 +180,7 @@ const MarketDetailDescriptionPanel: React.FC<
           )}
       </div>
       <Divider className="border-zinc-200 !m-0" />
-      {/* <MapEmbed
-        latitude={property.latitude}
-        longitude={property.longitude}
-        width="100%"
-        height="350px"
-        className="rounded-2xl"
-      /> */}
-
-      {/* <iframe
-        width="100%"
-        height="350px"
-        className="rounded-2xl"
-        style={{ border: 0 }}
-        loading="lazy"
-        allowFullScreen
-        src={property.mapUrl}
-      /> */}
+      <MapEmbed url={property.googleMapUrl} />
 
       <Divider className="border-zinc-200 !m-0" />
       <div className="flex flex-col gap-3">

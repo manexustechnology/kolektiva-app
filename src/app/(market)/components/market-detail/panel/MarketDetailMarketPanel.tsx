@@ -1,12 +1,19 @@
 'use client';
 
 import { interGlobalFont } from '@/commons/font';
+import { PropertyData } from '@/types/property';
 import { Divider } from 'antd';
 import { ApexOptions } from 'apexcharts';
 import { useState, useEffect } from 'react';
+import '../../../../../styles/quill-custom-styles.css';
 
-const MarketDetailMarketPanel: React.FC = () => {
-  // https://blog.nirdeshpokhrel.com.np/nextjs-window-is-not-defined-react-apexcharts
+interface MarketDetailMarketPanelProps {
+  property: PropertyData;
+}
+
+const MarketDetailMarketPanel: React.FC<MarketDetailMarketPanelProps> = ({
+  property,
+}) => {
   const [ReactApexChart, setReactApexChart] = useState<any>();
   useEffect(() => {
     import('react-apexcharts').then((mod) => {
@@ -94,53 +101,26 @@ const MarketDetailMarketPanel: React.FC = () => {
 
   return (
     <>
-      {!CommingSoon && (
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1">
-            <p className="text-base font-medium text-zinc-700">
-              Why DKI Jakarta?
-            </p>
-            <p className="text-sm text-zinc-500">
-              Owning property in DKI Jakarta is a highly profitable investment
-              because Jakarta is the economic and business center of Indonesia,
-              offering significant opportunities for property value growth. With
-              continuously developing infrastructure, including transportation
-              projects like MRT and LRT, accessibility and quality of life are
-              improving. Additionally, Jakarta has comprehensive educational,
-              healthcare, and entertainment facilities and serves as the hub of
-              cultural and political activities, making it an ideal location for
-              both residence and long-term investment. With consistently high
-              property demand, owning property in Jakarta promises significant
-              potential returns in the future.
-            </p>
-          </div>
-          <Divider className="border-zinc-200 !m-0" />
-          <div className="flex flex-col gap-1">
-            <p className="text-base font-medium text-zinc-700">
-              DKI Jakarta historical growth
-            </p>
-            <div id="chart">
-              {ReactApexChart && (
-                <ReactApexChart
-                  options={historicalChartOptions}
-                  series={historicalChartSeries}
-                  type="bar"
-                  height={350}
-                />
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      <div className="flex flex-col gap-6">
+        {/* Makets */}
+        <div className="flex flex-col items-start p-4 gap-5 w-full bg-white shadow-md rounded-lg">
+          {/* Title */}
+          <p className="text-lg font-medium text-zinc-500">Markets</p>
+          {/* Divider */}
+          <div className="w-full h-px bg-zinc-200"></div>
 
-      {CommingSoon && (
-        <div className="flex flex-col gap-4 items-center justify-center">
-          <div className="flex flex-col gap-1">
-            <p className="text-base font-medium text-zinc-700">Comming Soon</p>
-          </div>
-          <Divider className="border-zinc-200 !m-0" />
+          {!CommingSoon ? (
+            <div
+              className="quill-wrapper"
+              dangerouslySetInnerHTML={{
+                __html: property.city,
+              }}
+            />
+          ) : (
+            <p className="text-sm font-medium text-zinc-500">Coming Soon</p>
+          )}
         </div>
-      )}
+      </div>
     </>
   );
 };
