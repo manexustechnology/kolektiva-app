@@ -14,7 +14,6 @@ import { IMarketFilter } from '@/types/filter';
 import { findPropertyLocations } from '@/app/api/property.api';
 
 interface FilterBarProps {
-  locations: string[];
   propertyTypes: string[];
   sortOptions: string[];
   onFilterApply: (newFilters: any) => void;
@@ -53,7 +52,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
   onFilterApply,
   filters,
 }) => {
-  const [locations, setLocations] = useState<string[]>([]); // State for locations
+  const [locations, setLocations] = useState<string[]>([]);
   const [phaseTabIndex, setPhaseTabIndex] = useState(
     phaseStringToIndex(filters.phase),
   );
@@ -82,12 +81,11 @@ const FilterBar: React.FC<FilterBarProps> = ({
           state: true,
           country: true,
         });
+        const allCities: string[] = response.map((property) => property.city);
 
-        if (response && response.city) {
-          setLocations(response.city);
-        }
+        const uniqueCities = Array.from(new Set(allCities));
 
-        console.log('Property Locations:', response);
+        setLocations(uniqueCities);
       } catch (error) {
         console.error('Error fetching property locations:', error);
       }
@@ -188,7 +186,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
         </Select>
 
         <div className="absolute right-0">
-          {/*Tabs*/}
+          {/* Tabs */}
           <Tabs
             variant="soft-rounded"
             colorScheme="teal"
