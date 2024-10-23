@@ -48,12 +48,12 @@ const phaseIndexToString = (value: number): string => {
 };
 
 const FilterBar: React.FC<FilterBarProps> = ({
-  locations,
   propertyTypes,
   sortOptions,
   onFilterApply,
   filters,
 }) => {
+  const [locations, setLocations] = useState<string[]>([]); // State for locations
   const [phaseTabIndex, setPhaseTabIndex] = useState(
     phaseStringToIndex(filters.phase),
   );
@@ -82,6 +82,11 @@ const FilterBar: React.FC<FilterBarProps> = ({
           state: true,
           country: true,
         });
+
+        // Assuming response contains a 'cities' field or similar
+        if (response && response.cities) {
+          setLocations(response.cities); // Update state with fetched cities
+        }
 
         console.log('Property Locations:', response);
       } catch (error) {
@@ -184,135 +189,6 @@ const FilterBar: React.FC<FilterBarProps> = ({
         </Select>
 
         <div className="absolute right-0">
-          {/*Slider Filter if needed*/}
-          {/* <Menu isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
-            <MenuButton
-              as={Button}
-              rounded={100}
-              width="200px"
-              onClick={onOpen}
-              rightIcon={<SlidersHorizontal weight="fill" />}
-              textAlign="start"
-              _hover={{
-                backgroundColor: "#CCFBF1",
-              }}
-              _focus={{
-                backgroundColor: "#CCFBF1",
-              }}
-              backgroundColor="#F4F4F5"
-            >
-              Filter
-            </MenuButton>
-            <MenuList zIndex={1000} width={400} p={4}>
-        
-              <Box p={1} gap={4}>
-                <Box mt={2} marginBottom={10}>
-                  Projected Rental Yield
-                </Box>
-                <div className="flex gap-3 justify-between items-center">
-                  <p className="text-xs text-zinc-500 w-full max-w-5">0%</p>
-                  <Slider
-                    aria-label="slider-1"
-                    min={0}
-                    max={100}
-                    defaultValue={sliderValue1}
-                    onChange={(value) => setSliderValue1(value)}
-                  >
-                    <SliderMark
-                      value={sliderValue1}
-                      textAlign="center"
-                      bg="white"
-                      color="black"
-                      shadow="md"
-                      rounded="lg"
-                      fontSize="xs"
-                      fontWeight="bold"
-                      py={1}
-                      px={2}
-                      transform="translate(-50%, -45px)"
-                    >
-                      {sliderValue1}
-                    </SliderMark>
-                    <SliderTrack h={3} rounded="full">
-                      <SliderFilledTrack bgColor="teal.600" />
-                    </SliderTrack>
-                    <SliderThumb h={5} w={5} bgColor="teal.500" />
-                  </Slider>
-                  <p className="text-xs text-zinc-500 w-full max-w-10">100%</p>
-                </div>
-
-           
-                <Box
-                  width="362px"
-                  height="1px"
-                  backgroundColor="#E4E4E7"
-                  flex="none"
-                  order={1}
-                  alignSelf="stretch"
-                  flexGrow={0}
-                  my={4}
-                />
-
-                <Box mt={2} marginBottom={10}>
-                  Projected Annual Return{" "}
-                </Box>
-                <div className="flex gap-3 justify-between items-center">
-                  <p className="text-xs text-zinc-500 w-full max-w-5">0%</p>
-                  <Slider
-                    aria-label="slider-2"
-                    min={0}
-                    max={100}
-                    defaultValue={sliderValue2}
-                    onChange={(value) => setSliderValue2(value)}
-                  >
-                    <SliderMark
-                      value={sliderValue2}
-                      textAlign="center"
-                      bg="white"
-                      color="black"
-                      shadow="md"
-                      rounded="lg"
-                      fontSize="xs"
-                      fontWeight="bold"
-                      py={1}
-                      px={2}
-                      transform="translate(-50%, -45px)"
-                    >
-                      {sliderValue2}
-                    </SliderMark>
-                    <SliderTrack h={3} rounded="full">
-                      <SliderFilledTrack bgColor="teal.600" />
-                    </SliderTrack>
-                    <SliderThumb h={5} w={5} bgColor="teal.500" />
-                  </Slider>
-                  <p className="text-xs text-zinc-500 w-full max-w-10">100%</p>
-                </div>
-              </Box>
-
-           
-              <Box mt={4} gap={4} display="flex" justifyContent="space-between">
-                <Button
-                  width="full"
-                  rounded={100}
-                  onClick={() => alert("Button A clicked")}
-                  backgroundColor="teal.100"
-                  color="teal.700"
-                >
-                  Reset
-                </Button>
-                <Button
-                  width="full"
-                  rounded={100}
-                  onClick={() => alert("Button B clicked")}
-                  backgroundColor="teal.600"
-                  color="white"
-                >
-                  Apply
-                </Button>
-              </Box>
-            </MenuList>
-          </Menu> */}
-
           {/*Tabs*/}
           <Tabs
             variant="soft-rounded"
@@ -421,8 +297,6 @@ const FilterBar: React.FC<FilterBarProps> = ({
           </Tabs>
         </div>
       </div>
-
-      {/*Slider */}
     </Box>
   );
 };

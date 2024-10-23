@@ -866,22 +866,13 @@ const MarketDetailClientPage: React.FC<MarketDetailClientPageProps> = ({
                     />
                   </TabPanel>
                 )}
-                <TabPanel px={0} py={4}>
-                  <MarketDetailFinancialPanel />
-                </TabPanel>
 
-                <TabPanel px={0} py={4}>
-                  <MarketDetailOrderbookPanel
-                    allowTrade={allowTrade}
-                    propertyData={propertyData}
-                  />
-                </TabPanel>
                 <TabPanel px={0} py={4}>
                   {/* add for ignoring error */}
                   <MarketDetailDocumentPanel property={propertyData} />
                 </TabPanel>
                 <TabPanel px={0} py={4}>
-                  <MarketDetailMarketPanel />
+                  <MarketDetailMarketPanel property={propertyData} />
                 </TabPanel>
               </TabPanels>
             </Tabs>
