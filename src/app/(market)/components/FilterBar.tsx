@@ -57,6 +57,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
   const [phaseTabIndex, setPhaseTabIndex] = useState(
     phaseStringToIndex(filters.phase),
   );
+  const [uniqueCities, setUniqueCities] = useState<string[]>([]);
 
   useEffect(() => {
     setPhaseTabIndex(phaseStringToIndex(filters.phase));
@@ -83,12 +84,21 @@ const FilterBar: React.FC<FilterBarProps> = ({
           country: true,
         });
         console.log('Property Locations:', response);
+
+        const citiesSet = new Set(response.data.data.map((item) => item.city));
+        setUniqueCities(
+          Array.from(citiesSet).filter(
+            (city) => city !== undefined,
+          ) as string[],
+        );
+        console.log('Cities : ', uniqueCities);
       } catch (error) {
         console.error('Error fetching property locations:', error);
       }
     };
     fetchPropertyLocations();
   }, []);
+
   return (
     <Box
       pt={4}
@@ -138,7 +148,7 @@ const FilterBar: React.FC<FilterBarProps> = ({
           marginRight={5}
           onChange={(e) => handleFilterChange('location', e.target.value)}
         >
-          {locations.map((location, index) => (
+          {uniqueCities.map((location, index) => (
             <option
               key={index}
               value={location}
