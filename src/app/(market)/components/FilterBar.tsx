@@ -83,21 +83,34 @@ const FilterBar: React.FC<FilterBarProps> = ({
           state: true,
           country: true,
         });
+
         console.log('Property Locations:', response);
 
-        // const citiesSet = new Set(response.data.data.map((item) => item.city));
-        // setUniqueCities(
-        //   Array.from(citiesSet).filter(
-        //     (city) => city !== undefined,
-        //   ) as string[],
-        // );
-        // console.log('Cities : ', uniqueCities);
+        const responseNew = Array.isArray(response)
+          ? response
+          : response.data?.data;
+
+        if (!responseNew) {
+          console.error('Response data is undefined or not an array');
+          return;
+        }
+
+        const citiesSet = new Set(
+          responseNew
+            .map((item: any) => item.city)
+            .filter((city: string) => city),
+        );
+
+        setUniqueCities(Array.from(citiesSet));
+        console.log('Unique Cities:', Array.from(citiesSet));
       } catch (error) {
         console.error('Error fetching property locations:', error);
       }
     };
+
     fetchPropertyLocations();
   }, []);
+
   return (
     <Box
       pt={4}
