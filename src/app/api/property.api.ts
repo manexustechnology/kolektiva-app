@@ -39,7 +39,7 @@ export const setPropertyToSettlement = async (
 
 export const findPropertyLocations = async (
   params: PropertyLocationFilter,
-): Promise<ResponseData<PropertyLocationResponse[]>> => {
+): Promise<AxiosResponse<ResponseData<PropertyLocationResponse[]>>> => {
   try {
     const queryParams = queryString.stringify(params as any);
     const response = await axios.get(
